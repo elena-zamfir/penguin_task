@@ -80,10 +80,10 @@ function updateGameArea() {
 
         myGamePiece.speedX = 0;
         myGamePiece.speedY = 0;
-        if (myGameArea.key && myGameArea.key == 37) {myGamePiece.speedX = -1; }
-        if (myGameArea.key && myGameArea.key == 39) {myGamePiece.speedX = 1; }
-        if (myGameArea.key && myGameArea.key == 38) {myGamePiece.speedY = -1; }
-        if (myGameArea.key && myGameArea.key == 40) {myGamePiece.speedY = 1; }
+        if (myGameArea.key && myGameArea.key == 37) {myGamePiece.speedX = -2; }
+        if (myGameArea.key && myGameArea.key == 39) {myGamePiece.speedX = 2; }
+        if (myGameArea.key && myGameArea.key == 38) {myGamePiece.speedY = -2; }
+        if (myGameArea.key && myGameArea.key == 40) {myGamePiece.speedY = 2; }
         proposed_x = myGamePiece.x + myGamePiece.speedX;
         proposed_y = myGamePiece.y + myGamePiece.speedY;
 
@@ -96,29 +96,13 @@ function updateGameArea() {
         myGamePiece.update();
 }
 
-function moveup() {
-    myGamePiece.speedY = -1;
-}
 
-function movedown() {
-    myGamePiece.speedY = 1;
-}
 
-function moveleft() {
-    myGamePiece.speedX = -1;
-}
 
-function moveright() {
-    myGamePiece.speedX = 1;
-}
 
-function clearmove() {
-    myGamePiece.speedX = 0;
-    myGamePiece.speedY = 0;
-}
 </script>
 
-</div>
+<!--</div>-->
 <p>Try hitting the obstacle, and the piece will not move. Control with arrowkeys.</p>
 </body>
 </html>
