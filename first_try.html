@@ -13,19 +13,20 @@ canvas {
 <script>
 
 var myGamePiece;
-var myObstacle;
+var myObstacles = [];
 
 function startGame() {
-    myGamePiece = new component(30, 30, "red", 10, 120);
-    myObstacle  = new component(400, 1, "green", 100, 100);
+    myGamePiece = new component(30, 30, "red", 285, 85);
+    myObstacles.push (new component(180, 1, "green", 70, 100));
+    myObstacles.push (new component(180, 1, "green", 350, 100));
     myGameArea.start();
 }
 
 var myGameArea = {
     canvas : document.createElement("canvas"),
     start : function() {
-        this.canvas.width = 480;
-        this.canvas.height = 270;
+        this.canvas.width = 600;
+        this.canvas.height = 600;
         this.context = this.canvas.getContext("2d");
         document.body.insertBefore(this.canvas, document.body.childNodes[0]);
         this.interval = setInterval(updateGameArea, 20);
@@ -71,12 +72,25 @@ function component(width, height, color, x, y) {
         }
         return crash;
     }
+    this.crashWithMaze = function(proposed_x, proposed_y){
+        maze_crash  = false;
+        for (i = 0; i < myObstacles.length; i += 1) {
+        if (myGamePiece.crashWith(myObstacles[i], proposed_x, proposed_y)) {
+            maze_crash  = true;
+            return;
+        }
+
+        }
+        return maze_crash;
+    }
 }
 
 function updateGameArea() {
 
         myGameArea.clear();
-        myObstacle.update();
+        for (i = 0; i < myObstacles.length; i += 1) {
+        myObstacles[i].update();
+        }
 
         myGamePiece.speedX = 0;
         myGamePiece.speedY = 0;
@@ -87,7 +101,8 @@ function updateGameArea() {
         proposed_x = myGamePiece.x + myGamePiece.speedX;
         proposed_y = myGamePiece.y + myGamePiece.speedY;
 
-        test_crash = myGamePiece.crashWith(myObstacle, proposed_x, proposed_y)
+       <!-- test_crash = myGamePiece.crashWith(myObstacle, proposed_x, proposed_y)-->
+        test_crash = myGamePiece.crashWithMaze( proposed_x, proposed_y)
         if (test_crash == false) {
         myGamePiece.x += myGamePiece.speedX;
         myGamePiece.y += myGamePiece.speedY;
