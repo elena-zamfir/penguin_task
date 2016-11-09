@@ -17,8 +17,15 @@ var myObstacles = [];
 
 function startGame() {
     myGamePiece = new component(30, 30, "red", 285, 85);
-    myObstacles.push (new component(180, 1, "green", 70, 100));
-    myObstacles.push (new component(180, 1, "green", 350, 100));
+<!-- creating maze exterior frame-->
+    myObstacles.push (new component(200, 1, "green", 70, 100));
+    myObstacles.push (new component(200, 1, "green", 330, 100));
+    myObstacles.push (new component(1, 400, "green", 70, 100));
+    myObstacles.push (new component(1, 400, "green", 530, 100));
+    myObstacles.push (new component(200, 1, "green", 70, 500));
+    myObstacles.push (new component(200, 1, "green", 330, 500));
+
+
     myGameArea.start();
 }
 
@@ -94,14 +101,14 @@ function updateGameArea() {
 
         myGamePiece.speedX = 0;
         myGamePiece.speedY = 0;
-        if (myGameArea.key && myGameArea.key == 37) {myGamePiece.speedX = -2; }
-        if (myGameArea.key && myGameArea.key == 39) {myGamePiece.speedX = 2; }
-        if (myGameArea.key && myGameArea.key == 38) {myGamePiece.speedY = -2; }
-        if (myGameArea.key && myGameArea.key == 40) {myGamePiece.speedY = 2; }
+        if (myGameArea.key && myGameArea.key == 37) {myGamePiece.speedX = -5; }
+        if (myGameArea.key && myGameArea.key == 39) {myGamePiece.speedX = 5; }
+        if (myGameArea.key && myGameArea.key == 38) {myGamePiece.speedY = -5; }
+        if (myGameArea.key && myGameArea.key == 40) {myGamePiece.speedY = 5; }
         proposed_x = myGamePiece.x + myGamePiece.speedX;
         proposed_y = myGamePiece.y + myGamePiece.speedY;
 
-       <!-- test_crash = myGamePiece.crashWith(myObstacle, proposed_x, proposed_y)-->
+
         test_crash = myGamePiece.crashWithMaze( proposed_x, proposed_y)
         if (test_crash == false) {
         myGamePiece.x += myGamePiece.speedX;
