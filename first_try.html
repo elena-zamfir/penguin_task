@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -127,6 +127,7 @@ var myGameArea = {
         this.canvas.height = canvas_size;
         this.context = this.canvas.getContext("2d");
         document.body.insertBefore(this.canvas, document.body.childNodes[0]);
+        this.frameNo = 0;
         this.interval = setInterval(updateGameArea, 50);
         window.addEventListener('keydown', function (e) {
             myGameArea.key = e.keyCode;
@@ -141,6 +142,12 @@ var myGameArea = {
     }
 
 }
+
+function everyinterval(n) {
+    if ((myGameArea.frameNo / n) % 1 == 0) {return true;}
+    return false;
+}
+
 
 function component(width, height, color, x, y) {
     this.width = width;
@@ -187,19 +194,36 @@ function component(width, height, color, x, y) {
 
 function rotate_90_piece(obstacle) {
           current_x = obstacle.x;
+           
           current_y = obstacle.y;
-          obstacle.x = canvas_size - current_y;
+          current_width = obstacle.width; 
+          current_height = obstacle.height;
+          obstacle.x = canvas_size - current_y-current_height;
+          
           obstacle.y = current_x;
+            
+          obstacle.width = current_height;
+ 
+          obstacle.height = current_width;
+ 
+          
 }
 
 function rotate_90_maze(){
         for (i =0; i< myObstacles.length; i++){ rotate_90_piece(myObstacles[i]);}
+        rotate_90_piece(myGamePiece);
 }
 
 
 function updateGameArea() {
 
         myGameArea.clear();
+
+        myGameArea.frameNo += 1;
+    if (myGameArea.frameNo == 50 ) {
+         rotate_90_maze();
+    }
+
         for (i = 0; i < myObstacles.length; i += 1) {
         myObstacles[i].update();
         }
