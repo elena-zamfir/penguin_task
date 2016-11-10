@@ -1,11 +1,11 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <style>
 canvas {
-    border:1px solid #d3d3d3;
-    background-color: #f1f1f1;
+   border:1px solid #d3d3d3;
+   background-color: #f1f1f1;
 }
 </style>
 </head>
@@ -16,23 +16,23 @@ var myGamePiece;
 var myObstacles = [];
 
 
-function Create3DArray(rows, columns) 
+function Create3DArray(rows, columns)
 {
-  var arr = [];
-  for (var i=0;i<rows;i++) 
-    {
-    arr[i] = [];
-    for ( var j =0; j< columns; j++) 
-       {
-        arr[i][j] = [];
-        for ( var k =0; k <5; k++)
-           {
-            arr[i][j][k] = 0;
-            }
- 
-        }
-     }
-  return arr;
+ var arr = [];
+ for (var i=0;i<rows;i++)
+   {
+   arr[i] = [];
+   for ( var j =0; j< columns; j++)
+      {
+       arr[i][j] = [];
+       for ( var k =0; k <5; k++)
+          {
+           arr[i][j][k] = 0;
+           }
+
+       }
+    }
+ return arr;
 }
 
 function createMaze(rows, columns){
@@ -46,205 +46,212 @@ var aux = [];
 
 
 while (history.length)
-      {
-       /*document.write('  current history length is   ');
-       document.write(history.length);
-       */
-       M[r][c][4]  = 1;
-       check  = [];
-       if  (c > 0 && M[r][c-1][4] == 0) {check.push('L');}
-       if  (r > 0 && M[r-1][c][4] == 0) {check.push('U');}
-       if  (c < columns-1 && M[r][c+1][4] == 0) {check.push('R');}
-       if  (r < rows-1 && M[r+1][c][4] == 0) {check.push('D');}
+     {
+      /*document.write('  current history length is   ');
+      document.write(history.length);
+      */
+      M[r][c][4]  = 1;
+      check  = [];
+      if  (c > 0 && M[r][c-1][4] == 0) {check.push('L');}
+      if  (r > 0 && M[r-1][c][4] == 0) {check.push('U');}
+      if  (c < columns-1 && M[r][c+1][4] == 0) {check.push('R');}
+      if  (r < rows-1 && M[r+1][c][4] == 0) {check.push('D');}
 
-      if (check.length)
+     if (check.length)
 
-         {
-          history.push([r,c]);
-          move_direction = check[Math.floor(Math.random() * check.length)];
-          if (move_direction == 'L') {M[r][c][0] =1; c = c-1; M[r][c][2]=1;}
-          if (move_direction == 'U') {M[r][c][1] =1; r = r-1; M[r][c][3]=1;}
-          if (move_direction == 'R') {M[r][c][2] =1; c = c+1; M[r][c][0]=1;}
-          if (move_direction == 'D') {M[r][c][3] =1; r = r+1; M[r][c][1]=1;}
-         }
-     else  {aux  = history.pop(); r  = aux[0]; c = aux[1];}
+        {
+         history.push([r,c]);
+         move_direction = check[Math.floor(Math.random() * check.length)];
+         if (move_direction == 'L') {M[r][c][0] =1; c = c-1; M[r][c][2]=1;}
+         if (move_direction == 'U') {M[r][c][1] =1; r = r-1; M[r][c][3]=1;}
+         if (move_direction == 'R') {M[r][c][2] =1; c = c+1; M[r][c][0]=1;}
+         if (move_direction == 'D') {M[r][c][3] =1; r = r+1; M[r][c][1]=1;}
+        }
+    else  {aux  = history.pop(); r  = aux[0]; c = aux[1];}
 
 
-      }
+     }
 
 M[0][Math.floor(columns/2)][1] = 1;
 M[rows-1][Math.floor(columns/2)][3] = 1;
-return M;  
+return M;
 }
 
 
-var canvas_size = 600; 
+var canvas_size = 600;
 var border = 50;
 var nr_maze_rows = 15;
 var maze_segment_length = Math.floor((canvas_size - 2*border)/nr_maze_rows);
 
 function startGame() {
-    myGamePiece = new component(maze_segment_length - 18, maze_segment_length - 18, "red", border + Math.floor(nr_maze_rows/2)*maze_segment_length + 9, border);
+   myGamePiece = new component(maze_segment_length - 18, maze_segment_length - 18, "red", border + Math.floor(nr_maze_rows/2)*maze_segment_length + 9, border);
 /*
 <!-- creating maze exterior frame-->
-    myObstacles.push (new component(200, 1, "green", 70, 100));
-    myObstacles.push (new component(200, 1, "green", 330, 100));
-    myObstacles.push (new component(1, 400, "green", 70, 100));
-    myObstacles.push (new component(1, 400, "green", 530, 100));
-    myObstacles.push (new component(200, 1, "green", 70, 500));
-    myObstacles.push (new component(200, 1, "green", 330, 500));
-   
+   myObstacles.push (new component(200, 1, "green", 70, 100));
+   myObstacles.push (new component(200, 1, "green", 330, 100));
+   myObstacles.push (new component(1, 400, "green", 70, 100));
+   myObstacles.push (new component(1, 400, "green", 530, 100));
+   myObstacles.push (new component(200, 1, "green", 70, 500));
+   myObstacles.push (new component(200, 1, "green", 330, 500));
+
 */
 
- 
+
 M = createMaze(nr_maze_rows, nr_maze_rows);
 for ( i =0; i< nr_maze_rows; i++)
-    {
-     for ( j=0; j< nr_maze_rows; j++)
-         {
-           if (M[i][j][0] == 0) {myObstacles.push(new component (1, maze_segment_length, "green", border + j*maze_segment_length, border + i *maze_segment_length));}
-           if (M[i][j][1] == 0) {myObstacles.push(new component (maze_segment_length,1, "green", border + j*maze_segment_length, border + i *maze_segment_length));}
-           if (M[i][j][2] == 0) {myObstacles.push(new component (1,maze_segment_length, "green", border + (j+1)*maze_segment_length, border + i *maze_segment_length));}
-           if (M[i][j][3] == 0) {myObstacles.push(new component (maze_segment_length,1, "green", border + j*maze_segment_length, border + (i+1) *maze_segment_length));}
+   {
+    for ( j=0; j< nr_maze_rows; j++)
+        {
+          if (M[i][j][0] == 0) {myObstacles.push(new component (1, maze_segment_length, "green", border + j*maze_segment_length, border + i *maze_segment_length));}
+          if (M[i][j][1] == 0) {myObstacles.push(new component (maze_segment_length,1, "green", border + j*maze_segment_length, border + i *maze_segment_length));}
+          if (M[i][j][2] == 0) {myObstacles.push(new component (1,maze_segment_length, "green", border + (j+1)*maze_segment_length, border + i *maze_segment_length));}
+          if (M[i][j][3] == 0) {myObstacles.push(new component (maze_segment_length,1, "green", border + j*maze_segment_length, border + (i+1) *maze_segment_length));}
 
-         }
-    }
-
-
+        }
+   }
 
 
 
 
 
 
-    myGameArea.start();
+
+
+   myGameArea.start();
 }
 
 var myGameArea = {
-    canvas : document.createElement("canvas"),
-    start : function() {
-        this.canvas.width = canvas_size;
-        this.canvas.height = canvas_size;
-        this.context = this.canvas.getContext("2d");
-        document.body.insertBefore(this.canvas, document.body.childNodes[0]);
-        this.frameNo = 0;
-        this.interval = setInterval(updateGameArea, 50);
-        window.addEventListener('keydown', function (e) {
-            myGameArea.key = e.keyCode;
-        })
-        window.addEventListener('keyup', function (e) {
-            myGameArea.key = false;
-        })
-    },
+   canvas : document.createElement("canvas"),
+   start : function() {
+       this.canvas.width = canvas_size;
+       this.canvas.height = canvas_size;
+       this.context = this.canvas.getContext("2d");
+       document.body.insertBefore(this.canvas, document.body.childNodes[0]);
+       this.frameNo = 0;
+       this.interval = setInterval(updateGameArea, 50);
+       window.addEventListener('keydown', function (e) {
+           myGameArea.key = e.keyCode;
+       })
+       window.addEventListener('keyup', function (e) {
+           myGameArea.key = false;
+       })
+   },
 
-    clear : function() {
-        this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
-    }
+   clear : function() {
+       this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+   }
 
 }
 
 function everyinterval(n) {
-    if ((myGameArea.frameNo / n) % 1 == 0) {return true;}
-    return false;
+   if ((myGameArea.frameNo / n) % 1 == 0) {return true;}
+   return false;
 }
 
 
 function component(width, height, color, x, y) {
-    this.width = width;
-    this.height = height;
-    this.speedX = 0;
-    this.speedY = 0;
-    this.x = x;
-    this.y = y;
-    this.update = function() {
-        ctx = myGameArea.context;
-        ctx.fillStyle = color;
-        ctx.fillRect(this.x, this.y, this.width, this.height);
-    }
+   this.width = width;
+   this.height = height;
+   this.speedX = 0;
+   this.speedY = 0;
+   this.x = x;
+   this.y = y;
+   this.orientation = 'U';
+   this.update = function() {
+       ctx = myGameArea.context;
+       ctx.fillStyle = color;
+       ctx.fillRect(this.x, this.y, this.width, this.height);
+   }
 
-    this.crashWith = function(otherobj, proposed_x, proposed_y) {
-        var myleft = proposed_x;
-        var myright = myleft + (this.width);
-        var mytop = proposed_y;
-        var mybottom = mytop + (this.height);
-        var otherleft = otherobj.x;
-        var otherright = otherobj.x + (otherobj.width);
-        var othertop = otherobj.y;
-        var otherbottom = otherobj.y + (otherobj.height);
-        var crash = true;
-        if ((mybottom < othertop) || (mytop > otherbottom) || (myright < otherleft) || (myleft > otherright)) {
-            crash = false;
-        }
-        return crash;
-    }
-    this.crashWithMaze = function(proposed_x, proposed_y){
-        maze_crash  = false;
-        for (i = 0; i < myObstacles.length; i += 1) {
-        if (myGamePiece.crashWith(myObstacles[i], proposed_x, proposed_y)) {
-            maze_crash  = true;
-            return;
-        }
+   this.crashWith = function(otherobj, proposed_x, proposed_y) {
+       var myleft = proposed_x;
+       var myright = myleft + (this.width);
+       var mytop = proposed_y;
+       var mybottom = mytop + (this.height);
+       var otherleft = otherobj.x;
+       var otherright = otherobj.x + (otherobj.width);
+       var othertop = otherobj.y;
+       var otherbottom = otherobj.y + (otherobj.height);
+       var crash = true;
+       if ((mybottom < othertop) || (mytop > otherbottom) || (myright < otherleft) || (myleft > otherright)) {
+           crash = false;
+       }
+       return crash;
+   }
+   this.crashWithMaze = function(proposed_x, proposed_y){
+       maze_crash  = false;
+       for (i = 0; i < myObstacles.length; i += 1) {
+       if (myGamePiece.crashWith(myObstacles[i], proposed_x, proposed_y)) {
+           maze_crash  = true;
+           return;
+       }
 
-        }
-        return maze_crash;
-    }
+       }
+       return maze_crash;
+   }
 }
 
 
 
 function rotate_90_piece(obstacle) {
-          current_x = obstacle.x;
-           
-          current_y = obstacle.y;
-          current_width = obstacle.width; 
-          current_height = obstacle.height;
-          obstacle.x = canvas_size - current_y-current_height;
-          
-          obstacle.y = current_x;
-            
-          obstacle.width = current_height;
- 
-          obstacle.height = current_width;
- 
-          
+         current_x = obstacle.x;
+
+         current_y = obstacle.y;
+         current_width = obstacle.width;
+         current_height = obstacle.height;
+         obstacle.x = canvas_size - current_y-current_height;
+
+         obstacle.y = current_x;
+
+         obstacle.width = current_height;
+
+         obstacle.height = current_width;
+         current_orientation = obstacle.orientation;
+
+         if (current_orientation == 'U') {obstacle.orientation ='R';}
+         if (current_orientation == 'R') {obstacle.orientation ='D';}
+         if (current_orientation == 'D') {obstacle.orientation ='L';}
+         if (current_orientation == 'L') {obstacle.orientation ='U';}
+
+
 }
 
 function rotate_90_maze(){
-        for (i =0; i< myObstacles.length; i++){ rotate_90_piece(myObstacles[i]);}
-        rotate_90_piece(myGamePiece);
+       for (i =0; i< myObstacles.length; i++){ rotate_90_piece(myObstacles[i]);}
+       rotate_90_piece(myGamePiece);
 }
 
 
 function updateGameArea() {
 
-        myGameArea.clear();
+       myGameArea.clear();
 
-        myGameArea.frameNo += 1;
-    if (myGameArea.frameNo == 50 ) {
-         rotate_90_maze();
-    }
+       myGameArea.frameNo += 1;
+   if (myGameArea.frameNo == 50 ) {
+        rotate_90_maze();
+   }
 
-        for (i = 0; i < myObstacles.length; i += 1) {
-        myObstacles[i].update();
-        }
+       for (i = 0; i < myObstacles.length; i += 1) {
+       myObstacles[i].update();
+       }
 
-        myGamePiece.speedX = 0;
-        myGamePiece.speedY = 0;
-        if (myGameArea.key && myGameArea.key == 37) {myGamePiece.speedX = -7; }
-        if (myGameArea.key && myGameArea.key == 39) {myGamePiece.speedX = 7; }
-        if (myGameArea.key && myGameArea.key == 38) {myGamePiece.speedY = -7; }
-        if (myGameArea.key && myGameArea.key == 40) {myGamePiece.speedY = 7; }
-        proposed_x = myGamePiece.x + myGamePiece.speedX;
-        proposed_y = myGamePiece.y + myGamePiece.speedY;
+       myGamePiece.speedX = 0;
+       myGamePiece.speedY = 0;
+       if (myGameArea.key && myGameArea.key == 37) {myGamePiece.speedX = -7; }
+       if (myGameArea.key && myGameArea.key == 39) {myGamePiece.speedX = 7; }
+       if (myGameArea.key && myGameArea.key == 38) {myGamePiece.speedY = -7; }
+       if (myGameArea.key && myGameArea.key == 40) {myGamePiece.speedY = 7; }
+       proposed_x = myGamePiece.x + myGamePiece.speedX;
+       proposed_y = myGamePiece.y + myGamePiece.speedY;
 
 
-        test_crash = myGamePiece.crashWithMaze( proposed_x, proposed_y)
-        if (test_crash == false) {
-        myGamePiece.x += myGamePiece.speedX;
-        myGamePiece.y += myGamePiece.speedY;
+       test_crash = myGamePiece.crashWithMaze( proposed_x, proposed_y)
+       if (test_crash == false) {
+       myGamePiece.x += myGamePiece.speedX;
+       myGamePiece.y += myGamePiece.speedY;
 
-        }
-        myGamePiece.update();
+       }
+       myGamePiece.update();
 }
 
 
