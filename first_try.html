@@ -183,6 +183,20 @@ function component(width, height, color, x, y) {
     }
 }
 
+
+
+function rotate_90_piece(obstacle) {
+          current_x = obstacle.x;
+          current_y = obstacle.y;
+          obstacle.x = canvas_size - current_y;
+          obstacle.y = current_x;
+}
+
+function rotate_90_maze(){
+        for (i =0; i< myObstacles.length; i++){ rotate_90_piece(myObstacles[i]);}
+}
+
+
 function updateGameArea() {
 
         myGameArea.clear();
