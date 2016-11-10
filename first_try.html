@@ -84,7 +84,7 @@ var nr_maze_rows = 15;
 var maze_segment_length = Math.floor((canvas_size - 2*border)/nr_maze_rows);
 
 function startGame() {
-    myGamePiece = new component(maze_segment_length - 10, maze_segment_length - 10, "red", border + Math.floor(nr_maze_rows/2)*maze_segment_length + 5, border);
+    myGamePiece = new component(maze_segment_length - 18, maze_segment_length - 18, "red", border + Math.floor(nr_maze_rows/2)*maze_segment_length + 9, border);
 /*
 <!-- creating maze exterior frame-->
     myObstacles.push (new component(200, 1, "green", 70, 100));
@@ -127,7 +127,7 @@ var myGameArea = {
         this.canvas.height = canvas_size;
         this.context = this.canvas.getContext("2d");
         document.body.insertBefore(this.canvas, document.body.childNodes[0]);
-        this.interval = setInterval(updateGameArea, 20);
+        this.interval = setInterval(updateGameArea, 50);
         window.addEventListener('keydown', function (e) {
             myGameArea.key = e.keyCode;
         })
@@ -192,10 +192,10 @@ function updateGameArea() {
 
         myGamePiece.speedX = 0;
         myGamePiece.speedY = 0;
-        if (myGameArea.key && myGameArea.key == 37) {myGamePiece.speedX = -5; }
-        if (myGameArea.key && myGameArea.key == 39) {myGamePiece.speedX = 5; }
-        if (myGameArea.key && myGameArea.key == 38) {myGamePiece.speedY = -5; }
-        if (myGameArea.key && myGameArea.key == 40) {myGamePiece.speedY = 5; }
+        if (myGameArea.key && myGameArea.key == 37) {myGamePiece.speedX = -7; }
+        if (myGameArea.key && myGameArea.key == 39) {myGamePiece.speedX = 7; }
+        if (myGameArea.key && myGameArea.key == 38) {myGamePiece.speedY = -7; }
+        if (myGameArea.key && myGameArea.key == 40) {myGamePiece.speedY = 7; }
         proposed_x = myGamePiece.x + myGamePiece.speedX;
         proposed_y = myGamePiece.y + myGamePiece.speedY;
 
