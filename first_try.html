@@ -15,8 +15,77 @@ canvas {
 var myGamePiece;
 var myObstacles = [];
 
+
+function Create3DArray(rows, columns) 
+{
+  var arr = [];
+  for (var i=0;i<rows;i++) 
+    {
+    arr[i] = [];
+    for ( var j =0; j< columns; j++) 
+       {
+        arr[i][j] = [];
+        for ( var k =0; k <5; k++)
+           {
+            arr[i][j][k] = 0;
+            }
+ 
+        }
+     }
+  return arr;
+}
+
+function createMaze(rows, columns){
+
+var M = Create3DArray(rows, columns);
+var r = 0;
+var c = Math.floor(columns/2);
+var history  = [[r,c]];
+var check = [];
+var aux = [];
+
+
+while (history.length)
+      {
+       /*document.write('  current history length is   ');
+       document.write(history.length);
+       */
+       M[r][c][4]  = 1;
+       check  = [];
+       if  (c > 0 && M[r][c-1][4] == 0) {check.push('L');}
+       if  (r > 0 && M[r-1][c][4] == 0) {check.push('U');}
+       if  (c < columns-1 && M[r][c+1][4] == 0) {check.push('R');}
+       if  (r < rows-1 && M[r+1][c][4] == 0) {check.push('D');}
+
+      if (check.length)
+
+         {
+          history.push([r,c]);
+          move_direction = check[Math.floor(Math.random() * check.length)];
+          if (move_direction == 'L') {M[r][c][0] =1; c = c-1; M[r][c][2]=1;}
+          if (move_direction == 'U') {M[r][c][1] =1; r = r-1; M[r][c][3]=1;}
+          if (move_direction == 'R') {M[r][c][2] =1; c = c+1; M[r][c][0]=1;}
+          if (move_direction == 'D') {M[r][c][3] =1; r = r+1; M[r][c][1]=1;}
+         }
+     else  {aux  = history.pop(); r  = aux[0]; c = aux[1];}
+
+
+      }
+
+M[0][Math.floor(columns/2)][1] = 1;
+M[rows-1][Math.floor(columns/2)][3] = 1;
+return M;  
+}
+
+
+var canvas_size = 600; 
+var border = 50;
+var nr_maze_rows = 15;
+var maze_segment_length = Math.floor((canvas_size - 2*border)/nr_maze_rows);
+
 function startGame() {
-    myGamePiece = new component(30, 30, "red", 285, 85);
+    myGamePiece = new component(maze_segment_length - 10, maze_segment_length - 10, "red", border + Math.floor(nr_maze_rows/2)*maze_segment_length + 5, border);
+/*
 <!-- creating maze exterior frame-->
     myObstacles.push (new component(200, 1, "green", 70, 100));
     myObstacles.push (new component(200, 1, "green", 330, 100));
@@ -24,6 +93,28 @@ function startGame() {
     myObstacles.push (new component(1, 400, "green", 530, 100));
     myObstacles.push (new component(200, 1, "green", 70, 500));
     myObstacles.push (new component(200, 1, "green", 330, 500));
+   
+*/
+
+ 
+M = createMaze(nr_maze_rows, nr_maze_rows);
+for ( i =0; i< nr_maze_rows; i++)
+    {
+     for ( j=0; j< nr_maze_rows; j++)
+         {
+           if (M[i][j][0] == 0) {myObstacles.push(new component (1, maze_segment_length, "green", border + j*maze_segment_length, border + i *maze_segment_length));}
+           if (M[i][j][1] == 0) {myObstacles.push(new component (maze_segment_length,1, "green", border + j*maze_segment_length, border + i *maze_segment_length));}
+           if (M[i][j][2] == 0) {myObstacles.push(new component (1,maze_segment_length, "green", border + (j+1)*maze_segment_length, border + i *maze_segment_length));}
+           if (M[i][j][3] == 0) {myObstacles.push(new component (maze_segment_length,1, "green", border + j*maze_segment_length, border + (i+1) *maze_segment_length));}
+
+         }
+    }
+
+
+
+
+
+
 
 
     myGameArea.start();
@@ -32,8 +123,8 @@ function startGame() {
 var myGameArea = {
     canvas : document.createElement("canvas"),
     start : function() {
-        this.canvas.width = 600;
-        this.canvas.height = 600;
+        this.canvas.width = canvas_size;
+        this.canvas.height = canvas_size;
         this.context = this.canvas.getContext("2d");
         document.body.insertBefore(this.canvas, document.body.childNodes[0]);
         this.interval = setInterval(updateGameArea, 20);
