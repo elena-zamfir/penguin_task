@@ -1,0 +1,114 @@
+ <!DOCTYPE html>
+<html>
+<body>
+
+ 
+
+<p id="demo"></p>
+
+<script>
+ 
+function Create3DArray(rows, columns) {
+  var arr = [];
+ 
+  for (var i=0;i<rows;i++) {
+ 
+arr[i] = [];
+    for ( var j =0; j< columns; j++)
+{
+ 
+arr[i][j] = [];
+ 
+ 
+for ( var k =0; k <5; k++)
+{
+ 
+arr[i][j][k] = 0;
+ 
+}
+ 
+ }
+}
+  return arr;
+}
+
+
+
+function createMaze(rows, columns){
+
+var M = Create3DArray(rows, columns);
+var r = 0;
+var c = Math.floor(columns/2);
+var history  = [[r,c]];
+var check = [];
+var aux = [];
+
+
+while (history.length)
+      {
+       /*document.write('  current history length is   ');
+       document.write(history.length);
+       */
+       M[r][c][4]  = 1;
+       check  = [];
+       if  (c > 0 && M[r][c-1][4] == 0) {check.push('L');}
+       if  (r > 0 && M[r-1][c][4] == 0) {check.push('U');}
+       if  (c < columns-1 && M[r][c+1][4] == 0) {check.push('R');}
+       if  (r < rows-1 && M[r+1][c][4] == 0) {check.push('D');}
+
+      if (check.length)
+
+         {
+          history.push([r,c]);
+          move_direction = check[Math.floor(Math.random() * check.length)];
+          if (move_direction == 'L') {M[r][c][0] =1; c = c-1; M[r][c][2]=1;}
+          if (move_direction == 'U') {M[r][c][1] =1; r = r-1; M[r][c][3]=1;}
+          if (move_direction == 'R') {M[r][c][2] =1; c = c+1; M[r][c][0]=1;}
+          if (move_direction == 'D') {M[r][c][3] =1; r = r+1; M[r][c][1]=1;}
+         }
+     else  {aux  = history.pop(); r  = aux[0]; c = aux[1];}
+
+
+      }
+
+M[0][Math.floor(columns/2)][1] = 1;
+M[rows-1][Math.floor(columns/2)][3] = 1;
+return M;  
+}
+
+
+
+
+
+
+
+var x;
+x = Create3DArray(2,3);
+//document.write(x);
+x = createMaze(3,3);
+ 
+document.write(x[0][0]);
+document.write("<br>");
+document.write(x[0][1]);
+document.write("<br>");
+document.write(x[0][2]);
+document.write("<br>");
+document.write(x[1][0]);
+document.write("<br>");
+document.write(x[1][1]);
+document.write("<br>");
+document.write(x[1][2]);
+document.write("<br>");
+document.write(x[2][0]);
+document.write("<br>");
+document.write(x[2][1]);
+document.write("<br>");
+document.write(x[2][2]);
+document.write("<br>");
+
+
+
+</script>
+
+</body>
+</html>
