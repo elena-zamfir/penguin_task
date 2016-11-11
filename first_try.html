@@ -221,6 +221,31 @@ function rotate_90_maze(){
        rotate_90_piece(myGamePiece);
 }
 
+function rotate_180_piece(obstacle) {
+          current_x = obstacle.x;
+
+          current_y = obstacle.y;
+          current_width = obstacle.width;
+          current_height = obstacle.height;
+          obstacle.x = canvas_size - current_x-current_width;
+
+          obstacle.y = canvas_size - current_y-current_height;
+
+
+          current_orientation = obstacle.orientation;
+
+          if (current_orientation == 'U') {obstacle.orientation ='D';}
+          if (current_orientation == 'R') {obstacle.orientation ='L';}
+          if (current_orientation == 'D') {obstacle.orientation ='U';}
+          if (current_orientation == 'L') {obstacle.orientation ='R';}
+
+
+}
+
+function rotate_180_maze(){
+        for (i =0; i< myObstacles.length; i++){              rotate_180_piece(myObstacles[i]);}
+        rotate_180_piece(myGamePiece);
+}
 
 function updateGameArea() {
 
@@ -228,7 +253,7 @@ function updateGameArea() {
 
        myGameArea.frameNo += 1;
    if (myGameArea.frameNo == 50 ) {
-        rotate_90_maze();
+        rotate_180_maze();
    }
 
        for (i = 0; i < myObstacles.length; i += 1) {
