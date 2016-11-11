@@ -142,8 +142,10 @@ var myGameArea = {
 
    clear : function() {
        this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
-   }
-
+   },
+    stop : function() {
+        clearInterval(this.interval);
+    }
 }
 
 function everyinterval(n) {
@@ -287,6 +289,13 @@ function getRndInteger(min, max) {
 var switch_prob = 0.004;
 function updateGameArea() {
 
+
+
+
+if (myGamePiece.crashWith(myFinishPosition, myGamePiece.x, myGamePiece.y)) {
+        myGameArea.stop();
+    }
+else{
        myGameArea.clear();
 
        myGameArea.frameNo += 1;
@@ -356,7 +365,8 @@ if (current_orientation == 'D'){
 
        }
        myGamePiece.update();
-        myFinishPosition.update();
+        myFinishPosition.update();}
+
 }
 
 
