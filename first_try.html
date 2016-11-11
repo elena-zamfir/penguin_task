@@ -285,7 +285,7 @@ function updateGameArea() {
 
        myGameArea.frameNo += 1;
    if (myGameArea.frameNo == 50 ) {
-        rotate_270_maze();
+        rotate_180_maze();
    }
 
        for (i = 0; i < myObstacles.length; i += 1) {
@@ -309,6 +309,21 @@ function updateGameArea() {
        if (myGameArea.key && myGameArea.key == 40) {myGamePiece.speedX = 7; }
 }
 
+
+if (current_orientation == 'R'){
+       if (myGameArea.key && myGameArea.key == 37) {myGamePiece.speedY = -7; }
+       if (myGameArea.key && myGameArea.key == 39) {myGamePiece.speedY = 7; }
+       if (myGameArea.key && myGameArea.key == 38) {myGamePiece.speedX = 7; }
+       if (myGameArea.key && myGameArea.key == 40) {myGamePiece.speedX = -7; }
+}
+
+
+if (current_orientation == 'D'){
+       if (myGameArea.key && myGameArea.key == 37) {myGamePiece.speedX = 7; }
+       if (myGameArea.key && myGameArea.key == 39) {myGamePiece.speedX = -7; }
+       if (myGameArea.key && myGameArea.key == 38) {myGamePiece.speedY = 7; }
+       if (myGameArea.key && myGameArea.key == 40) {myGamePiece.speedY = -7; }
+}
 
        proposed_x = myGamePiece.x + myGamePiece.speedX;
        proposed_y = myGamePiece.y + myGamePiece.speedY;
