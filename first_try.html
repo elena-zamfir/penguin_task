@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -85,6 +85,8 @@ var maze_segment_length = Math.floor((canvas_size - 2*border)/nr_maze_rows);
 
 function startGame() {
    myGamePiece = new component(maze_segment_length - 18, maze_segment_length - 18, "red", border + Math.floor(nr_maze_rows/2)*maze_segment_length + 9, border);
+
+myFinishPosition = new component(maze_segment_length - 18, maze_segment_length - 18, "yellow", border + Math.floor(nr_maze_rows/2)*maze_segment_length + 9, canvas_size - border);
 /*
 <!-- creating maze exterior frame-->
    myObstacles.push (new component(200, 1, "green", 70, 100));
@@ -128,6 +130,7 @@ var myGameArea = {
        this.context = this.canvas.getContext("2d");
        document.body.insertBefore(this.canvas, document.body.childNodes[0]);
        this.frameNo = 0;
+       this.nextRotation  = 90;
        this.interval = setInterval(updateGameArea, 50);
        window.addEventListener('keydown', function (e) {
            myGameArea.key = e.keyCode;
@@ -218,7 +221,7 @@ function rotate_90_piece(obstacle) {
 
 function rotate_90_maze(){
        for (i =0; i< myObstacles.length; i++){ rotate_90_piece(myObstacles[i]);}
-       rotate_90_piece(myGamePiece);
+       rotate_90_piece(myGamePiece);rotate_90_piece(myFinishPosition);
 }
 
 function rotate_180_piece(obstacle) {
@@ -244,7 +247,7 @@ function rotate_180_piece(obstacle) {
 
 function rotate_180_maze(){
         for (i =0; i< myObstacles.length; i++){              rotate_180_piece(myObstacles[i]);}
-        rotate_180_piece(myGamePiece);
+        rotate_180_piece(myGamePiece);rotate_180_piece(myFinishPosition);
 }
 
 
@@ -274,19 +277,31 @@ function rotate_270_piece(obstacle) {
 }
 function rotate_270_maze(){
         for (i =0; i< myObstacles.length; i++){              rotate_270_piece(myObstacles[i]);}
-        rotate_270_piece(myGamePiece);
+        rotate_270_piece(myGamePiece); rotate_180_piece(myFinishPosition);
 }
 
+function getRndInteger(min, max) {
+    return Math.floor(Math.random() * (max - min) ) + min;
+}
 
-
+var switch_prob = 0.004;
 function updateGameArea() {
 
        myGameArea.clear();
 
        myGameArea.frameNo += 1;
-   if (myGameArea.frameNo == 50 ) {
+       //jitter = Math.random();
+       
+if (myGameArea.frameNo ==  myGameArea.nextRotation) {rotate_180_maze(); myGameArea.nextRotation = myGameArea.frameNo + getRndInteger(150, 180);   }
+       
+   /*if ((myGameArea.frameNo - myGameArea.lastRotation) == 50 + jitter ) {
+          myGameArea.lastRotation = myGameArea.frameNo;
         rotate_180_maze();
-   }
+   }*/
+
+/*if(jitter < switch_prob) {rotate_180_maze();}*/
+
+        
 
        for (i = 0; i < myObstacles.length; i += 1) {
        myObstacles[i].update();
@@ -336,6 +351,7 @@ if (current_orientation == 'D'){
 
        }
        myGamePiece.update();
+        myFinishPosition.update();
 }
 
 
