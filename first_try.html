@@ -247,13 +247,45 @@ function rotate_180_maze(){
         rotate_180_piece(myGamePiece);
 }
 
+
+
+function rotate_270_piece(obstacle) {
+          current_x = obstacle.x;
+
+          current_y = obstacle.y;
+          current_width = obstacle.width;
+          current_height = obstacle.height;
+
+          obstacle.x = current_y;
+          obstacle.y = canvas_size - current_x-current_width;
+
+          obstacle.width = current_height;
+
+         obstacle.height = current_width;
+
+          current_orientation = obstacle.orientation;
+
+          if (current_orientation == 'U') {obstacle.orientation ='L';}
+          if (current_orientation == 'R') {obstacle.orientation ='U';}
+          if (current_orientation == 'D') {obstacle.orientation ='R';}
+          if (current_orientation == 'L') {obstacle.orientation ='D';}
+
+
+}
+function rotate_270_maze(){
+        for (i =0; i< myObstacles.length; i++){              rotate_270_piece(myObstacles[i]);}
+        rotate_270_piece(myGamePiece);
+}
+
+
+
 function updateGameArea() {
 
        myGameArea.clear();
 
        myGameArea.frameNo += 1;
    if (myGameArea.frameNo == 50 ) {
-        rotate_180_maze();
+        rotate_270_maze();
    }
 
        for (i = 0; i < myObstacles.length; i += 1) {
