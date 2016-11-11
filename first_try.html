@@ -292,7 +292,12 @@ function updateGameArea() {
        myGameArea.frameNo += 1;
        //jitter = Math.random();
        
-if (myGameArea.frameNo ==  myGameArea.nextRotation) {rotate_180_maze(); myGameArea.nextRotation = myGameArea.frameNo + getRndInteger(150, 180);   }
+if (myGameArea.frameNo ==  myGameArea.nextRotation) {
+random_rot = getRndInteger(1,3); 
+if (random_rot == 1) {rotate_90_maze();}
+if(random_rot == 2) {rotate_180_maze();}
+if(random_rot == 3) {rotate_270_maze();}
+ myGameArea.nextRotation = myGameArea.frameNo + getRndInteger(150, 180);   }
        
    /*if ((myGameArea.frameNo - myGameArea.lastRotation) == 50 + jitter ) {
           myGameArea.lastRotation = myGameArea.frameNo;
