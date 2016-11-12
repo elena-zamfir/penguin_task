@@ -1,11 +1,12 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <style>
 canvas {
-   border:1px solid #d3d3d3;
-   background-color: #f1f1f1;
+  border:1px solid #d3d3d3;
+  <!--background-color: #f1f1f1;-->
+background-color: "white";
 }
 </style>
 </head>
@@ -18,21 +19,21 @@ var myObstacles = [];
 
 function Create3DArray(rows, columns)
 {
- var arr = [];
- for (var i=0;i<rows;i++)
-   {
-   arr[i] = [];
-   for ( var j =0; j< columns; j++)
-      {
-       arr[i][j] = [];
-       for ( var k =0; k <5; k++)
-          {
-           arr[i][j][k] = 0;
-           }
+var arr = [];
+for (var i=0;i<rows;i++)
+  {
+  arr[i] = [];
+  for ( var j =0; j< columns; j++)
+     {
+      arr[i][j] = [];
+      for ( var k =0; k <5; k++)
+         {
+          arr[i][j][k] = 0;
+          }
 
-       }
-    }
- return arr;
+      }
+   }
+return arr;
 }
 
 function createMaze(rows, columns){
@@ -46,31 +47,31 @@ var aux = [];
 
 
 while (history.length)
-     {
-      /*document.write('  current history length is   ');
-      document.write(history.length);
-      */
-      M[r][c][4]  = 1;
-      check  = [];
-      if  (c > 0 && M[r][c-1][4] == 0) {check.push('L');}
-      if  (r > 0 && M[r-1][c][4] == 0) {check.push('U');}
-      if  (c < columns-1 && M[r][c+1][4] == 0) {check.push('R');}
-      if  (r < rows-1 && M[r+1][c][4] == 0) {check.push('D');}
+    {
+     /*document.write('  current history length is   ');
+     document.write(history.length);
+     */
+     M[r][c][4]  = 1;
+     check  = [];
+     if  (c > 0 && M[r][c-1][4] == 0) {check.push('L');}
+     if  (r > 0 && M[r-1][c][4] == 0) {check.push('U');}
+     if  (c < columns-1 && M[r][c+1][4] == 0) {check.push('R');}
+     if  (r < rows-1 && M[r+1][c][4] == 0) {check.push('D');}
 
-     if (check.length)
+    if (check.length)
 
-        {
-         history.push([r,c]);
-         move_direction = check[Math.floor(Math.random() * check.length)];
-         if (move_direction == 'L') {M[r][c][0] =1; c = c-1; M[r][c][2]=1;}
-         if (move_direction == 'U') {M[r][c][1] =1; r = r-1; M[r][c][3]=1;}
-         if (move_direction == 'R') {M[r][c][2] =1; c = c+1; M[r][c][0]=1;}
-         if (move_direction == 'D') {M[r][c][3] =1; r = r+1; M[r][c][1]=1;}
-        }
-    else  {aux  = history.pop(); r  = aux[0]; c = aux[1];}
+       {
+        history.push([r,c]);
+        move_direction = check[Math.floor(Math.random() * check.length)];
+        if (move_direction == 'L') {M[r][c][0] =1; c = c-1; M[r][c][2]=1;}
+        if (move_direction == 'U') {M[r][c][1] =1; r = r-1; M[r][c][3]=1;}
+        if (move_direction == 'R') {M[r][c][2] =1; c = c+1; M[r][c][0]=1;}
+        if (move_direction == 'D') {M[r][c][3] =1; r = r+1; M[r][c][1]=1;}
+       }
+   else  {aux  = history.pop(); r  = aux[0]; c = aux[1];}
 
 
-     }
+    }
 
 M[0][Math.floor(columns/2)][1] = 1;
 M[rows-1][Math.floor(columns/2)][3] = 1;
@@ -84,288 +85,309 @@ var nr_maze_rows = 15;
 var maze_segment_length = Math.floor((canvas_size - 2*border)/nr_maze_rows);
 
 function startGame() {
-   myGamePiece = new component(maze_segment_length - 18, maze_segment_length - 18, "red", border + Math.floor(nr_maze_rows/2)*maze_segment_length + 9, border);
+  myGamePiece = new component(maze_segment_length - 18, maze_segment_length - 18, "red", border + Math.floor(nr_maze_rows/2)*maze_segment_length + 9, border);
 
 myFinishPosition = new component(maze_segment_length - 18, maze_segment_length - 18, "yellow", border + Math.floor(nr_maze_rows/2)*maze_segment_length + 9, canvas_size - border);
 /*
 <!-- creating maze exterior frame-->
-   myObstacles.push (new component(200, 1, "green", 70, 100));
-   myObstacles.push (new component(200, 1, "green", 330, 100));
-   myObstacles.push (new component(1, 400, "green", 70, 100));
-   myObstacles.push (new component(1, 400, "green", 530, 100));
-   myObstacles.push (new component(200, 1, "green", 70, 500));
-   myObstacles.push (new component(200, 1, "green", 330, 500));
+  myObstacles.push (new component(200, 1, "green", 70, 100));
+  myObstacles.push (new component(200, 1, "green", 330, 100));
+  myObstacles.push (new component(1, 400, "green", 70, 100));
+  myObstacles.push (new component(1, 400, "green", 530, 100));
+  myObstacles.push (new component(200, 1, "green", 70, 500));
+  myObstacles.push (new component(200, 1, "green", 330, 500));
 
 */
 
 
 M = createMaze(nr_maze_rows, nr_maze_rows);
 for ( i =0; i< nr_maze_rows; i++)
-   {
-    for ( j=0; j< nr_maze_rows; j++)
-        {
-          if (M[i][j][0] == 0) {myObstacles.push(new component (1, maze_segment_length, "green", border + j*maze_segment_length, border + i *maze_segment_length));}
-          if (M[i][j][1] == 0) {myObstacles.push(new component (maze_segment_length,1, "green", border + j*maze_segment_length, border + i *maze_segment_length));}
-          if (M[i][j][2] == 0) {myObstacles.push(new component (1,maze_segment_length, "green", border + (j+1)*maze_segment_length, border + i *maze_segment_length));}
-          if (M[i][j][3] == 0) {myObstacles.push(new component (maze_segment_length,1, "green", border + j*maze_segment_length, border + (i+1) *maze_segment_length));}
+  {
+   for ( j=0; j< nr_maze_rows; j++)
+       {
+         if (M[i][j][0] == 0) {myObstacles.push(new component (1, maze_segment_length, "green", border + j*maze_segment_length, border + i *maze_segment_length));}
+         if (M[i][j][1] == 0) {myObstacles.push(new component (maze_segment_length,1, "green", border + j*maze_segment_length, border + i *maze_segment_length));}
+         if (M[i][j][2] == 0) {myObstacles.push(new component (1,maze_segment_length, "green", border + (j+1)*maze_segment_length, border + i *maze_segment_length));}
+         if (M[i][j][3] == 0) {myObstacles.push(new component (maze_segment_length,1, "green", border + j*maze_segment_length, border + (i+1) *maze_segment_length));}
 
-        }
-   }
-
-
+       }
+  }
 
 
 
 
+myStart =  new component(maze_segment_length-18, maze_segment_length -10 , "http://www.freeiconspng.com/uploads/up-arrow-png-29.png", border + Math.floor(nr_maze_rows/2)*maze_segment_length + 9, border- maze_segment_length + 5, "image");
 
 
-   myGameArea.start();
+
+  myGameArea.start();
 }
 
 var myGameArea = {
-   canvas : document.createElement("canvas"),
-   start : function() {
-       this.canvas.width = canvas_size;
-       this.canvas.height = canvas_size;
-       this.context = this.canvas.getContext("2d");
-       document.body.insertBefore(this.canvas, document.body.childNodes[0]);
-       this.frameNo = 0;
-       this.nextRotation  = 90;
-       this.interval = setInterval(updateGameArea, 50);
-       window.addEventListener('keydown', function (e) {
-           myGameArea.key = e.keyCode;
-       })
-       window.addEventListener('keyup', function (e) {
-           myGameArea.key = false;
-       })
-   },
+  canvas : document.createElement("canvas"),
+  start : function() {
+      this.canvas.width = canvas_size;
+      this.canvas.height = canvas_size;
+      this.context = this.canvas.getContext("2d");
+      document.body.insertBefore(this.canvas, document.body.childNodes[0]);
+      this.frameNo = 0;
+      this.nextRotation  = 90;
+      this.interval = setInterval(updateGameArea, 50);
+      window.addEventListener('keydown', function (e) {
+          myGameArea.key = e.keyCode;
+      })
+      window.addEventListener('keyup', function (e) {
+          myGameArea.key = false;
+      })
+  },
 
-   clear : function() {
-       this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
-   },
-    stop : function() {
-        clearInterval(this.interval);
-    }
+  clear : function() {
+      this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+  },
+   stop : function() {
+       clearInterval(this.interval);
+   }
 }
 
 function everyinterval(n) {
-   if ((myGameArea.frameNo / n) % 1 == 0) {return true;}
-   return false;
+  if ((myGameArea.frameNo / n) % 1 == 0) {return true;}
+  return false;
 }
 
 
-function component(width, height, color, x, y) {
-   this.width = width;
-   this.height = height;
-   this.speedX = 0;
-   this.speedY = 0;
-   this.x = x;
-   this.y = y;
-   this.orientation = 'U';
-   this.update = function() {
-       ctx = myGameArea.context;
-       ctx.fillStyle = color;
-       ctx.fillRect(this.x, this.y, this.width, this.height);
+function component(width, height, color, x, y, type) {
+  this.width = width;
+  this.height = height;
+this.type = type;
+this.type = type;
+   if (type == "image") {
+       this.image = new Image();
+       this.image.src = color;
    }
+  this.speedX = 0;
+  this.speedY = 0;
+  this.x = x;
+  this.y = y;
+  this.orientation = 'U';
+  this.update = function() {
+      ctx = myGameArea.context;
+if (type == "image") {
+           ctx.drawImage(this.image,
+               this.x,
+               this.y,
+               this.width, this.height);
+       } else {
+      ctx.fillStyle = color;
+      ctx.fillRect(this.x, this.y, this.width, this.height);}
+  }
 
-   this.crashWith = function(otherobj, proposed_x, proposed_y) {
-       var myleft = proposed_x;
-       var myright = myleft + (this.width);
-       var mytop = proposed_y;
-       var mybottom = mytop + (this.height);
-       var otherleft = otherobj.x;
-       var otherright = otherobj.x + (otherobj.width);
-       var othertop = otherobj.y;
-       var otherbottom = otherobj.y + (otherobj.height);
-       var crash = true;
-       if ((mybottom < othertop) || (mytop > otherbottom) || (myright < otherleft) || (myleft > otherright)) {
-           crash = false;
-       }
-       return crash;
-   }
-   this.crashWithMaze = function(proposed_x, proposed_y){
-       maze_crash  = false;
-       for (i = 0; i < myObstacles.length; i += 1) {
-       if (myGamePiece.crashWith(myObstacles[i], proposed_x, proposed_y)) {
-           maze_crash  = true;
-           return;
-       }
+  this.crashWith = function(otherobj, proposed_x, proposed_y) {
+      var myleft = proposed_x;
+      var myright = myleft + (this.width);
+      var mytop = proposed_y;
+      var mybottom = mytop + (this.height);
+      var otherleft = otherobj.x;
+      var otherright = otherobj.x + (otherobj.width);
+      var othertop = otherobj.y;
+      var otherbottom = otherobj.y + (otherobj.height);
+      var crash = true;
+      if ((mybottom < othertop) || (mytop > otherbottom) || (myright < otherleft) || (myleft > otherright)) {
+          crash = false;
+      }
+      return crash;
+  }
+  this.crashWithMaze = function(proposed_x, proposed_y){
+      maze_crash  = false;
+      for (i = 0; i < myObstacles.length; i += 1) {
+      if (myGamePiece.crashWith(myObstacles[i], proposed_x, proposed_y)) {
+          maze_crash  = true;
+          return;
+      }
 
-       }
-       return maze_crash;
-   }
+      }
+      return maze_crash;
+  }
 }
 
 
 
 function rotate_90_piece(obstacle) {
-         current_x = obstacle.x;
+        current_x = obstacle.x;
 
-         current_y = obstacle.y;
-         current_width = obstacle.width;
-         current_height = obstacle.height;
-         obstacle.x = canvas_size - current_y-current_height;
+        current_y = obstacle.y;
+        current_width = obstacle.width;
+        current_height = obstacle.height;
+        obstacle.x = canvas_size - current_y-current_height;
 
-         obstacle.y = current_x;
+        obstacle.y = current_x;
 
-         obstacle.width = current_height;
+        obstacle.width = current_height;
 
-         obstacle.height = current_width;
-         current_orientation = obstacle.orientation;
+        obstacle.height = current_width;
+        current_orientation = obstacle.orientation;
 
-         if (current_orientation == 'U') {obstacle.orientation ='R';}
-         if (current_orientation == 'R') {obstacle.orientation ='D';}
-         if (current_orientation == 'D') {obstacle.orientation ='L';}
-         if (current_orientation == 'L') {obstacle.orientation ='U';}
+        if (current_orientation == 'U') {obstacle.orientation ='R';}
+        if (current_orientation == 'R') {obstacle.orientation ='D';}
+        if (current_orientation == 'D') {obstacle.orientation ='L';}
+        if (current_orientation == 'L') {obstacle.orientation ='U';}
 
 
 }
 
 function rotate_90_maze(){
-       for (i =0; i< myObstacles.length; i++){ rotate_90_piece(myObstacles[i]);}
-       rotate_90_piece(myGamePiece);rotate_90_piece(myFinishPosition);
+      for (i =0; i< myObstacles.length; i++){ rotate_90_piece(myObstacles[i]);}
+      rotate_90_piece(myGamePiece);rotate_90_piece(myFinishPosition);rotate_90_piece(myStart);
 }
 
 function rotate_180_piece(obstacle) {
-          current_x = obstacle.x;
+         current_x = obstacle.x;
 
-          current_y = obstacle.y;
-          current_width = obstacle.width;
-          current_height = obstacle.height;
-          obstacle.x = canvas_size - current_x-current_width;
+         current_y = obstacle.y;
+         current_width = obstacle.width;
+         current_height = obstacle.height;
+         obstacle.x = canvas_size - current_x-current_width;
 
-          obstacle.y = canvas_size - current_y-current_height;
+         obstacle.y = canvas_size - current_y-current_height;
 
 
-          current_orientation = obstacle.orientation;
+         current_orientation = obstacle.orientation;
 
-          if (current_orientation == 'U') {obstacle.orientation ='D';}
-          if (current_orientation == 'R') {obstacle.orientation ='L';}
-          if (current_orientation == 'D') {obstacle.orientation ='U';}
-          if (current_orientation == 'L') {obstacle.orientation ='R';}
+         if (current_orientation == 'U') {obstacle.orientation ='D';}
+         if (current_orientation == 'R') {obstacle.orientation ='L';}
+         if (current_orientation == 'D') {obstacle.orientation ='U';}
+         if (current_orientation == 'L') {obstacle.orientation ='R';}
 
 
 }
 
 function rotate_180_maze(){
-        for (i =0; i< myObstacles.length; i++){              rotate_180_piece(myObstacles[i]);}
-        rotate_180_piece(myGamePiece);rotate_180_piece(myFinishPosition);
-}
+       for (i =0; i< myObstacles.length; i++){              rotate_180_piece(myObstacles[i]);}
+       rotate_180_piece(myGamePiece);rotate_180_piece(myFinishPosition);
+rotate_180_piece(myStart);}
 
 
 
 function rotate_270_piece(obstacle) {
-          current_x = obstacle.x;
+         current_x = obstacle.x;
 
-          current_y = obstacle.y;
-          current_width = obstacle.width;
-          current_height = obstacle.height;
+         current_y = obstacle.y;
+         current_width = obstacle.width;
+         current_height = obstacle.height;
 
-          obstacle.x = current_y;
-          obstacle.y = canvas_size - current_x-current_width;
+         obstacle.x = current_y;
+         obstacle.y = canvas_size - current_x-current_width;
 
-          obstacle.width = current_height;
+         obstacle.width = current_height;
 
-         obstacle.height = current_width;
+        obstacle.height = current_width;
 
-          current_orientation = obstacle.orientation;
+         current_orientation = obstacle.orientation;
 
-          if (current_orientation == 'U') {obstacle.orientation ='L';}
-          if (current_orientation == 'R') {obstacle.orientation ='U';}
-          if (current_orientation == 'D') {obstacle.orientation ='R';}
-          if (current_orientation == 'L') {obstacle.orientation ='D';}
+         if (current_orientation == 'U') {obstacle.orientation ='L';}
+         if (current_orientation == 'R') {obstacle.orientation ='U';}
+         if (current_orientation == 'D') {obstacle.orientation ='R';}
+         if (current_orientation == 'L') {obstacle.orientation ='D';}
 
 
 }
 function rotate_270_maze(){
-        for (i =0; i< myObstacles.length; i++){              rotate_270_piece(myObstacles[i]);}
-        rotate_270_piece(myGamePiece); rotate_180_piece(myFinishPosition);
+       for (i =0; i< myObstacles.length; i++){              rotate_270_piece(myObstacles[i]);}
+       rotate_270_piece(myGamePiece); rotate_270_piece(myFinishPosition); rotate_270_piece(myStart);
 }
 
 function getRndInteger(min, max) {
-    return Math.floor(Math.random() * (max - min) ) + min;
+   return Math.floor(Math.random() * (max - min) ) + min;
 }
 
 var switch_prob = 0.004;
+
 function updateGameArea() {
 
 
 
 
 if (myGamePiece.crashWith(myFinishPosition, myGamePiece.x, myGamePiece.y)) {
-        myGameArea.stop();
-    }
+       myGameArea.stop();
+   }
 else{
-       myGameArea.clear();
+      myGameArea.clear();
 
-       myGameArea.frameNo += 1;
-       //jitter = Math.random();
-       
+      myGameArea.frameNo += 1;
+      //jitter = Math.random();
+
 if (myGameArea.frameNo ==  myGameArea.nextRotation) {
-random_rot = getRndInteger(1,3); 
+random_rot = getRndInteger(1,3);
 if (random_rot == 1) {rotate_90_maze();}
 if(random_rot == 2) {rotate_180_maze();}
 if(random_rot == 3) {rotate_270_maze();}
- myGameArea.nextRotation = myGameArea.frameNo + getRndInteger(150, 180);   }
-       
-   /*if ((myGameArea.frameNo - myGameArea.lastRotation) == 50 + jitter ) {
-          myGameArea.lastRotation = myGameArea.frameNo;
-        rotate_180_maze();
-   }*/
+myGameArea.nextRotation = myGameArea.frameNo + getRndInteger(150, 180);   }
+
+  /*if ((myGameArea.frameNo - myGameArea.lastRotation) == 50 + jitter ) {
+         myGameArea.lastRotation = myGameArea.frameNo;
+       rotate_180_maze();
+  }*/
 
 /*if(jitter < switch_prob) {rotate_180_maze();}*/
 
-        
 
-       for (i = 0; i < myObstacles.length; i += 1) {
-       myObstacles[i].update();
-       }
 
-       myGamePiece.speedX = 0;
-       myGamePiece.speedY = 0;
-       current_orientation  = myGamePiece.orientation;
-     if (current_orientation == 'U'){
-       if (myGameArea.key && myGameArea.key == 37) {myGamePiece.speedX = -7; }
-       if (myGameArea.key && myGameArea.key == 39) {myGamePiece.speedX = 7; }
-       if (myGameArea.key && myGameArea.key == 38) {myGamePiece.speedY = -7; }
-       if (myGameArea.key && myGameArea.key == 40) {myGamePiece.speedY = 7; }
+      for (i = 0; i < myObstacles.length; i += 1) {
+      myObstacles[i].update();
+      }
+
+      myGamePiece.speedX = 0;
+      myGamePiece.speedY = 0;
+      current_orientation  = myGamePiece.orientation;
+
+    if (current_orientation == 'U'){
+      if (myGameArea.key && myGameArea.key == 37) {myGamePiece.speedX = -7; }
+      if (myGameArea.key && myGameArea.key == 39) {myGamePiece.speedX = 7; }
+      if (myGameArea.key && myGameArea.key == 38) {myGamePiece.speedY = -7; }
+      if (myGameArea.key && myGameArea.key == 40) {myGamePiece.speedY = 7; }
 }
 
- if (current_orientation == 'L'){
-       if (myGameArea.key && myGameArea.key == 37) {myGamePiece.speedY = 7; }
-       if (myGameArea.key && myGameArea.key == 39) {myGamePiece.speedY = -7; }
-       if (myGameArea.key && myGameArea.key == 38) {myGamePiece.speedX = -7; }
-       if (myGameArea.key && myGameArea.key == 40) {myGamePiece.speedX = 7; }
+if (current_orientation == 'L'){
+      if (myGameArea.key && myGameArea.key == 37) {myGamePiece.speedY = 7; }
+      if (myGameArea.key && myGameArea.key == 39) {myGamePiece.speedY = -7; }
+      if (myGameArea.key && myGameArea.key == 38) {myGamePiece.speedX = -7; }
+      if (myGameArea.key && myGameArea.key == 40) {myGamePiece.speedX = 7; }
 }
 
 
 if (current_orientation == 'R'){
-       if (myGameArea.key && myGameArea.key == 37) {myGamePiece.speedY = -7; }
-       if (myGameArea.key && myGameArea.key == 39) {myGamePiece.speedY = 7; }
-       if (myGameArea.key && myGameArea.key == 38) {myGamePiece.speedX = 7; }
-       if (myGameArea.key && myGameArea.key == 40) {myGamePiece.speedX = -7; }
+      if (myGameArea.key && myGameArea.key == 37) {myGamePiece.speedY = -7; }
+      if (myGameArea.key && myGameArea.key == 39) {myGamePiece.speedY = 7; }
+      if (myGameArea.key && myGameArea.key == 38) {myGamePiece.speedX = 7; }
+      if (myGameArea.key && myGameArea.key == 40) {myGamePiece.speedX = -7; }
 }
 
 
 if (current_orientation == 'D'){
-       if (myGameArea.key && myGameArea.key == 37) {myGamePiece.speedX = 7; }
-       if (myGameArea.key && myGameArea.key == 39) {myGamePiece.speedX = -7; }
-       if (myGameArea.key && myGameArea.key == 38) {myGamePiece.speedY = 7; }
-       if (myGameArea.key && myGameArea.key == 40) {myGamePiece.speedY = -7; }
+      if (myGameArea.key && myGameArea.key == 37) {myGamePiece.speedX = 7; }
+      if (myGameArea.key && myGameArea.key == 39) {myGamePiece.speedX = -7; }
+      if (myGameArea.key && myGameArea.key == 38) {myGamePiece.speedY = 7; }
+      if (myGameArea.key && myGameArea.key == 40) {myGamePiece.speedY = -7; }
 }
 
-       proposed_x = myGamePiece.x + myGamePiece.speedX;
-       proposed_y = myGamePiece.y + myGamePiece.speedY;
+      proposed_x = myGamePiece.x + myGamePiece.speedX;
+      proposed_y = myGamePiece.y + myGamePiece.speedY;
 
 
-       test_crash = myGamePiece.crashWithMaze( proposed_x, proposed_y)
-       if (test_crash == false) {
-       myGamePiece.x += myGamePiece.speedX;
-       myGamePiece.y += myGamePiece.speedY;
+      test_crash = myGamePiece.crashWithMaze( proposed_x, proposed_y)
+      if (test_crash == false) {
+      myGamePiece.x += myGamePiece.speedX;
+      myGamePiece.y += myGamePiece.speedY;
 
-       }
-       myGamePiece.update();
-        myFinishPosition.update();}
+      }
+      myGamePiece.update();
+       myFinishPosition.update();
+/*if (current_orientation == 'U') {/*myStart.image.src = "http://www.freeiconspng.com/uploads/up-arrow-png-29.png";myStart.update();}*/
+if (current_orientation == 'D') {myStart.image.src = "http://pngplay.com/wp-content/uploads/2016/07/Down-Arrow-PNG.png";}
+if (current_orientation == 'L') {myStart.image.src = "http://www.clipartkid.com/images/172/left-arrow-silhouette-uZxFVM-clipart.gif";}
+if (current_orientation == 'R') {myStart.image.src = "http://www.clipartkid.com/images/853/can-t-find-the-perfect-clip-art-L30Drx-clipart.gif";}
+if (current_orientation == 'U') {myStart.image.src = "http://www.freeiconspng.com/uploads/up-arrow-png-29.png";}
+
+myStart.update();}
 
 }
 
@@ -376,6 +398,6 @@ if (current_orientation == 'D'){
 </script>
 
 <!--</div>-->
-<p>Try hitting the obstacle, and the piece will not move. Control with arrowkeys.</p>
+
 </body>
 </html>
