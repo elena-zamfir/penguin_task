@@ -85,19 +85,11 @@ var nr_maze_rows = 15;
 var maze_segment_length = Math.floor((canvas_size - 2*border)/nr_maze_rows);
 
 function startGame() {
+
   myGamePiece = new component(maze_segment_length - 18, maze_segment_length - 18, "red", border + Math.floor(nr_maze_rows/2)*maze_segment_length + 9, border);
 
 myFinishPosition = new component(maze_segment_length - 18, maze_segment_length - 18, "yellow", border + Math.floor(nr_maze_rows/2)*maze_segment_length + 9, canvas_size - border);
-/*
-<!-- creating maze exterior frame-->
-  myObstacles.push (new component(200, 1, "green", 70, 100));
-  myObstacles.push (new component(200, 1, "green", 330, 100));
-  myObstacles.push (new component(1, 400, "green", 70, 100));
-  myObstacles.push (new component(1, 400, "green", 530, 100));
-  myObstacles.push (new component(200, 1, "green", 70, 500));
-  myObstacles.push (new component(200, 1, "green", 330, 500));
 
-*/
 
 
 M = createMaze(nr_maze_rows, nr_maze_rows);
@@ -156,13 +148,14 @@ function everyinterval(n) {
 
 
 function component(width, height, color, x, y, type) {
+  this.type = type;
   this.width = width;
   this.height = height;
-this.type = type;
-this.type = type;
+
+ 
    if (type == "image") {
        this.image = new Image();
-       this.image.src = color;
+       this.image.src ="http://www.freeiconspng.com/uploads/up-arrow-png-29.png";
    }
   this.speedX = 0;
   this.speedY = 0;
@@ -226,10 +219,10 @@ function rotate_90_piece(obstacle) {
         obstacle.height = current_width;
         current_orientation = obstacle.orientation;
 
-        if (current_orientation == 'U') {obstacle.orientation ='R';}
-        if (current_orientation == 'R') {obstacle.orientation ='D';}
-        if (current_orientation == 'D') {obstacle.orientation ='L';}
-        if (current_orientation == 'L') {obstacle.orientation ='U';}
+        if (current_orientation == 'U') {obstacle.orientation ='R'; if(obstacle.type == "image") {obstacle.image.src = "http://www.clipartkid.com/images/853/can-t-find-the-perfect-clip-art-L30Drx-clipart.gif";}}
+        if (current_orientation == 'R') {obstacle.orientation ='D'; if(obstacle.type == "image") {obstacle.image.src = "http://pngplay.com/wp-content/uploads/2016/07/Down-Arrow-PNG.png";}}
+        if (current_orientation == 'D') {obstacle.orientation ='L'; if(obstacle.type == "image") {obstacle.image.src = "http://www.clipartkid.com/images/172/left-arrow-silhouette-uZxFVM-clipart.gif";} }
+        if (current_orientation == 'L') {obstacle.orientation ='U';if(obstacle.type == "image") {obstacle.image.src = "http://www.freeiconspng.com/uploads/up-arrow-png-29.png";} }
 
 
 }
@@ -252,10 +245,10 @@ function rotate_180_piece(obstacle) {
 
          current_orientation = obstacle.orientation;
 
-         if (current_orientation == 'U') {obstacle.orientation ='D';}
-         if (current_orientation == 'R') {obstacle.orientation ='L';}
-         if (current_orientation == 'D') {obstacle.orientation ='U';}
-         if (current_orientation == 'L') {obstacle.orientation ='R';}
+         if (current_orientation == 'U') {obstacle.orientation ='D';if(obstacle.type == "image") {obstacle.image.src = "http://pngplay.com/wp-content/uploads/2016/07/Down-Arrow-PNG.png";}}
+         if (current_orientation == 'R') {obstacle.orientation ='L';if(obstacle.type == "image") {obstacle.image.src = "http://www.clipartkid.com/images/172/left-arrow-silhouette-uZxFVM-clipart.gif";}}
+         if (current_orientation == 'D') {obstacle.orientation ='U';if(obstacle.type == "image") {obstacle.image.src = "http://www.freeiconspng.com/uploads/up-arrow-png-29.png";} }
+         if (current_orientation == 'L') {obstacle.orientation ='R';if(obstacle.type == "image") {obstacle.image.src = "http://www.clipartkid.com/images/853/can-t-find-the-perfect-clip-art-L30Drx-clipart.gif";}}
 
 
 }
@@ -283,10 +276,10 @@ function rotate_270_piece(obstacle) {
 
          current_orientation = obstacle.orientation;
 
-         if (current_orientation == 'U') {obstacle.orientation ='L';}
-         if (current_orientation == 'R') {obstacle.orientation ='U';}
-         if (current_orientation == 'D') {obstacle.orientation ='R';}
-         if (current_orientation == 'L') {obstacle.orientation ='D';}
+         if (current_orientation == 'U') {obstacle.orientation ='L';if(obstacle.type == "image") {obstacle.image.src = "http://www.clipartkid.com/images/172/left-arrow-silhouette-uZxFVM-clipart.gif";}}
+         if (current_orientation == 'R') {obstacle.orientation ='U';if(obstacle.type == "image") {obstacle.image.src = "http://www.freeiconspng.com/uploads/up-arrow-png-29.png";}}
+         if (current_orientation == 'D') {obstacle.orientation ='R';if(obstacle.type == "image") {obstacle.image.src = "http://www.clipartkid.com/images/853/can-t-find-the-perfect-clip-art-L30Drx-clipart.gif";}}
+         if (current_orientation == 'L') {obstacle.orientation ='D';if(obstacle.type == "image") {obstacle.image.src = "http://pngplay.com/wp-content/uploads/2016/07/Down-Arrow-PNG.png";}}
 
 
 }
@@ -322,13 +315,7 @@ if(random_rot == 2) {rotate_180_maze();}
 if(random_rot == 3) {rotate_270_maze();}
 myGameArea.nextRotation = myGameArea.frameNo + getRndInteger(150, 180);   }
 
-  /*if ((myGameArea.frameNo - myGameArea.lastRotation) == 50 + jitter ) {
-         myGameArea.lastRotation = myGameArea.frameNo;
-       rotate_180_maze();
-  }*/
-
-/*if(jitter < switch_prob) {rotate_180_maze();}*/
-
+   
 
 
       for (i = 0; i < myObstacles.length; i += 1) {
