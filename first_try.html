@@ -81,10 +81,27 @@ return M;
 
 
 var canvas_size = 600;
-var border = 50;
-var nr_maze_rows = 15;
-var maze_segment_length = Math.floor((canvas_size - 2*border)/nr_maze_rows);
+var border_to_maze_segment_ratio = 1.5;
+
+
+
+var nr_maze_rows = 9;
+
+var maze_segment_length = Math.floor(canvas_size/(nr_maze_rows + 2*border_to_maze_segment_ratio));
+
+var border = border_to_maze_segment_ratio*maze_segment_length;
 var mySound;
+
+var game_piece_size = 0.6* maze_segment_length;
+var arrow_height = 0.9*maze_segment_length;
+var piece_x = 0.5*canvas_size - 0.5*game_piece_size;
+var piece_y = border - 0.5*game_piece_size;
+var start_x = piece_x;
+var start_y = 0.5*border - 0.25*game_piece_size - 0.5*arrow_height;
+var finish_x = piece_x;
+var finish_y = canvas_size - border;
+
+
 
 function sound(src) {
     this.sound = document.createElement("audio");
@@ -108,9 +125,9 @@ function sound(src) {
 
 function startGame() {
 mySound = new sound("http://soundbible.com/grab.php?id=1003&type=mp3");
-  myGamePiece = new component(maze_segment_length - 18, maze_segment_length - 18, "red", border + Math.floor(nr_maze_rows/2)*maze_segment_length + 9, border);
+  myGamePiece = new component(game_piece_size, game_piece_size, "red",piece_x , piece_y);
 
-myFinishPosition = new component(maze_segment_length - 18, maze_segment_length - 18, "yellow", border + Math.floor(nr_maze_rows/2)*maze_segment_length + 9, canvas_size - border);
+myFinishPosition = new component(game_piece_size, game_piece_size, "yellow", finish_x, finish_y);
 
 
 
@@ -132,9 +149,9 @@ for ( i =0; i< nr_maze_rows; i++)
 
 
 
-myStart =  new component(maze_segment_length-18, maze_segment_length -10 , "http://www.freeiconspng.com/uploads/up-arrow-png-29.png", border + Math.floor(nr_maze_rows/2)*maze_segment_length + 9, border- maze_segment_length + 5, "image");
+myStart =  new component(game_piece_size, arrow_height , "http://www.freeiconspng.com/uploads/up-arrow-png-29.png", start_x, start_y, "image");
 
-
+ myPrize = new component(0.7*canvas_size, 0.7*canvas_size, "http://smileyfaceplace.weebly.com/uploads/6/9/7/1/6971266/4692542_orig.jpg", 0.15*canvas_size, 0.15*canvas_size, "image");
 
   myGameArea.start();
 }
@@ -188,7 +205,7 @@ function component(width, height, color, x, y, type) {
   this.orientation = 'U';
   this.update = function() {
       ctx = myGameArea.context;
-if (type == "image") {
+if (type == "image") {//document.getElementById("demo").innerHTML = this.image.src;
            ctx.drawImage(this.image,
                this.x,
                this.y,
@@ -325,15 +342,13 @@ function updateGameArea() {
 
 if (myGamePiece.crashWith(myFinishPosition, myGamePiece.x, myGamePiece.y)) {
 
-          myPrize = new component(0.7*canvas_size, 0.7*canvas_size, "http://smileyfaceplace.weebly.com/uploads/6/9/7/1/6971266/4692542_orig.jpg", 0.15*canvas_size, 0.15*canvas_size, "image");
+         
 
 myPrize.image.src = "http://smileyfaceplace.weebly.com/uploads/6/9/7/1/6971266/4692542_orig.jpg";
  
 myPrize.update();
 mySound.play();
- 
-
-       myGameArea.stop();
+myGameArea.stop();
         
 
    }
