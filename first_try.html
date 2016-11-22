@@ -11,6 +11,7 @@ background-color: "white";
 </style>
 </head>
 <body onload="startGame()">
+<p id="demo"></p>
 <script>
 
 var myGamePiece;
@@ -302,7 +303,18 @@ function updateGameArea() {
 
 
 if (myGamePiece.crashWith(myFinishPosition, myGamePiece.x, myGamePiece.y)) {
+
+          myPrize = new component(0.7*canvas_size, 0.7*canvas_size, "http://smileyfaceplace.weebly.com/uploads/6/9/7/1/6971266/4692542_orig.jpg", 0.15*canvas_size, 0.15*canvas_size, "image");
+
+myPrize.image.src = "http://smileyfaceplace.weebly.com/uploads/6/9/7/1/6971266/4692542_orig.jpg";
+ 
+myPrize.update();
+
+document.getElementById("demo").innerHTML = myPrize.image.src;
+
        myGameArea.stop();
+        
+
    }
 else{
       myGameArea.clear();
@@ -312,6 +324,7 @@ else{
 
 if (myGameArea.frameNo ==  myGameArea.nextRotation) {
 random_rot = getRndInteger(1,3);
+
 if (random_rot == 1) {rotate_90_maze();}
 if(random_rot == 2) {rotate_180_maze();}
 if(random_rot == 3) {rotate_270_maze();}
