@@ -85,7 +85,7 @@ var border_to_maze_segment_ratio = 1.5;
 
 
 
-var nr_maze_rows = 21;
+var nr_maze_rows = 5;
 
 var maze_segment_length = Math.floor(canvas_size/(nr_maze_rows + 2*border_to_maze_segment_ratio));
 
@@ -100,7 +100,7 @@ var start_x = piece_x;
 var start_y = 0.5*border - 0.25*game_piece_size - 0.5*arrow_height;
 var finish_x = piece_x;
 var finish_y = canvas_size - border;
-
+var inter_maze_interval = 25;
 var speed = 0.3*game_piece_size;
 
 function sound(src) {
@@ -129,7 +129,7 @@ mySound = new sound("http://soundbible.com/grab.php?id=1003&type=mp3");
 
 myFinishPosition = new component(game_piece_size, game_piece_size, "yellow", finish_x, finish_y);
 
-
+myObstacles = [];
 
 M = createMaze(nr_maze_rows, nr_maze_rows);
 for ( i =0; i< nr_maze_rows; i++)
@@ -165,6 +165,8 @@ var myGameArea = {
       document.body.insertBefore(this.canvas, document.body.childNodes[0]);
       this.frameNo = 0;
       this.nextRotation  = 90;
+this.paused = false;
+this.frames_to_wait = 0;
       this.interval = setInterval(updateGameArea, 50);
       window.addEventListener('keydown', function (e) {
           myGameArea.key = e.keyCode;
@@ -179,7 +181,8 @@ var myGameArea = {
   },
    stop : function() {
        clearInterval(this.interval);
-   }
+   },
+pause : function() { this.paused = true; this.frames_to_wait = inter_maze_interval;}
 }
 
 function everyinterval(n) {
@@ -193,7 +196,7 @@ function component(width, height, color, x, y, type, image_source) {
   this.width = width;
   this.height = height;
 
- 
+
    if (type == "image") {
        this.image = new Image();
        //this.image.src ="http://www.freeiconspng.com/uploads/up-arrow-png-29.png";
@@ -339,24 +342,24 @@ var switch_prob = 0.004;
 function updateGameArea() {
 
 
-
-
+if (myGameArea.paused == false){
+myGameArea.frameNo += 1;
 if (myGamePiece.crashWith(myFinishPosition, myGamePiece.x, myGamePiece.y)) {
 
-         
+   //myGameArea.frameNo += 1;
 
 myPrize.image.src = "http://smileyfaceplace.weebly.com/uploads/6/9/7/1/6971266/4692542_orig.jpg";
- 
+
 myPrize.update();
 mySound.play();
-myGameArea.stop();
-        
+myGameArea.pause();
+
 
    }
 else{
       myGameArea.clear();
 
-      myGameArea.frameNo += 1;
+      //myGameArea.frameNo += 1;
       //jitter = Math.random();
 
 if (myGameArea.frameNo ==  myGameArea.nextRotation) {
@@ -367,7 +370,7 @@ if(random_rot == 2) {rotate_180_maze();}
 if(random_rot == 3) {rotate_270_maze();}
 myGameArea.nextRotation = myGameArea.frameNo + getRndInteger(150, 180);   }
 
-   
+
 
 
       for (i = 0; i < myObstacles.length; i += 1) {
@@ -426,7 +429,12 @@ if (current_orientation == 'L') {myStart.image.src = "http://www.clipartkid.com/
 if (current_orientation == 'R') {myStart.image.src = "http://www.clipartkid.com/images/853/can-t-find-the-perfect-clip-art-L30Drx-clipart.gif";}
 if (current_orientation == 'U') {myStart.image.src = "http://www.freeiconspng.com/uploads/up-arrow-png-29.png";}
 
-myStart.update();}
+myStart.update();}}
+
+else {//myGameArea.frameNo += 1;
+if(myGameArea.frames_to_wait > 0) {myGameArea.frames_to_wait = myGameArea.frames_to_wait-1;}
+else {startGame();}
+}
 
 }
 
