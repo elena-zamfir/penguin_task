@@ -85,7 +85,7 @@ var border_to_maze_segment_ratio = 1.5;
 
 
 
-var nr_maze_rows = 9;
+var nr_maze_rows = 15;
 
 var maze_segment_length = Math.floor(canvas_size/(nr_maze_rows + 2*border_to_maze_segment_ratio));
 
@@ -101,7 +101,7 @@ var start_y = 0.5*border - 0.25*game_piece_size - 0.5*arrow_height;
 var finish_x = piece_x;
 var finish_y = canvas_size - border;
 
-
+var speed = 0.3*game_piece_size;
 
 function sound(src) {
     this.sound = document.createElement("audio");
@@ -378,33 +378,33 @@ myGameArea.nextRotation = myGameArea.frameNo + getRndInteger(150, 180);   }
       current_orientation  = myGamePiece.orientation;
 
     if (current_orientation == 'U'){
-      if (myGameArea.key && myGameArea.key == 37) {myGamePiece.speedX = -7; }
-      if (myGameArea.key && myGameArea.key == 39) {myGamePiece.speedX = 7; }
-      if (myGameArea.key && myGameArea.key == 38) {myGamePiece.speedY = -7; }
-      if (myGameArea.key && myGameArea.key == 40) {myGamePiece.speedY = 7; }
+      if (myGameArea.key && myGameArea.key == 37) {myGamePiece.speedX = -speed; }
+      if (myGameArea.key && myGameArea.key == 39) {myGamePiece.speedX = speed; }
+      if (myGameArea.key && myGameArea.key == 38) {myGamePiece.speedY = -speed; }
+      if (myGameArea.key && myGameArea.key == 40) {myGamePiece.speedY = speed; }
 }
 
 if (current_orientation == 'L'){
-      if (myGameArea.key && myGameArea.key == 37) {myGamePiece.speedY = 7; }
-      if (myGameArea.key && myGameArea.key == 39) {myGamePiece.speedY = -7; }
-      if (myGameArea.key && myGameArea.key == 38) {myGamePiece.speedX = -7; }
-      if (myGameArea.key && myGameArea.key == 40) {myGamePiece.speedX = 7; }
+      if (myGameArea.key && myGameArea.key == 37) {myGamePiece.speedY = speed; }
+      if (myGameArea.key && myGameArea.key == 39) {myGamePiece.speedY = -speed; }
+      if (myGameArea.key && myGameArea.key == 38) {myGamePiece.speedX = -speed; }
+      if (myGameArea.key && myGameArea.key == 40) {myGamePiece.speedX = speed; }
 }
 
 
 if (current_orientation == 'R'){
-      if (myGameArea.key && myGameArea.key == 37) {myGamePiece.speedY = -7; }
-      if (myGameArea.key && myGameArea.key == 39) {myGamePiece.speedY = 7; }
-      if (myGameArea.key && myGameArea.key == 38) {myGamePiece.speedX = 7; }
-      if (myGameArea.key && myGameArea.key == 40) {myGamePiece.speedX = -7; }
+      if (myGameArea.key && myGameArea.key == 37) {myGamePiece.speedY = -speed; }
+      if (myGameArea.key && myGameArea.key == 39) {myGamePiece.speedY = speed; }
+      if (myGameArea.key && myGameArea.key == 38) {myGamePiece.speedX = speed; }
+      if (myGameArea.key && myGameArea.key == 40) {myGamePiece.speedX = -speed; }
 }
 
 
 if (current_orientation == 'D'){
-      if (myGameArea.key && myGameArea.key == 37) {myGamePiece.speedX = 7; }
-      if (myGameArea.key && myGameArea.key == 39) {myGamePiece.speedX = -7; }
-      if (myGameArea.key && myGameArea.key == 38) {myGamePiece.speedY = 7; }
-      if (myGameArea.key && myGameArea.key == 40) {myGamePiece.speedY = -7; }
+      if (myGameArea.key && myGameArea.key == 37) {myGamePiece.speedX = speed; }
+      if (myGameArea.key && myGameArea.key == 39) {myGamePiece.speedX = -speed; }
+      if (myGameArea.key && myGameArea.key == 38) {myGamePiece.speedY = speed; }
+      if (myGameArea.key && myGameArea.key == 40) {myGamePiece.speedY = -speed; }
 }
 
       proposed_x = myGamePiece.x + myGamePiece.speedX;
