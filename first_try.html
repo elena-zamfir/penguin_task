@@ -85,7 +85,7 @@ var border_to_maze_segment_ratio = 1.5;
 
 
 
-var nr_maze_rows = 15;
+var nr_maze_rows = 21;
 
 var maze_segment_length = Math.floor(canvas_size/(nr_maze_rows + 2*border_to_maze_segment_ratio));
 
@@ -149,9 +149,9 @@ for ( i =0; i< nr_maze_rows; i++)
 
 
 
-myStart =  new component(game_piece_size, arrow_height , "http://www.freeiconspng.com/uploads/up-arrow-png-29.png", start_x, start_y, "image");
+myStart =  new component(game_piece_size, arrow_height , "http://www.freeiconspng.com/uploads/up-arrow-png-29.png", start_x, start_y, "image", "http://www.freeiconspng.com/uploads/up-arrow-png-29.png");
 
- myPrize = new component(0.7*canvas_size, 0.7*canvas_size, "http://smileyfaceplace.weebly.com/uploads/6/9/7/1/6971266/4692542_orig.jpg", 0.15*canvas_size, 0.15*canvas_size, "image");
+ myPrize = new component(0.7*canvas_size, 0.7*canvas_size, "http://smileyfaceplace.weebly.com/uploads/6/9/7/1/6971266/4692542_orig.jpg", 0.15*canvas_size, 0.15*canvas_size, "image", "http://smileyfaceplace.weebly.com/uploads/6/9/7/1/6971266/4692542_orig.jpg");
 
   myGameArea.start();
 }
@@ -188,7 +188,7 @@ function everyinterval(n) {
 }
 
 
-function component(width, height, color, x, y, type) {
+function component(width, height, color, x, y, type, image_source) {
   this.type = type;
   this.width = width;
   this.height = height;
@@ -196,7 +196,8 @@ function component(width, height, color, x, y, type) {
  
    if (type == "image") {
        this.image = new Image();
-       this.image.src ="http://www.freeiconspng.com/uploads/up-arrow-png-29.png";
+       //this.image.src ="http://www.freeiconspng.com/uploads/up-arrow-png-29.png";
+this.image.src =image_source;
    }
   this.speedX = 0;
   this.speedY = 0;
