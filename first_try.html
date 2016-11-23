@@ -182,15 +182,44 @@ this.frames_to_wait = 0;
    stop : function() {
        clearInterval(this.interval);
    },
-pause : function() { this.paused = true; this.frames_to_wait = inter_maze_interval;}
-}
+pause : function() { this.paused = true; this.frames_to_wait = inter_maze_interval;},
+resume : function() {this.paused = false; 
+                     this.frames_to_wait = 0;
+myGamePiece = new component(game_piece_size, game_piece_size, "red",piece_x , piece_y);
 
+myFinishPosition = new component(game_piece_size, game_piece_size, "yellow", finish_x, finish_y);
+
+myObstacles = [];
+
+M = createMaze(nr_maze_rows, nr_maze_rows);
+for ( i =0; i< nr_maze_rows; i++)
+  {
+   for ( j=0; j< nr_maze_rows; j++)
+       {
+         if (M[i][j][0] == 0) {myObstacles.push(new component (1, maze_segment_length, "green", border + j*maze_segment_length, border + i *maze_segment_length));}
+         if (M[i][j][1] == 0) {myObstacles.push(new component (maze_segment_length,1, "green", border + j*maze_segment_length, border + i *maze_segment_length));}
+         if(j == nr_maze_rows-1){
+         if (M[i][j][2] == 0) {myObstacles.push(new component (1,maze_segment_length, "green", border + (j+1)*maze_segment_length, border + i *maze_segment_length));}}
+        if(i == nr_maze_rows-1){
+         if (M[i][j][3] == 0) {myObstacles.push(new component (maze_segment_length,1, "green", border + j*maze_segment_length, border + (i+1) *maze_segment_length));}}
+
+       }
+  }
+
+
+
+
+myStart =  new component(game_piece_size, arrow_height , "http://www.freeiconspng.com/uploads/up-arrow-png-29.png", start_x, start_y, "image", "http://www.freeiconspng.com/uploads/up-arrow-png-29.png");
+this.nextRotation  = 90;
+}
+}
+/*
 function everyinterval(n) {
   if ((myGameArea.frameNo / n) % 1 == 0) {return true;}
   return false;
 }
 
-
+*/
 function component(width, height, color, x, y, type, image_source) {
   this.type = type;
   this.width = width;
@@ -340,10 +369,11 @@ function getRndInteger(min, max) {
 var switch_prob = 0.004;
 
 function updateGameArea() {
+myGameArea.frameNo += 1;
 
 
 if (myGameArea.paused == false){
-myGameArea.frameNo += 1;
+
 if (myGamePiece.crashWith(myFinishPosition, myGamePiece.x, myGamePiece.y)) {
 
    //myGameArea.frameNo += 1;
@@ -433,7 +463,7 @@ myStart.update();}}
 
 else {//myGameArea.frameNo += 1;
 if(myGameArea.frames_to_wait > 0) {myGameArea.frames_to_wait = myGameArea.frames_to_wait-1;}
-else {startGame();}
+else {myGameArea.resume();}
 }
 
 }
