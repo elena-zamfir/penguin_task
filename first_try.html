@@ -465,7 +465,8 @@ else {//myGameArea.frameNo += 1;
 if(myGameArea.frames_to_wait > 0) {myGameArea.frames_to_wait = myGameArea.frames_to_wait-1;}
 else {myGameArea.resume();}
 }
-
+document.getElementById("demo").innerHTML = myGameArea.frameNo;
+if (myGameArea.frameNo == 750) {myGameArea.stop();}
 }
 
 
