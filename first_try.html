@@ -146,7 +146,7 @@ mySound = new sound("http://soundbible.com/grab.php?id=1003&type=mp3");
 
 myFinishPosition = new component(game_piece_size, game_piece_size, "yellow", finish_x, finish_y);
 
-myScore = new component("30px", "Consolas", "black", 280, 40, "text");
+myScore = new component("25px", "Consolas", "black", canvas_size/4.5, canvas_size/2, "text");
 
 myObstacles = [];
 
@@ -499,7 +499,9 @@ else { increase_level = Math.random(); if (increase_level < 0.8) {nr_maze_rows =
 myGameArea.resume();}
 }
 document.getElementById("demo").innerHTML = "current frame number " + myGameArea.frameNo +  " next rotation  " + myGameArea.nextRotation;
-if (myGameArea.frameNo == 1550) {myGameArea.stop();}
+if (myGameArea.frameNo == 1500) {myGameArea.clear();
+myScore.text="TIME UP!!! Highest level reached: " + nr_maze_rows;
+    myScore.update();myGameArea.stop();}
 }
 
 
