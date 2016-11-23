@@ -146,6 +146,8 @@ mySound = new sound("http://soundbible.com/grab.php?id=1003&type=mp3");
 
 myFinishPosition = new component(game_piece_size, game_piece_size, "yellow", finish_x, finish_y);
 
+myScore = new component("30px", "Consolas", "black", 280, 40, "text");
+
 myObstacles = [];
 
 M = createMaze(nr_maze_rows, nr_maze_rows);
@@ -227,7 +229,7 @@ for ( i =0; i< nr_maze_rows; i++)
 
 
 myStart =  new component(game_piece_size, arrow_height , "http://www.freeiconspng.com/uploads/up-arrow-png-29.png", start_x, start_y, "image", "http://www.freeiconspng.com/uploads/up-arrow-png-29.png");
-this.nextRotation  = 90;
+//this.nextRotation  = 90;
 }
 }
 /*
@@ -242,19 +244,29 @@ function component(width, height, color, x, y, type, image_source) {
   this.width = width;
   this.height = height;
 
-
    if (type == "image") {
        this.image = new Image();
        //this.image.src ="http://www.freeiconspng.com/uploads/up-arrow-png-29.png";
 this.image.src =image_source;
    }
+
   this.speedX = 0;
   this.speedY = 0;
   this.x = x;
   this.y = y;
   this.orientation = 'U';
+
+
   this.update = function() {
       ctx = myGameArea.context;
+
+
+if (this.type == "text") {
+      ctx.font = this.width + " " + this.height;
+      ctx.fillStyle = color;
+      ctx.fillText(this.text, this.x, this.y);
+    } 
+
 if (type == "image") {//document.getElementById("demo").innerHTML = this.image.src;
            ctx.drawImage(this.image,
                this.x,
@@ -415,7 +427,7 @@ random_rot = getRndInteger(1,3);
 if (random_rot == 1) {rotate_90_maze();}
 if(random_rot == 2) {rotate_180_maze();}
 if(random_rot == 3) {rotate_270_maze();}
-myGameArea.nextRotation = myGameArea.frameNo + getRndInteger(150, 180);   }
+myGameArea.nextRotation = myGameArea.frameNo + getRndInteger(70, 100);   }
 
 
 
@@ -478,13 +490,16 @@ if (current_orientation == 'U') {myStart.image.src = "http://www.freeiconspng.co
 
 myStart.update();}}
 
-else {//myGameArea.frameNo += 1;
+else {//myGameArea.frameNo += 1; 
+myGameArea.nextRotation = myGameArea.nextRotation + 1;
 if(myGameArea.frames_to_wait > 0) {myGameArea.frames_to_wait = myGameArea.frames_to_wait-1;}
 else { increase_level = Math.random(); if (increase_level < 0.8) {nr_maze_rows = nr_maze_rows+2; }
- level_setup(); myGameArea.resume();}
+ level_setup(); 
+
+myGameArea.resume();}
 }
-document.getElementById("demo").innerHTML = myGameArea.frameNo;
-if (myGameArea.frameNo == 750) {myGameArea.stop();}
+document.getElementById("demo").innerHTML = "current frame number " + myGameArea.frameNo +  " next rotation  " + myGameArea.nextRotation;
+if (myGameArea.frameNo == 1550) {myGameArea.stop();}
 }
 
 
