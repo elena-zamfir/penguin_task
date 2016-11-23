@@ -103,6 +103,23 @@ var finish_y = canvas_size - border;
 var inter_maze_interval = 25;
 var speed = 0.3*game_piece_size;
 
+
+
+function level_setup() {
+maze_segment_length = Math.floor(canvas_size/(nr_maze_rows + 2*border_to_maze_segment_ratio));
+border = border_to_maze_segment_ratio*maze_segment_length;
+game_piece_size = 0.6* maze_segment_length;
+arrow_height = 0.9*maze_segment_length;
+piece_x = 0.5*canvas_size - 0.5*game_piece_size;
+piece_y = border - 0.5*game_piece_size;
+start_x = piece_x;
+start_y = 0.5*border - 0.25*game_piece_size - 0.5*arrow_height;
+finish_x = piece_x;
+finish_y = canvas_size - border;
+speed = 0.3*game_piece_size;
+}
+
+
 function sound(src) {
     this.sound = document.createElement("audio");
     this.sound.src = src;
@@ -463,7 +480,7 @@ myStart.update();}}
 
 else {//myGameArea.frameNo += 1;
 if(myGameArea.frames_to_wait > 0) {myGameArea.frames_to_wait = myGameArea.frames_to_wait-1;}
-else {myGameArea.resume();}
+else { nr_maze_rows = nr_maze_rows+2; level_setup(); myGameArea.resume();}
 }
 document.getElementById("demo").innerHTML = myGameArea.frameNo;
 if (myGameArea.frameNo == 750) {myGameArea.stop();}
