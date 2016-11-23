@@ -480,7 +480,8 @@ myStart.update();}}
 
 else {//myGameArea.frameNo += 1;
 if(myGameArea.frames_to_wait > 0) {myGameArea.frames_to_wait = myGameArea.frames_to_wait-1;}
-else { nr_maze_rows = nr_maze_rows+2; level_setup(); myGameArea.resume();}
+else { increase_level = Math.random(); if (increase_level < 0.8) {nr_maze_rows = nr_maze_rows+2; }
+ level_setup(); myGameArea.resume();}
 }
 document.getElementById("demo").innerHTML = myGameArea.frameNo;
 if (myGameArea.frameNo == 750) {myGameArea.stop();}
