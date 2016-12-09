@@ -7,28 +7,48 @@
 <button onclick="stopColor()">Stop Toggling</button>
 
 <script>
-var myVar;
+var myTrial;
 var trial = 1;
 var myTrialVar;
-var t=0;
-
+var t = 0;
+var stopped = false;
 function start()
-{myVar = setInterval(function(){ setColor() }, 300);
+{myTrial = setInterval(function(){ setColor() }, 300);
 
-myTrialVar = setInterval(function(){ t = t+1;window.alert("t = " + t); if(t< 5) {if (trial ==1) {trial = 2;} else {trial = 1;}} else {clearInterval(myTrialVar);}} , 6000);
+myTrialVar = setInterval(function () { startTrial() } , 600);
 
+}
+function startTrial()
+{
+window.alert("trial = " + trial);
+if(trial > 3) {window.alert("opresc trialurile"); clearInterval(myTrialVar);clearInterval(myTrial);}
+else {
+//window.alert("a intrat in start trial, stopped = " + stopped);
+      if(stopped == true) {trial = trial + 1; t = 0;stopped = false; myTrial = setInterval(function(){ setColor() }, 300); }
+
+     }
 }
 function setColor() {
   var x = document.body;
+  //window.alert("calling within trial function t = " + t + "trial = "+ trial);
+  t = t+1;
+  if(t< 20){
   if (trial == 1) {
   x.style.backgroundColor = x.style.backgroundColor == "yellow" ? "pink" : "yellow";
 }
-else {
+if (trial == 2) {
   x.style.backgroundColor = x.style.backgroundColor == "red" ? "green" : "red";
-}}
+}
+if (trial == 3) {
+  x.style.backgroundColor = x.style.backgroundColor == "blue" ? "brown" : "blue";
+}
+ }
+ else {stopped = true; stopColor();}
+}
 
 function stopColor() {
-  clearInterval(myVar);
+  clearInterval(myTrial);
+
 }
 
 start();
