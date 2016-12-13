@@ -16,7 +16,10 @@ background-color: "white";
 
 var myGamePiece;
 var myObstacles = [];
-
+var myTrialStructure; 
+var trialNo = 1;
+var nrTrials = 3;
+var iti = 5; 
 
 function Create3DArray(rows, columns)
 {
@@ -143,8 +146,9 @@ function sound(src) {
 
 
 function startGame() {
+
 mySound = new sound("http://soundbible.com/grab.php?id=1003&type=mp3");
-  myGamePiece = new component(game_piece_size, game_piece_size, "red",piece_x , piece_y);
+myGamePiece = new component(game_piece_size, game_piece_size, "red",piece_x , piece_y);
 
 myFinishPosition = new component(game_piece_size, game_piece_size, "yellow", finish_x, finish_y);
 
@@ -174,7 +178,39 @@ myStart =  new component(game_piece_size, arrow_height , "http://www.freeiconspn
 
  myPrize = new component(0.7*canvas_size, 0.7*canvas_size, "http://smileyfaceplace.weebly.com/uploads/6/9/7/1/6971266/4692542_orig.jpg", 0.15*canvas_size, 0.15*canvas_size, "image", "http://smileyfaceplace.weebly.com/uploads/6/9/7/1/6971266/4692542_orig.jpg");
 
+  myTrialStructure = setInterval(function(){startTrial()},100);
+  
+  
+  
   myGameArea.start();
+  
+}
+
+
+
+function startTrial(){
+
+if(trialNo>nrTrials) {clearInterval(myTrialStructure); myGameArea.stop();}
+else {if(myGameArea.stopped == true) 
+      if(myGameArea.intertrial_interval_left >0)
+         {myGameArea.intertrial_interval_left = myGameArea.intertrial_interval_left - 1; }
+         
+       else
+         
+        {trialNo = trialNo + 1; 
+         myGameArea.frameNo = 0;
+         myGameArea.stopped  = false; 
+         myGameArea.paused  = false;
+         myGameArea.intertrial_interval_left = 0;
+         myGameArea.nextRotation  = 90;
+         myGameArea.frames_to_wait  = 0;
+         nr_maze_rows  = 5; 
+         level_setup();
+         myGameArea.resume();
+         
+         myGameArea.interval = setInterval(updateGameArea, 50);
+         }
+      }
 }
 
 var myGameArea = {
@@ -187,7 +223,9 @@ var myGameArea = {
       this.frameNo = 0;
       this.nextRotation  = 90;
 this.paused = false;
+this.stopped = false;
 this.frames_to_wait = 0;
+this.intertrial_interval_left = 0;
       this.interval = setInterval(updateGameArea, 50);
       window.addEventListener('keydown', function (e) {
           myGameArea.key = e.keyCode;
@@ -400,6 +438,7 @@ function getRndInteger(min, max) {
 var switch_prob = 0.004;
 
 function updateGameArea() {
+
 myGameArea.frameNo += 1;
 
 
@@ -501,13 +540,20 @@ else { increase_level = Math.random(); if (increase_level < 0.8) {nr_maze_rows =
 myGameArea.resume();}
 }
 document.getElementById("demo").innerHTML = "current frame number " + myGameArea.frameNo +  " next rotation  " + myGameArea.nextRotation;
-if (myGameArea.frameNo == 1500) {myGameArea.clear();
+if (myGameArea.frameNo == 1000) {
+   if(trialNo == nrTrials) {clearInterval(myTrialStructure);}
+   myGameArea.clear();
  x = Math.random();
     y = Math.random();
     z = Math.sqrt(-2*Math.log(x))*Math.cos(2*Math.PI*y);
     score = Math.floor(z*sigma_score + mu_score);
 myScore.text="TIME UP!!! Score: " + score;
-    myScore.update();myGameArea.stop();}
+    myScore.update();
+    myGameArea.stopped = true;
+    myGameArea.intertrial_interval_left = iti;
+    myGameArea.stop();
+    }
+    
 }
 
 
