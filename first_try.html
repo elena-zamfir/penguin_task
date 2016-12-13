@@ -83,6 +83,8 @@ return M;
 var canvas_size = 600;
 var border_to_maze_segment_ratio = 1.5;
 
+var mu_score = 75;
+var sigma_score = 10;
 
 
 var nr_maze_rows = 5;
@@ -500,7 +502,11 @@ myGameArea.resume();}
 }
 document.getElementById("demo").innerHTML = "current frame number " + myGameArea.frameNo +  " next rotation  " + myGameArea.nextRotation;
 if (myGameArea.frameNo == 1500) {myGameArea.clear();
-myScore.text="TIME UP!!! Highest level reached: " + nr_maze_rows;
+ x = Math.random();
+    y = Math.random();
+    z = Math.sqrt(-2*Math.log(x))*Math.cos(2*Math.PI*y);
+    score = Math.floor(z*sigma_score + mu_score);
+myScore.text="TIME UP!!! Score: " + score;
     myScore.update();myGameArea.stop();}
 }
 
