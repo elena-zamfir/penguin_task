@@ -22,11 +22,31 @@ var myInstructionArea = {
         this.canvas.height = canvas_size;
         this.context = this.canvas.getContext("2d");
         document.body.insertBefore(this.canvas, document.body.childNodes[0]);
-        //this.interval = setInterval(updateGameArea, 20);
+        this.interval = setInterval(checkForKeyPresses, 20);
+        myInstructionArea.key = false;
+        
+        window.addEventListener('keydown', function (e) {
+            myInstructionArea.key = e.keyCode;
+        })
+        window.addEventListener('keyup', function (e) {
+            myInstructionArea.key = false;
+        })
     },
     clear : function() {
      this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
     }
+}
+
+function checkForKeyPresses() {
+if (myInstructionArea.key)
+	{
+   startingText= new component("25px", "Consolas", "black", canvas_size/7, canvas_size/2,"text");
+startingText.text = "Exp starting!!";
+startingText.update();
+myInstructionArea.clear();
+clearInterval(myInstructioArea.interval);
+    }
+
 }
 function component(width, height, color, x, y, type) {
     this.type = type;
@@ -57,6 +77,7 @@ myInstructionArea.start();
 introText= new component("25px", "Consolas", "black", canvas_size/7, canvas_size/2, "text");
 introText.text = "Hello!\n Press any key to start the experiment!";
 introText.update();
+
 }
  
 </script>
