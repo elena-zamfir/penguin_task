@@ -98,8 +98,28 @@ function setDifficulty() {}
 
 function showChoiceScreen()
   {
-    //myChoiceArea.start();
+    myChoiceArea.start();
+    myChoiceText  = new component("25px", "Consolas", "black", canvas_size/7, canvas_size/2,"text", myChoiceArea);
+    myChoiceText.text = "Press Left arrow for left and Right arrow for right";
+    myChoiceText.update();
 
+
+  }
+
+
+function checkForChoicePresses ()
+  {
+    if (myChoiceArea.key && myChoiceArea.key == 37)
+    	{
+       leftChoiceText= new component("25px", "Consolas", "black", canvas_size/7, canvas_size/2,"text", myChoiceArea);
+    leftChoiceText.text = " you chose left!!";
+    myChoiceArea.clear();
+    leftChoiceText.update();
+    clearInterval(myChoiceArea.interval);
+
+    setTimeout(function (){myChoiceArea.clear();}, 1000);
+
+        }
 
 
   }
