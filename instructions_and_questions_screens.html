@@ -43,11 +43,41 @@ if (myInstructionArea.key)
    startingText= new component("25px", "Consolas", "black", canvas_size/7, canvas_size/2,"text");
 startingText.text = "Exp starting!!";
 myInstructionArea.clear();
+
+clearInterval(myInstructionArea.interval);
 startingText.update();
-clearInterval(myInstructioArea.interval);
+runExperiment();
+
     }
 
 }
+
+
+var nr_trials = 3;
+
+function runExperiment(){
+  for (var i=0;i<nr_trials;i++)
+    {
+      setDifficulty();
+      showChoiceScreen();
+      playTrial();
+      showPostTrialQuestions();
+
+    }
+    finishExperiment();
+
+}
+
+function setDifficulty() {}
+function showChoiceScreen() {}
+function playTrial() {}
+function showPostTrialQuestions() {}
+function finishExperiment() {
+  myInstructionArea.clear();
+  finishingText = new component("25px", "Consolas", "black", canvas_size/7, canvas_size/2,"text");
+  finishingText.text  = "Done!!!";
+  finishingText.update();}
+
 function component(width, height, color, x, y, type) {
     this.type = type;
     this.width = width;
