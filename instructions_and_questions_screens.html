@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<style>
+canvas {
+    border:1px solid #d3d3d3;
+    background-color: #f1f1f1;
+}
+</style>
+</head>
+<body onload="showInstructions()">
+
+<script>
+ 
+var canvas_size = 600;
+
+var myInstructionArea = {
+    canvas : document.createElement("canvas"),
+    start : function() {
+        this.canvas.width = canvas_size;
+        this.canvas.height = canvas_size;
+        this.context = this.canvas.getContext("2d");
+        document.body.insertBefore(this.canvas, document.body.childNodes[0]);
+        //this.interval = setInterval(updateGameArea, 20);
+    },
+    clear : function() {
+     this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    }
+}
+function component(width, height, color, x, y, type) {
+    this.type = type;
+    this.width = width;
+    this.height = height;
+    this.speedX = 0;
+    this.speedY = 0;    
+    this.x = x;
+    this.y = y;    
+    this.update = function() {
+        ctx = myInstructionArea.context;
+        if (this.type == "text") {
+            ctx.font = this.width + " " + this.height;
+            ctx.fillStyle = color;
+            ctx.fillText(this.text, this.x, this.y);
+        } else {
+            ctx.fillStyle = color;
+            ctx.fillRect(this.x, this.y, this.width, this.height);
+        }
+    }
+    
+   
+}
+
+function showInstructions() 
+{
+myInstructionArea.start();
+introText= new component("25px", "Consolas", "black", canvas_size/7, canvas_size/2, "text");
+introText.text = "Hello!\n Press any key to start the experiment!";
+introText.update();
+}
+ 
+</script>
+ 
+
+ 
+</body>
+</html>
