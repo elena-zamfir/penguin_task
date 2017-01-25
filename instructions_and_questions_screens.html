@@ -14,97 +14,80 @@ canvas {
 <script>
 
 var canvas_size = 600;
-
-var myInstructionArea = {
-    canvas : document.createElement("canvas"),
-    start : function() {
-        this.canvas.width = canvas_size;
-        this.canvas.height = canvas_size;
-        this.context = this.canvas.getContext("2d");
-        document.body.insertBefore(this.canvas, document.body.childNodes[0]);
-        this.interval = setInterval(checkForKeyPresses, 20);
-        myInstructionArea.key = false;
-
-        window.addEventListener('keydown', function (e) {
-            myInstructionArea.key = e.keyCode;
-        })
-        window.addEventListener('keyup', function (e) {
-            myInstructionArea.key = false;
-        })
-    },
-    clear : function() {
-     this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
-    }
-}
-
-
-
-var myChoiceArea =
-{
-    canvas : document.createElement("canvas"),
-    start : function() {
-        this.canvas.width = canvas_size;
-        this.canvas.height = canvas_size;
-        this.context = this.canvas.getContext("2d");
-        document.body.insertBefore(this.canvas, document.body.childNodes[0]);
-        this.interval = setInterval(checkForChoicePresses, 20);
-        myChoiceArea.key = false;
-
-        window.addEventListener('keydown', function (e) {
-            myChoiceArea.key = e.keyCode;
-        })
-        window.addEventListener('keyup', function (e) {
-            myChoiceArea.key = false;
-        })
-    },
-    clear : function() {
-     this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
-    }
-}
-
-
-function checkForKeyPresses() {
-if (myInstructionArea.key)
-	{
-   startingText= new component("25px", "Consolas", "black", canvas_size/7, canvas_size/2,"text", myInstructionArea);
-startingText.text = "Exp starting!!";
-myInstructionArea.clear();
-
-clearInterval(myInstructionArea.interval);
-startingText.update();
-setTimeout(runExperiment, 1000);
-
-    }
-
-}
-
-
 var nr_trials = 3;
 
-function runExperiment(){
-  for (var i=0;i<nr_trials;i++)
-    {
-      setDifficulty();
-      showChoiceScreen();
-      playTrial();
-      showPostTrialQuestions();
+var myArea = 
+	{
+         canvas : document.createElement("canvas"),
+    	 start : function(expstage)
+                    {
+                     this.canvas.width = canvas_size;
+	             this.canvas.height = canvas_size;
+                     this.context = this.canvas.getContext("2d");
+		     this.expstage = expstage;
+         	     document.body.insertBefore(this.canvas, document.body.childNodes[0]);
+         	     this.interval = setInterval(checkForKeyPresses, 20);
+         	     myArea.key = false;
+	 	     window.addEventListener('keydown', function (e) {myArea.key = e.keyCode;})
+         	     window.addEventListener('keyup', function (e) {myArea.key = false;})
+                    },
+        clear : function() 
+                 {
+                    this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+   		 }
+         }
 
-    }
-    finishExperiment();
 
-}
+
+
+
+
+function checkForKeyPresses()
+         {
+	  if (myArea.key && myArea.expstage == 'starting')
+	     {
+   	      startingText= new component("25px", "Consolas", "black", canvas_size/7, canvas_size/2,"text");
+	      startingText.text = "Exp starting!!";
+	      myArea.clear();
+	      clearInterval(myArea.interval);
+	      startingText.update();
+	      setTimeout(runExperiment, 1000);
+ 	     }
+          if (myArea.key && myArea.expstage == 'pretrial_choice' && myArea.key == 37)
+    	     {
+       	      leftChoiceText= new component("25px", "Consolas", "black", canvas_size/7, canvas_size/2,"text");
+   	      leftChoiceText.text = " you chose left!!";
+   	      myArea.clear();
+ 	      leftChoiceText.update();
+ 	      clearInterval(myArea.interval);
+  	      setTimeout(function (){finishExperiment();}, 1000);
+      	     }
+	}
+
+
+
+
+function runExperiment()
+         {
+  	  for (var i=0;i<nr_trials;i++)
+    	 	{
+      		 setDifficulty();
+      		 showChoiceScreen();
+	         playTrial();
+      		 showPostTrialQuestions();
+                }
+    	  //finishExperiment();
+ 	}
 
 function setDifficulty() {}
 
 function showChoiceScreen()
-  {
-    myChoiceArea.start();
-    myChoiceText  = new component("25px", "Consolas", "black", canvas_size/7, canvas_size/2,"text", myChoiceArea);
-    myChoiceText.text = "Press Left arrow for left and Right arrow for right";
-    myChoiceText.update();
-
-
-  }
+         {
+    	  myArea.start('pretrial_choice');
+  	  myChoiceText  = new component("25px", "Consolas", "black", canvas_size/7, canvas_size/2,"text");
+  	  myChoiceText.text = "Press Left arrow for left and Right arrow for right";
+  	  myChoiceText.update();
+         }
 
 
 function checkForChoicePresses ()
@@ -126,13 +109,16 @@ function checkForChoicePresses ()
 
 function playTrial() {}
 function showPostTrialQuestions() {}
-function finishExperiment() {
-  myInstructionArea.clear();
-  finishingText = new component("25px", "Consolas", "black", canvas_size/7, canvas_size/2,"text", myInstructionArea);
-  finishingText.text  = "Done!!!";
-  finishingText.update();}
 
-function component(width, height, color, x, y, type, area) {
+function finishExperiment() 
+	 {
+  	  myArea.clear();
+	  finishingText = new component("25px", "Consolas", "black", canvas_size/7, canvas_size/2,"text");
+	  finishingText.text  = "Done!!!";
+	  finishingText.update();
+  	 }
+
+function component(width, height, color, x, y, type) {
     this.type = type;
     this.width = width;
     this.height = height;
@@ -141,7 +127,7 @@ function component(width, height, color, x, y, type, area) {
     this.x = x;
     this.y = y;
     this.update = function() {
-        ctx = area.context;
+        ctx = myArea.context;
         if (this.type == "text") {
             ctx.font = this.width + " " + this.height;
             ctx.fillStyle = color;
@@ -156,13 +142,12 @@ function component(width, height, color, x, y, type, area) {
 }
 
 function showInstructions()
-{
-myInstructionArea.start();
-introText= new component("25px", "Consolas", "black", canvas_size/7, canvas_size/2, "text", myInstructionArea);
-introText.text = "Hello!\n Press any key to start the experiment!";
-introText.update();
-
-}
+	{
+	 myArea.start('starting');
+	 introText= new component("25px", "Consolas", "black", canvas_size/7, canvas_size/2, "text");
+	 introText.text = "Hello! Press any key to start the experiment!";
+	 introText.update();
+ 	}
 
 </script>
 
