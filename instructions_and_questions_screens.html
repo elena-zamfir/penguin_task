@@ -208,9 +208,10 @@ if (myArea.key && myArea.expstage == 'pretrial_choice' && myArea.key == 37)
          }
        }
     myStart =  new component(game_piece_size, arrow_height , "black", start_x, start_y, "image", "http://www.freeiconspng.com/uploads/up-arrow-png-29.png");
-    myStart.image = new Image(); myStart.image.src ="http://www.freeiconspng.com/uploads/up-arrow-png-29.png";
-    setTimeout( function() {myArea.context.drawImage(myStart.image, myStart.x, myStart.y, myStart.width, myStart.height); },1000);
-      myGamePiece.update();
+    myStart.image = new Image(); 
+    myStart.image.src ="http://www.freeiconspng.com/uploads/up-arrow-png-29.png";
+    myArea.context.drawImage(myStart.image, myStart.x, myStart.y, myStart.width, myStart.height);
+    myGamePiece.update();
     myStart.update();
     myFinishPosition.update();
     for (i = 0; i < myObstacles.length; i += 1) {myObstacles[i].update();}
@@ -317,14 +318,8 @@ function showInstructions()
 	 introText= new component("25px", "Consolas", "black", canvas_size/7, canvas_size/2, "text");
 	 introText.text = "Hello! Press any key to start the experiment!";
 	 introText.update();
-  // myStart =  new component(game_piece_size, arrow_height , "black", start_x, start_y, "image", "http://www.freeiconspng.com/uploads/up-arrow-png-29.png");
-   //myStart.image = new Image(); 
-   //myStart.image.src ="http://www.freeiconspng.com/uploads/up-arrow-png-29.png";
-   //current_context = myArea.context;
-   /*current_context.drawImage(myStart.image,
-            myStart.x,
-            myStart.y,
-            myStart.width, myStart.height);*/
+   myStart =  new component(game_piece_size, arrow_height , "black", start_x, start_y, "image", "http://www.freeiconspng.com/uploads/up-arrow-png-29.png");
+  
      
  	}
 
