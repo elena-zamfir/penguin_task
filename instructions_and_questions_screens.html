@@ -62,6 +62,15 @@ function checkForKeyPresses()
  	      clearInterval(myArea.interval);
   	      setTimeout(function (){finishExperiment();}, 1000);
       	     }
+          if (myArea.key && myArea.expstage == 'pretrial_choice' && myArea.key == 39)
+    	     {
+       	      leftChoiceText= new component("25px", "Consolas", "black", canvas_size/7, canvas_size/2,"text");
+   	      leftChoiceText.text = " you chose right!!";
+   	      myArea.clear();
+ 	      leftChoiceText.update();
+ 	      clearInterval(myArea.interval);
+  	      setTimeout(function (){finishExperiment();}, 1000);
+      	     }
 	}
 
 
