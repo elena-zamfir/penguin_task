@@ -207,19 +207,23 @@ if (myArea.key && myArea.expstage == 'pretrial_choice' && myArea.key == 37)
            if (M[i][j][3] == 0) {myObstacles.push(new component (maze_segment_length,1, "green", border + j*maze_segment_length, border + (i+1) *maze_segment_length));}}
          }
        }
-    myStart =  new component(game_piece_size, arrow_height , "http://www.freeiconspng.com/uploads/up-arrow-png-29.png", start_x, start_y, "image", "http://www.freeiconspng.com/uploads/up-arrow-png-29.png");
-
-
-
-    myGamePiece.update();
+    myStart =  new component(game_piece_size, arrow_height , "black", start_x, start_y, "image", "http://www.freeiconspng.com/uploads/up-arrow-png-29.png");
+    myStart.image = new Image(); myStart.image.src ="http://www.freeiconspng.com/uploads/up-arrow-png-29.png";
+    setTimeout( function() {myArea.context.drawImage(myStart.image, myStart.x, myStart.y, myStart.width, myStart.height); },1000);
+      myGamePiece.update();
     myStart.update();
     myFinishPosition.update();
     for (i = 0; i < myObstacles.length; i += 1) {myObstacles[i].update();}
-    setTimeout(function (){finishExperiment();}, 1000);
+    setTimeout(function (){finishExperiment();}, 1200);
     //myArea.draw = setInterval(updateGameArea,50);
    }
  }
  
+
+
+
+
+
 function runExperiment()
          {
           setDifficulty();
@@ -313,6 +317,15 @@ function showInstructions()
 	 introText= new component("25px", "Consolas", "black", canvas_size/7, canvas_size/2, "text");
 	 introText.text = "Hello! Press any key to start the experiment!";
 	 introText.update();
+  // myStart =  new component(game_piece_size, arrow_height , "black", start_x, start_y, "image", "http://www.freeiconspng.com/uploads/up-arrow-png-29.png");
+   //myStart.image = new Image(); 
+   //myStart.image.src ="http://www.freeiconspng.com/uploads/up-arrow-png-29.png";
+   //current_context = myArea.context;
+   /*current_context.drawImage(myStart.image,
+            myStart.x,
+            myStart.y,
+            myStart.width, myStart.height);*/
+     
  	}
 
 
