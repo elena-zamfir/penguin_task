@@ -127,6 +127,8 @@ function showPostTrialQuestions() {}
 function finishExperiment() 
 	 {
   	  myArea.clear();
+	  myArea.key = false;
+	  window.removeEventListener('keydown', function (e) {myArea.key = e.keyCode;})
 	  clearInterval(myArea.interval);
 	  finishingText = new component("25px", "Consolas", "black", canvas_size/7, canvas_size/2,"text");
 	  finishingText.text  = "Done!!!";
