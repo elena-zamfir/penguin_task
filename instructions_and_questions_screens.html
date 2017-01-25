@@ -15,6 +15,7 @@ canvas {
 
 var canvas_size = 600;
 var nr_trials = 3;
+var current_trial = 0;
 
 var myArea = 
 	{
@@ -26,10 +27,10 @@ var myArea =
                      this.context = this.canvas.getContext("2d");
 		     this.expstage = expstage;
          	     document.body.insertBefore(this.canvas, document.body.childNodes[0]);
-         	     this.interval = setInterval(checkForKeyPresses, 20);
+         	     this.interval = setInterval(checkForKeyPresses, 100);
          	     myArea.key = false;
 	 	     window.addEventListener('keydown', function (e) {myArea.key = e.keyCode;})
-         	     window.addEventListener('keyup', function (e) {myArea.key = false;})
+         	     //window.addEventListener('keyup', function (e) {myArea.key = false;})
                     },
         clear : function() 
                  {
@@ -46,6 +47,8 @@ function checkForKeyPresses()
          {
 	  if (myArea.key && myArea.expstage == 'starting')
 	     {
+              myArea.key = false;
+	      window.removeEventListener('keydown', function (e) {myArea.key = e.keyCode;})
    	      startingText= new component("25px", "Consolas", "black", canvas_size/7, canvas_size/2,"text");
 	      startingText.text = "Exp starting!!";
 	      myArea.clear();
@@ -55,15 +58,20 @@ function checkForKeyPresses()
  	     }
           if (myArea.key && myArea.expstage == 'pretrial_choice' && myArea.key == 37)
     	     {
+	      myArea.key = false;
+	      window.removeEventListener('keydown', function (e) {myArea.key = e.keyCode;})
+	      clearInterval(myArea.interval);
        	      leftChoiceText= new component("25px", "Consolas", "black", canvas_size/7, canvas_size/2,"text");
    	      leftChoiceText.text = " you chose left!!";
    	      myArea.clear();
- 	      leftChoiceText.update();
- 	      clearInterval(myArea.interval);
-  	      setTimeout(function (){finishExperiment();}, 1000);
+ 	      leftChoiceText.update(); 	      
+	      setTimeout(startTrial,1000);
+  	     // setTimeout(function (){finishExperiment();}, 1000);
       	     }
           if (myArea.key && myArea.expstage == 'pretrial_choice' && myArea.key == 39)
     	     {
+              myArea.key = false;
+	      window.removeEventListener('keydown', function (e) {myArea.key = e.keyCode;})
        	      leftChoiceText= new component("25px", "Consolas", "black", canvas_size/7, canvas_size/2,"text");
    	      leftChoiceText.text = " you chose right!!";
    	      myArea.clear();
@@ -74,6 +82,18 @@ function checkForKeyPresses()
 	}
 
 
+
+
+function startTrial()
+	 {
+	  myArea.start('trial');	
+          clearInterval(myArea.interval);  
+          current_trial = current_trial + 1;
+	  countTrialText = new component("25px", "Consolas", "black", canvas_size/7, canvas_size/2,"text");
+	  countTrialText.text = 'this is trial ' + current_trial;
+ 	  countTrialText.update();
+	  setTimeout(function (){finishExperiment();}, 1000);
+	 }
 
 
 function runExperiment()
@@ -99,22 +119,7 @@ function showChoiceScreen()
          }
 
 
-function checkForChoicePresses ()
-  {
-    if (myChoiceArea.key && myChoiceArea.key == 37)
-    	{
-       leftChoiceText= new component("25px", "Consolas", "black", canvas_size/7, canvas_size/2,"text", myChoiceArea);
-    leftChoiceText.text = " you chose left!!";
-    myChoiceArea.clear();
-    leftChoiceText.update();
-    clearInterval(myChoiceArea.interval);
 
-    setTimeout(function (){myChoiceArea.clear();}, 1000);
-
-        }
-
-
-  }
 
 function playTrial() {}
 function showPostTrialQuestions() {}
@@ -122,6 +127,7 @@ function showPostTrialQuestions() {}
 function finishExperiment() 
 	 {
   	  myArea.clear();
+	  clearInterval(myArea.interval);
 	  finishingText = new component("25px", "Consolas", "black", canvas_size/7, canvas_size/2,"text");
 	  finishingText.text  = "Done!!!";
 	  finishingText.update();
