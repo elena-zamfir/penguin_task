@@ -14,29 +14,122 @@ canvas {
 <script>
 
 var canvas_size = 600;
-var nr_trials = 3;
-var current_trial = 0;
+var nrTrials = 1;
+var currentTrial = 0;
 
-var myArea = 
+
+// maze creating functions
+
+function Create3DArray(rows, columns)
 	{
-         canvas : document.createElement("canvas"),
-    	 start : function(expstage)
-                    {
-                     this.canvas.width = canvas_size;
-	             this.canvas.height = canvas_size;
-                     this.context = this.canvas.getContext("2d");
-		     this.expstage = expstage;
-         	     document.body.insertBefore(this.canvas, document.body.childNodes[0]);
-         	     this.interval = setInterval(checkForKeyPresses, 100);
-         	     myArea.key = false;
-	 	     window.addEventListener('keydown', function (e) {myArea.key = e.keyCode;})
-         	     //window.addEventListener('keyup', function (e) {myArea.key = false;})
-                    },
-        clear : function() 
-                 {
-                    this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
-   		 }
+	 var arr = [];
+	 for (var i=0;i<rows;i++)
+             {
+  	      arr[i] = [];
+  	      for ( var j =0; j< columns; j++)
+	          {
+	           arr[i][j] = [];
+	           for ( var k =0; k <5; k++)
+	               { arr[i][j][k] = 0; }
+      		  }
+             }
+         return arr;
          }
+
+
+function createMaze(rows, columns)
+         {
+	  var M = Create3DArray(rows, columns);
+	  var r = 0;
+	  var c = Math.floor(columns/2);
+	  var history  = [[r,c]];
+	  var check = [];
+	  var aux = [];
+	  while (history.length)
+	       {
+	        M[r][c][4]  = 1;
+	        check  = [];
+	        if  (c > 0 && M[r][c-1][4] == 0) {check.push('L');}
+	        if  (r > 0 && M[r-1][c][4] == 0) {check.push('U');}
+	        if  (c < columns-1 && M[r][c+1][4] == 0) {check.push('R');}
+	        if  (r < rows-1 && M[r+1][c][4] == 0) {check.push('D');}
+       	        if (check.length)
+                   {
+	            history.push([r,c]);
+	            move_direction = check[Math.floor(Math.random() * check.length)];
+	            if (move_direction == 'L') {M[r][c][0] =1; c = c-1; M[r][c][2]=1;}
+        	    if (move_direction == 'U') {M[r][c][1] =1; r = r-1; M[r][c][3]=1;}
+	            if (move_direction == 'R') {M[r][c][2] =1; c = c+1; M[r][c][0]=1;}
+	            if (move_direction == 'D') {M[r][c][3] =1; r = r+1; M[r][c][1]=1;}
+       	 	   }
+   		else  {aux  = history.pop(); r  = aux[0]; c = aux[1];}
+           	}
+         M[0][Math.floor(columns/2)][1] = 1;
+	 M[rows-1][Math.floor(columns/2)][3] = 1;
+	 return M;
+         }
+
+
+
+
+
+var border_to_maze_segment_ratio = 1.5;
+var mu_score = 75;
+var sigma_score = 10;
+var nr_maze_rows = 5;
+var maze_segment_length = Math.floor(canvas_size/(nr_maze_rows + 2*border_to_maze_segment_ratio));
+var border = border_to_maze_segment_ratio*maze_segment_length;
+var mySound;
+var game_piece_size = 0.6* maze_segment_length;
+var arrow_height = 0.9*maze_segment_length;
+var piece_x = 0.5*canvas_size - 0.5*game_piece_size;
+var piece_y = border - 0.5*game_piece_size;
+var start_x = piece_x;
+var start_y = 0.5*border - 0.25*game_piece_size - 0.5*arrow_height;
+var finish_x = piece_x;
+var finish_y = canvas_size - border;
+var inter_maze_interval = 25;
+var speed = 0.3*game_piece_size;
+var myGamePiece;
+var myObstacles = [];
+
+
+function level_setup() 
+        {
+	 maze_segment_length = Math.floor(canvas_size/(nr_maze_rows + 2*border_to_maze_segment_ratio));
+	 border = border_to_maze_segment_ratio*maze_segment_length;
+	 game_piece_size = 0.6* maze_segment_length;
+	 arrow_height = 0.9*maze_segment_length;
+	 piece_x = 0.5*canvas_size - 0.5*game_piece_size;
+	 piece_y = border - 0.5*game_piece_size;
+	 start_x = piece_x;
+	 start_y = 0.5*border - 0.25*game_piece_size - 0.5*arrow_height;
+	 finish_x = piece_x;
+	 finish_y = canvas_size - border;
+	 speed = 0.3*game_piece_size;
+	}
+
+
+
+  var myArea = 
+  {
+   canvas : document.createElement("canvas"),
+   start : function(expstage)
+   {
+     this.canvas.width = canvas_size;
+     this.canvas.height = canvas_size;
+     this.context = this.canvas.getContext("2d");
+     this.expstage = expstage;
+     document.body.insertBefore(this.canvas, document.body.childNodes[0]);
+     this.interval = setInterval(checkForKeyPresses, 100);
+     myArea.key = false;
+     window.addEventListener('keydown', function (e) {myArea.key = e.keyCode;})     
+   },
+   clear : function() 
+   {
+    this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+  }
+}
 
 
 
@@ -44,68 +137,95 @@ var myArea =
 
 
 function checkForKeyPresses()
-         {
-	  if (myArea.key && myArea.expstage == 'starting')
-	     {
-              myArea.key = false;
-	      window.removeEventListener('keydown', function (e) {myArea.key = e.keyCode;})
-   	      startingText= new component("25px", "Consolas", "black", canvas_size/7, canvas_size/2,"text");
-	      startingText.text = "Exp starting!!";
-	      myArea.clear();
-	      clearInterval(myArea.interval);
-	      startingText.update();
-	      setTimeout(runExperiment, 1000);
- 	     }
-          if (myArea.key && myArea.expstage == 'pretrial_choice' && myArea.key == 37)
-    	     {
-	      myArea.key = false;
-	      window.removeEventListener('keydown', function (e) {myArea.key = e.keyCode;})
-	      clearInterval(myArea.interval);
-       	      leftChoiceText= new component("25px", "Consolas", "black", canvas_size/7, canvas_size/2,"text");
-   	      leftChoiceText.text = " you chose left!!";
-   	      myArea.clear();
- 	      leftChoiceText.update(); 	      
-	      setTimeout(startTrial,1000);
+{
+ if (myArea.key && myArea.expstage == 'starting')
+ {
+  myArea.key = false;
+  window.removeEventListener('keydown', function (e) {myArea.key = e.keyCode;})
+  startingText= new component("25px", "Consolas", "black", canvas_size/7, canvas_size/2,"text");
+  startingText.text = "Exp starting!!";
+  myArea.clear();
+  clearInterval(myArea.interval);
+  startingText.update();
+  setTimeout(runExperiment, 1000);
+}
+if (myArea.key && myArea.expstage == 'pretrial_choice' && myArea.key == 37)
+{
+ myArea.key = false;
+ window.removeEventListener('keydown', function (e) {myArea.key = e.keyCode;})
+ clearInterval(myArea.interval);
+ leftChoiceText= new component("25px", "Consolas", "black", canvas_size/7, canvas_size/2,"text");
+ leftChoiceText.text = " you chose left!!";
+ myArea.clear();
+ leftChoiceText.update(); 	      
+ setTimeout(startTrial,1000);
   	     // setTimeout(function (){finishExperiment();}, 1000);
-      	     }
-          if (myArea.key && myArea.expstage == 'pretrial_choice' && myArea.key == 39)
-    	     {
-              myArea.key = false;
-	      window.removeEventListener('keydown', function (e) {myArea.key = e.keyCode;})
-       	      leftChoiceText= new component("25px", "Consolas", "black", canvas_size/7, canvas_size/2,"text");
-   	      leftChoiceText.text = " you chose right!!";
-   	      myArea.clear();
- 	      leftChoiceText.update();
- 	      clearInterval(myArea.interval);
-  	      setTimeout(function (){finishExperiment();}, 1000);
-      	     }
-	}
+       }
+       if (myArea.key && myArea.expstage == 'pretrial_choice' && myArea.key == 39)
+       {
+        myArea.key = false;
+        window.removeEventListener('keydown', function (e) {myArea.key = e.keyCode;})
+        leftChoiceText= new component("25px", "Consolas", "black", canvas_size/7, canvas_size/2,"text");
+        leftChoiceText.text = " you chose right!!";
+        myArea.clear();
+        leftChoiceText.update();
+        clearInterval(myArea.interval);
+        setTimeout(function (){finishExperiment();}, 1000);
+      }
+    }
 
 
 
 
-function startTrial()
-	 {
-	  myArea.start('trial');	
-          clearInterval(myArea.interval);  
-          current_trial = current_trial + 1;
-	  countTrialText = new component("25px", "Consolas", "black", canvas_size/7, canvas_size/2,"text");
-	  countTrialText.text = 'this is trial ' + current_trial;
- 	  countTrialText.update();
-	  setTimeout(function (){finishExperiment();}, 1000);
-	 }
+  function startTrial()
+  {
+   myArea.start('trial');	
+   clearInterval(myArea.interval);  
+   currentTrial = currentTrial + 1;
+   countTrialText = new component("25px", "Consolas", "black", canvas_size/7, canvas_size/2,"text");
+   countTrialText.text = 'this is trial ' + currentTrial;
+   countTrialText.update();
+   if(currentTrial > nrTrials) 
+     {setTimeout(function (){finishExperiment();}, 1000);}
+   else
+   {
+    myArea.clear();
+    level_setup();
+    myGamePiece = new component(game_piece_size, game_piece_size, "red",piece_x , piece_y);
+    myFinishPosition = new component(game_piece_size, game_piece_size, "yellow", finish_x, finish_y);
+    myObstacles = [];
+    M = createMaze(nr_maze_rows, nr_maze_rows);
+    for ( i =0; i< nr_maze_rows; i++)
+    {
+     for ( j=0; j< nr_maze_rows; j++)
+     {
+       if (M[i][j][0] == 0) {myObstacles.push(new component (1, maze_segment_length, "green", border + j*maze_segment_length, border + i *maze_segment_length));}
+       if (M[i][j][1] == 0) {myObstacles.push(new component (maze_segment_length,1, "green", border + j*maze_segment_length, border + i *maze_segment_length));}
+       if(j == nr_maze_rows-1){
+         if (M[i][j][2] == 0) {myObstacles.push(new component (1,maze_segment_length, "green", border + (j+1)*maze_segment_length, border + i *maze_segment_length));}}
+         if(i == nr_maze_rows-1){
+           if (M[i][j][3] == 0) {myObstacles.push(new component (maze_segment_length,1, "green", border + j*maze_segment_length, border + (i+1) *maze_segment_length));}}
+         }
+       }
+    myStart =  new component(game_piece_size, arrow_height , "http://www.freeiconspng.com/uploads/up-arrow-png-29.png", start_x, start_y, "image", "http://www.freeiconspng.com/uploads/up-arrow-png-29.png");
 
 
+
+    myGamePiece.update();
+    myStart.update();
+    myFinishPosition.update();
+    for (i = 0; i < myObstacles.length; i += 1) {myObstacles[i].update();}
+    setTimeout(function (){finishExperiment();}, 1000);
+    //myArea.draw = setInterval(updateGameArea,50);
+   }
+ }
+ 
 function runExperiment()
          {
-  	  for (var i=0;i<nr_trials;i++)
-    	 	{
-      		 setDifficulty();
-      		 showChoiceScreen();
-	         playTrial();
-      		 showPostTrialQuestions();
-                }
-    	  //finishExperiment();
+          setDifficulty();
+      	  showChoiceScreen();
+	  playTrial();
+      	  showPostTrialQuestions();              
  	}
 
 function setDifficulty() {}
@@ -126,7 +246,7 @@ function showPostTrialQuestions() {}
 
 function finishExperiment() 
 	 {
-  	  myArea.clear();
+  	 myArea.clear();
 	  myArea.key = false;
 	  window.removeEventListener('keydown', function (e) {myArea.key = e.keyCode;})
 	  clearInterval(myArea.interval);
@@ -135,28 +255,57 @@ function finishExperiment()
 	  finishingText.update();
   	 }
 
-function component(width, height, color, x, y, type) {
-    this.type = type;
-    this.width = width;
-    this.height = height;
-    this.speedX = 0;
-    this.speedY = 0;
-    this.x = x;
-    this.y = y;
-    this.update = function() {
+function component(width, height, color, x, y, type,image_source) {
+      this.type = type;
+      this.width = width;
+      this.height = height;
+      this.speedX = 0;
+      this.speedY = 0;
+      this.x = x;
+      this.y = y;
+      this.orientation = 'U';
+      if (type == "image") {this.image = new Image(); this.image.src =image_source;}
+      this.update = function() 
+      {
         ctx = myArea.context;
         if (this.type == "text") {
-            ctx.font = this.width + " " + this.height;
-            ctx.fillStyle = color;
-            ctx.fillText(this.text, this.x, this.y);
-        } else {
-            ctx.fillStyle = color;
-            ctx.fillRect(this.x, this.y, this.width, this.height);
+          ctx.font = this.width + " " + this.height;
+          ctx.fillStyle = color;
+          ctx.fillText(this.text, this.x, this.y);
+        } 
+        if (type == "image") 
+        {
+          ctx.drawImage(this.image,
+            this.x,
+            this.y,
+            this.width, this.height);
         }
-    }
-
-
-}
+        else {
+          ctx.fillStyle = color;
+          ctx.fillRect(this.x, this.y, this.width, this.height);
+        }
+      }
+      this.crashWith = function(otherobj, proposed_x, proposed_y) 
+      {
+        var myleft = proposed_x;
+        var myright = myleft + (this.width);
+        var mytop = proposed_y;
+        var mybottom = mytop + (this.height);
+        var otherleft = otherobj.x;
+        var otherright = otherobj.x + (otherobj.width);
+        var othertop = otherobj.y;
+        var otherbottom = otherobj.y + (otherobj.height);
+        var crash = true;
+        if ((mybottom < othertop) || (mytop > otherbottom) || (myright < otherleft) || (myleft > otherright)) { crash = false;}
+        return crash;
+      }
+      this.crashWithMaze = function(proposed_x, proposed_y)
+      {
+        maze_crash  = false;
+        for (i = 0; i < myObstacles.length; i += 1) {if (myGamePiece.crashWith(myObstacles[i], proposed_x, proposed_y)) {maze_crash  = true;return;}}
+       return maze_crash;
+     }
+   }
 
 function showInstructions()
 	{
@@ -165,6 +314,14 @@ function showInstructions()
 	 introText.text = "Hello! Press any key to start the experiment!";
 	 introText.update();
  	}
+
+
+
+
+
+
+
+
 
 </script>
 
