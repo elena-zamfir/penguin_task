@@ -124,11 +124,10 @@ function level_setup()
      this.nextRotation  = 90;
      document.body.insertBefore(this.canvas, document.body.childNodes[0]);
      this.interval = setInterval(checkForKeyPresses, 100);
-     this.draw = setInterval(updateGameArea,50);
      myArea.key = false;
      window.addEventListener('keydown', function (e) {myArea.key = e.keyCode;})     
      window.addEventListener('keyup', function (e) {
-          myGameArea.key = false;
+          myArea.key = false;
       })
    },
    clear : function() 
@@ -137,7 +136,8 @@ function level_setup()
   },
   stop : function() {
    clearInterval(this.interval);
- },
+   clearInterval(this.draw);
+ }
 }
 
 
@@ -157,7 +157,7 @@ function checkForKeyPresses()
   startingText= new component("25px", "Consolas", "black", canvas_size/7, canvas_size/2,"text");
   startingText.text = "Exp starting!!";
   myArea.clear();
-  clearInterval(myArea.interval);
+  myArea.stop();
   startingText.update();
   setTimeout(runExperiment, 1000);
 }
@@ -165,7 +165,7 @@ if (myArea.key && myArea.expstage == 'pretrial_choice' && myArea.key == 37)
 {
  myArea.key = false;
  window.removeEventListener('keydown', function (e) {myArea.key = e.keyCode;})
- clearInterval(myArea.interval);
+ myArea.stop();
  leftChoiceText= new component("25px", "Consolas", "black", canvas_size/7, canvas_size/2,"text");
  leftChoiceText.text = " you chose left!!";
  myArea.clear();
@@ -180,7 +180,7 @@ if (myArea.key && myArea.expstage == 'pretrial_choice' && myArea.key == 39)
   leftChoiceText.text = " you chose right!!";
   myArea.clear();
   leftChoiceText.update();
-  clearInterval(myArea.interval);
+  myArea.stop();
   setTimeout(function (){finishExperiment();}, 1000);
 }
 }
@@ -220,7 +220,7 @@ if (myArea.key && myArea.expstage == 'pretrial_choice' && myArea.key == 39)
        }
     myStart =  new component(game_piece_size, arrow_height , "black", start_x, start_y, "image", "http://www.freeiconspng.com/uploads/up-arrow-png-29.png");
     myPrize = new component(0.7*canvas_size, 0.7*canvas_size, "http://smileyfaceplace.weebly.com/uploads/6/9/7/1/6971266/4692542_orig.jpg", 0.15*canvas_size, 0.15*canvas_size, "image", "http://smileyfaceplace.weebly.com/uploads/6/9/7/1/6971266/4692542_orig.jpg");
-    mySound = new sound("http://soundbible.com/grab.php?id=1003&type=mp3");
+   // mySound = new sound("http://soundbible.com/grab.php?id=1003&type=mp3");
     myArea.draw = setInterval(updateGameArea,50);
    }
  }
@@ -310,10 +310,12 @@ function updateGameArea()
   if (myGamePiece.crashWith(myFinishPosition, myGamePiece.x, myGamePiece.y))  //if goal has been reached
     {
       myArea.clear();
+      myArea.key = false;
+      window.removeEventListener('keydown', function (e) {myArea.key = e.keyCode;})
       myPrize.image.src = "http://smileyfaceplace.weebly.com/uploads/6/9/7/1/6971266/4692542_orig.jpg";
       myPrize.update();
-      mySound.play();
-      clearInterval(myArea.draw);
+      //mySound.play();
+      myArea.stop();
       setTimeout(finishExperiment, 1000);
     }
     else{
@@ -369,7 +371,7 @@ function updateGameArea()
         if (current_orientation == 'U') {myStart.image.src = "http://www.freeiconspng.com/uploads/up-arrow-png-29.png";}
         myStart.update();}
       }
-      document.getElementById("demo").innerHTML = "current frame number " + myArea.frameNo +  " next rotation  " + myArea.nextRotation;
+      //document.getElementById("demo").innerHTML = "current frame number " + myArea.frameNo +  " next rotation  " + myArea.nextRotation;
     }
 
 
@@ -430,10 +432,10 @@ function showPostTrialQuestions() {}
 
 function finishExperiment() 
 	 {
-  	 myArea.clear();
+  	myArea.clear();
+    myArea.stop();
 	  myArea.key = false;
 	  window.removeEventListener('keydown', function (e) {myArea.key = e.keyCode;})
-	  clearInterval(myArea.interval);
 	  finishingText = new component("25px", "Consolas", "black", canvas_size/7, canvas_size/2,"text");
 	  finishingText.text  = "Done!!!";
 	  finishingText.update();
