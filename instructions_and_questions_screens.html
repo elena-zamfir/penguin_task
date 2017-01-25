@@ -120,18 +120,30 @@ function level_setup()
      this.canvas.height = canvas_size;
      this.context = this.canvas.getContext("2d");
      this.expstage = expstage;
+     this.frameNo = 0;
+     this.nextRotation  = 90;
      document.body.insertBefore(this.canvas, document.body.childNodes[0]);
      this.interval = setInterval(checkForKeyPresses, 100);
+     this.draw = setInterval(updateGameArea,50);
      myArea.key = false;
      window.addEventListener('keydown', function (e) {myArea.key = e.keyCode;})     
+     window.addEventListener('keyup', function (e) {
+          myGameArea.key = false;
+      })
    },
    clear : function() 
    {
     this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
-  }
+  },
+  stop : function() {
+   clearInterval(this.interval);
+ },
 }
 
 
+
+
+ 
 
 
 
@@ -159,20 +171,19 @@ if (myArea.key && myArea.expstage == 'pretrial_choice' && myArea.key == 37)
  myArea.clear();
  leftChoiceText.update(); 	      
  setTimeout(startTrial,1000);
-  	     // setTimeout(function (){finishExperiment();}, 1000);
-       }
-       if (myArea.key && myArea.expstage == 'pretrial_choice' && myArea.key == 39)
-       {
-        myArea.key = false;
-        window.removeEventListener('keydown', function (e) {myArea.key = e.keyCode;})
-        leftChoiceText= new component("25px", "Consolas", "black", canvas_size/7, canvas_size/2,"text");
-        leftChoiceText.text = " you chose right!!";
-        myArea.clear();
-        leftChoiceText.update();
-        clearInterval(myArea.interval);
-        setTimeout(function (){finishExperiment();}, 1000);
-      }
-    }
+ }
+if (myArea.key && myArea.expstage == 'pretrial_choice' && myArea.key == 39)
+{
+  myArea.key = false;
+  window.removeEventListener('keydown', function (e) {myArea.key = e.keyCode;})
+  leftChoiceText= new component("25px", "Consolas", "black", canvas_size/7, canvas_size/2,"text");
+  leftChoiceText.text = " you chose right!!";
+  myArea.clear();
+  leftChoiceText.update();
+  clearInterval(myArea.interval);
+  setTimeout(function (){finishExperiment();}, 1000);
+}
+}
 
 
 
@@ -180,13 +191,13 @@ if (myArea.key && myArea.expstage == 'pretrial_choice' && myArea.key == 37)
   function startTrial()
   {
    myArea.start('trial');	
-   clearInterval(myArea.interval);  
+   clearInterval(myArea.interval); 
    currentTrial = currentTrial + 1;
    countTrialText = new component("25px", "Consolas", "black", canvas_size/7, canvas_size/2,"text");
    countTrialText.text = 'this is trial ' + currentTrial;
    countTrialText.update();
    if(currentTrial > nrTrials) 
-     {setTimeout(function (){finishExperiment();}, 1000);}
+     {setTimeout(function (){clearInterval(myArea.draw); finishExperiment();}, 1000);}
    else
    {
     myArea.clear();
@@ -208,18 +219,186 @@ if (myArea.key && myArea.expstage == 'pretrial_choice' && myArea.key == 37)
          }
        }
     myStart =  new component(game_piece_size, arrow_height , "black", start_x, start_y, "image", "http://www.freeiconspng.com/uploads/up-arrow-png-29.png");
-    myStart.image = new Image(); 
-    myStart.image.src ="http://www.freeiconspng.com/uploads/up-arrow-png-29.png";
-    myArea.context.drawImage(myStart.image, myStart.x, myStart.y, myStart.width, myStart.height);
-    myGamePiece.update();
-    myStart.update();
-    myFinishPosition.update();
-    for (i = 0; i < myObstacles.length; i += 1) {myObstacles[i].update();}
-    setTimeout(function (){finishExperiment();}, 1200);
-    //myArea.draw = setInterval(updateGameArea,50);
+    myPrize = new component(0.7*canvas_size, 0.7*canvas_size, "http://smileyfaceplace.weebly.com/uploads/6/9/7/1/6971266/4692542_orig.jpg", 0.15*canvas_size, 0.15*canvas_size, "image", "http://smileyfaceplace.weebly.com/uploads/6/9/7/1/6971266/4692542_orig.jpg");
+    mySound = new sound("http://soundbible.com/grab.php?id=1003&type=mp3");
+    myArea.draw = setInterval(updateGameArea,50);
    }
  }
  
+
+
+ function rotate_90_piece(obstacle) 
+ {
+  current_x = obstacle.x;
+  current_y = obstacle.y;
+  current_width = obstacle.width;
+  current_height = obstacle.height;
+  obstacle.x = canvas_size - current_y-current_height;
+  obstacle.y = current_x;
+  obstacle.width = current_height;
+  obstacle.height = current_width;
+  current_orientation = obstacle.orientation;
+  if (current_orientation == 'U') {obstacle.orientation ='R'; if(obstacle.type == "image") {obstacle.image.src = "http://www.clipartkid.com/images/853/can-t-find-the-perfect-clip-art-L30Drx-clipart.gif";}}
+  if (current_orientation == 'R') {obstacle.orientation ='D'; if(obstacle.type == "image") {obstacle.image.src = "http://pngplay.com/wp-content/uploads/2016/07/Down-Arrow-PNG.png";}}
+  if (current_orientation == 'D') {obstacle.orientation ='L'; if(obstacle.type == "image") {obstacle.image.src = "http://www.clipartkid.com/images/172/left-arrow-silhouette-uZxFVM-clipart.gif";}}
+  if (current_orientation == 'L') {obstacle.orientation ='U';if(obstacle.type == "image") {obstacle.image.src = "http://www.freeiconspng.com/uploads/up-arrow-png-29.png";}}
+ }
+
+ function rotate_90_maze()
+ {
+  for (i =0; i< myObstacles.length; i++){ rotate_90_piece(myObstacles[i]);}
+  rotate_90_piece(myGamePiece);rotate_90_piece(myFinishPosition);rotate_90_piece(myStart);
+ }
+
+ function rotate_180_piece(obstacle) 
+ {
+   current_x = obstacle.x;
+   current_y = obstacle.y;
+   current_width = obstacle.width;
+   current_height = obstacle.height;
+   obstacle.x = canvas_size - current_x-current_width;
+   obstacle.y = canvas_size - current_y-current_height;
+   current_orientation = obstacle.orientation;
+   if (current_orientation == 'U') {obstacle.orientation ='D';if(obstacle.type == "image") {obstacle.image.src = "http://pngplay.com/wp-content/uploads/2016/07/Down-Arrow-PNG.png";}}
+   if (current_orientation == 'R') {obstacle.orientation ='L';if(obstacle.type == "image") {obstacle.image.src = "http://www.clipartkid.com/images/172/left-arrow-silhouette-uZxFVM-clipart.gif";}}
+   if (current_orientation == 'D') {obstacle.orientation ='U';if(obstacle.type == "image") {obstacle.image.src = "http://www.freeiconspng.com/uploads/up-arrow-png-29.png";} }
+   if (current_orientation == 'L') {obstacle.orientation ='R';if(obstacle.type == "image") {obstacle.image.src = "http://www.clipartkid.com/images/853/can-t-find-the-perfect-clip-art-L30Drx-clipart.gif";}}
+ }
+
+ function rotate_180_maze()
+ {
+   for (i =0; i< myObstacles.length; i++){ rotate_180_piece(myObstacles[i]);}
+   rotate_180_piece(myGamePiece);
+   rotate_180_piece(myFinishPosition);
+   rotate_180_piece(myStart);
+ }
+
+ function rotate_270_piece(obstacle) 
+ {
+   current_x = obstacle.x;
+   current_y = obstacle.y;
+   current_width = obstacle.width;
+   current_height = obstacle.height;
+   obstacle.x = current_y;
+   obstacle.y = canvas_size - current_x-current_width;
+   obstacle.width = current_height;
+   obstacle.height = current_width;
+   current_orientation = obstacle.orientation;
+   if (current_orientation == 'U') {obstacle.orientation ='L';if(obstacle.type == "image") {obstacle.image.src = "http://www.clipartkid.com/images/172/left-arrow-silhouette-uZxFVM-clipart.gif";}}
+   if (current_orientation == 'R') {obstacle.orientation ='U';if(obstacle.type == "image") {obstacle.image.src = "http://www.freeiconspng.com/uploads/up-arrow-png-29.png";}}
+   if (current_orientation == 'D') {obstacle.orientation ='R';if(obstacle.type == "image") {obstacle.image.src = "http://www.clipartkid.com/images/853/can-t-find-the-perfect-clip-art-L30Drx-clipart.gif";}}
+   if (current_orientation == 'L') {obstacle.orientation ='D';if(obstacle.type == "image") {obstacle.image.src = "http://pngplay.com/wp-content/uploads/2016/07/Down-Arrow-PNG.png";}}
+ }
+
+ function rotate_270_maze()
+ {
+  for (i =0; i< myObstacles.length; i++){rotate_270_piece(myObstacles[i]);}
+  rotate_270_piece(myGamePiece); 
+  rotate_270_piece(myFinishPosition); 
+  rotate_270_piece(myStart);
+ }
+ 
+
+
+
+
+function updateGameArea() 
+{
+  if(myArea.expstage == 'trial')
+  {
+  myArea.frameNo += 1;
+  if (myGamePiece.crashWith(myFinishPosition, myGamePiece.x, myGamePiece.y))  //if goal has been reached
+    {
+      myArea.clear();
+      myPrize.image.src = "http://smileyfaceplace.weebly.com/uploads/6/9/7/1/6971266/4692542_orig.jpg";
+      myPrize.update();
+      mySound.play();
+      clearInterval(myArea.draw);
+      setTimeout(finishExperiment, 1000);
+    }
+    else{
+      myArea.clear();
+      if (myArea.frameNo ==  myArea.nextRotation) {
+        random_rot = getRndInteger(1,3);
+        if (random_rot == 1) {rotate_90_maze();}
+        if(random_rot == 2) {rotate_180_maze();}
+        if(random_rot == 3) {rotate_270_maze();}
+        myArea.nextRotation = myArea.frameNo + getRndInteger(70, 100);   }
+        for (i = 0; i < myObstacles.length; i += 1) {
+          myObstacles[i].update();
+        }
+        myGamePiece.speedX = 0;
+        myGamePiece.speedY = 0;
+        current_orientation  = myGamePiece.orientation;
+        if (current_orientation == 'U'){
+          if (myArea.key && myArea.key == 37) {myGamePiece.speedX = -speed; }
+          if (myArea.key && myArea.key == 39) {myGamePiece.speedX = speed; }
+          if (myArea.key && myArea.key == 38) {myGamePiece.speedY = -speed; }
+          if (myArea.key && myArea.key == 40) {myGamePiece.speedY = speed; }
+        }
+        if (current_orientation == 'L'){
+          if (myArea.key && myArea.key == 37) {myGamePiece.speedY = speed; }
+          if (myArea.key && myArea.key == 39) {myGamePiece.speedY = -speed; }
+          if (myArea.key && myArea.key == 38) {myGamePiece.speedX = -speed; }
+          if (myArea.key && myArea.key == 40) {myGamePiece.speedX = speed; }
+        }
+        if (current_orientation == 'R'){
+          if (myArea.key && myArea.key == 37) {myGamePiece.speedY = -speed; }
+          if (myArea.key && myArea.key == 39) {myGamePiece.speedY = speed; }
+          if (myArea.key && myArea.key == 38) {myGamePiece.speedX = speed; }
+          if (myArea.key && myArea.key == 40) {myGamePiece.speedX = -speed; }
+        }
+        if (current_orientation == 'D'){
+          if (myArea.key && myArea.key == 37) {myGamePiece.speedX = speed; }
+          if (myArea.key && myArea.key == 39) {myGamePiece.speedX = -speed; }
+          if (myArea.key && myArea.key == 38) {myGamePiece.speedY = speed; }
+          if (myArea.key && myArea.key == 40) {myGamePiece.speedY = -speed; }
+        }
+        proposed_x = myGamePiece.x + myGamePiece.speedX;
+        proposed_y = myGamePiece.y + myGamePiece.speedY;
+        test_crash = myGamePiece.crashWithMaze( proposed_x, proposed_y)
+        if (test_crash == false) {
+          myGamePiece.x += myGamePiece.speedX;
+          myGamePiece.y += myGamePiece.speedY;
+        }
+        myGamePiece.update();
+        myFinishPosition.update();
+        if (current_orientation == 'D') {myStart.image.src = "http://pngplay.com/wp-content/uploads/2016/07/Down-Arrow-PNG.png";}
+        if (current_orientation == 'L') {myStart.image.src = "http://www.clipartkid.com/images/172/left-arrow-silhouette-uZxFVM-clipart.gif";}
+        if (current_orientation == 'R') {myStart.image.src = "http://www.clipartkid.com/images/853/can-t-find-the-perfect-clip-art-L30Drx-clipart.gif";}
+        if (current_orientation == 'U') {myStart.image.src = "http://www.freeiconspng.com/uploads/up-arrow-png-29.png";}
+        myStart.update();}
+      }
+      document.getElementById("demo").innerHTML = "current frame number " + myArea.frameNo +  " next rotation  " + myArea.nextRotation;
+    }
+
+
+
+//document.getElementById("demo").innerHTML = "current frame number " + myGameArea.frameNo +  " next rotation  " + myGameArea.nextRotation;
+/*if (myGameArea.frameNo == 1000) {
+ if(trialNo == nrTrials) {clearInterval(myTrialStructure);}
+ myGameArea.clear();
+ x = Math.random();
+ y = Math.random();
+ z = Math.sqrt(-2*Math.log(x))*Math.cos(2*Math.PI*y);
+ score = Math.floor(z*sigma_score + mu_score);
+ myScore.text="TIME UP!!! Score: " + score;
+ myScore.update();
+ myGameArea.stopped = true;
+ myGameArea.intertrial_interval_left = iti;
+ myGameArea.stop();
+}    */
+
+
+
+
+
+
+
+
+
+
+
 
 
 
