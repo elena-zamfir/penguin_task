@@ -92,7 +92,8 @@ var inter_maze_interval = 25;
 var speed = 0.3*game_piece_size;
 var myGamePiece;
 var myObstacles = [];
-
+var myFinishPosition;
+var myStart;
 
 function level_setup() 
         {
@@ -300,7 +301,9 @@ if (myArea.key && myArea.expstage == 'pretrial_choice' && myArea.key == 39)
  
 
 
-
+function getRndInteger(min, max) {
+   return Math.floor(Math.random() * (max - min) ) + min;
+}
 
 function updateGameArea() 
 {
