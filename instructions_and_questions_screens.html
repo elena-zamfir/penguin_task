@@ -16,6 +16,8 @@ canvas {
 var canvas_size = 600;
 var nrTrials = 1;
 var currentTrial = 0;
+var maxLineWidth = 400;
+var heightLine = 30;
 
 
 // maze creating functions
@@ -324,7 +326,7 @@ function updateGameArea()
       myScore = new component("25px", "Consolas", "black", canvas_size/7, canvas_size/2,"text");
       myScore.text = "Your score: " + (100 - score);
       setTimeout(function(){myArea.clear(); myScore.update();}, 750);
-      setTimeout(finishExperiment, 1250);
+      setTimeout(finishExperiment, 1750);
     }
     else{
       myArea.clear();
@@ -449,6 +451,32 @@ function finishExperiment()
 	  finishingText.update();
   	 }
 
+
+
+
+ function wrapText(context, text, x, y, maxWidth, lineHeight) 
+ {
+  var words = text.split(' ');
+  var line = '';
+  for(var n = 0; n < words.length; n++) 
+  {
+    var testLine = line + words[n] + ' ';
+    var metrics = context.measureText(testLine);
+    var testWidth = metrics.width;
+    if (testWidth > maxWidth && n > 0) 
+    { 
+      context.fillText(line, x, y); //if the line with the current word is too long, then prin line without current word
+      line = words[n] + ' '; // then start new line with current work and space
+      y += lineHeight; // increase height if already printed text
+    }
+    else 
+    {
+      line = testLine;
+    }
+  }
+  context.fillText(line, x, y);
+}
+
 function component(width, height, color, x, y, type,image_source) {
       this.type = type;
       this.width = width;
@@ -463,12 +491,9 @@ function component(width, height, color, x, y, type,image_source) {
       {
         ctx = myArea.context;
         if (this.type == "text") {
-          //ctx.font = this.width + " " + this.height;
           ctx.font = " bold 23px Calibri";
-          ctx.textAlign = 'center';
-          //ctx.fillStyle = color;
-          ctx.fillStyle = 'green'
-          ctx.fillText(this.text, canvas_size/2, canvas_size/2);
+          ctx.fillStyle = 'green';
+          wrapText(ctx, this.text, 100, 100, 400, 30); //alwasy align left and start at the (border, border) corner, max line width 400 
         } 
         if (type == "image") 
         {
@@ -508,7 +533,7 @@ function showInstructions()
 	{
 	 myArea.start('starting');
 	 introText= new component("25px", "Consolas", "black", canvas_size/7, canvas_size/2, "text");
-	 introText.text = "Hello! Press any key to start the experiment!";
+	 introText.text = 'Hello! Press any key to start the experiment! This is a very long text, printed to check the text wrapping function.';
 	 introText.update();
    myStart =  new component(game_piece_size, arrow_height , "black", start_x, start_y, "image", "http://www.freeiconspng.com/uploads/up-arrow-png-29.png");
   
