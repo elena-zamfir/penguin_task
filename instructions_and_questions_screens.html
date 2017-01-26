@@ -94,6 +94,7 @@ var myGamePiece;
 var myObstacles = [];
 var myFinishPosition;
 var myStart;
+var score;
 
 function level_setup() 
         {
@@ -319,7 +320,11 @@ function updateGameArea()
       myPrize.update();
       //mySound.play();
       myArea.stop();
-      setTimeout(finishExperiment, 1000);
+      score = (myArea.frameNo * 1.0)/(nr_maze_rows * 1.0);
+      myScore = new component("25px", "Consolas", "black", canvas_size/7, canvas_size/2,"text");
+      myScore.text = "Your score: " + (100 - score);
+      setTimeout(function(){myArea.clear(); myScore.update();}, 750);
+      setTimeout(finishExperiment, 1250);
     }
     else{
       myArea.clear();
