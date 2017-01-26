@@ -158,7 +158,7 @@ function checkForKeyPresses()
  {
   myArea.key = false;
   window.removeEventListener('keydown', function (e) {myArea.key = e.keyCode;})
-  startingText= new component("25px", "Consolas", "black", canvas_size/7, canvas_size/2,"text");
+  startingText= new component("25px", "Consolas", "black", 100, 100,"text");
   startingText.text = "Exp starting!!";
   myArea.clear();
   myArea.stop();
@@ -170,7 +170,7 @@ if (myArea.key && myArea.expstage == 'pretrial_choice' && myArea.key == 37)
  myArea.key = false;
  window.removeEventListener('keydown', function (e) {myArea.key = e.keyCode;})
  myArea.stop();
- leftChoiceText= new component("25px", "Consolas", "black", canvas_size/7, canvas_size/2,"text");
+ leftChoiceText= new component("25px", "Consolas", "black", 100, 100,"text");
  leftChoiceText.text = " you chose left!!";
  myArea.clear();
  leftChoiceText.update(); 	      
@@ -180,7 +180,7 @@ if (myArea.key && myArea.expstage == 'pretrial_choice' && myArea.key == 39)
 {
   myArea.key = false;
   window.removeEventListener('keydown', function (e) {myArea.key = e.keyCode;})
-  leftChoiceText= new component("25px", "Consolas", "black", canvas_size/7, canvas_size/2,"text");
+  leftChoiceText= new component("25px", "Consolas", "black", 100, 100,"text");
   leftChoiceText.text = " you chose right!!";
   myArea.clear();
   leftChoiceText.update();
@@ -197,7 +197,7 @@ if (myArea.key && myArea.expstage == 'pretrial_choice' && myArea.key == 39)
    myArea.start('trial');	
    clearInterval(myArea.interval); 
    currentTrial = currentTrial + 1;
-   countTrialText = new component("25px", "Consolas", "black", canvas_size/7, canvas_size/2,"text");
+   countTrialText = new component("25px", "Consolas", "black", 100, 100,"text");
    countTrialText.text = 'this is trial ' + currentTrial;
    countTrialText.update();
    if(currentTrial > nrTrials) 
@@ -323,7 +323,7 @@ function updateGameArea()
       //mySound.play();
       myArea.stop();
       score = (myArea.frameNo * 1.0)/(nr_maze_rows * 1.0);
-      myScore = new component("25px", "Consolas", "black", canvas_size/7, canvas_size/2,"text");
+      myScore = new component("25px", "Consolas", "black", 100, 100,"text");
       myScore.text = "Your score: " + (100 - score);
       setTimeout(function(){myArea.clear(); myScore.update();}, 750);
       setTimeout(finishTrial,1750);
@@ -435,7 +435,7 @@ function setDifficulty() {}
 function showChoiceScreen()
          {
     	  myArea.start('pretrial_choice');
-  	  myChoiceText  = new component("25px", "Consolas", "black", canvas_size/7, canvas_size/2,"text");
+  	  myChoiceText  = new component("25px", "Consolas", "black", 100, 100,"text");
   	  myChoiceText.text = "Press Left arrow for left and Right arrow for right";
   	  myChoiceText.update();
          }
@@ -444,9 +444,18 @@ function showChoiceScreen()
 function showPostTrialDifficultyScreen()
          {
         myArea.start('posttrial_choice');
-      myChoiceText  = new component("25px", "Consolas", "black", canvas_size/7, canvas_size/2,"text");
-      myChoiceText.text = "How would you rate the difficulty of this trial on a scale from 0 to 100?";
-      myChoiceText.update();
+      difficultyQuestion  = new component("25px", "Consolas", "black", 100, 100,"text");
+      difficultyQuestion.text = "How would you rate the difficulty of this trial on a scale from 0 to 100?";
+      difficultyQuestion.update();
+      slideBar = new component( 400, 25, "black", 100, 250);
+      slideBar.update();
+      easyExtreme = new component("25px", "Consolas", "black", 65, 295,"text");
+      easyExtreme.text = 'very easy';
+      easyExtreme.update();
+      difficultExtreme = new component("25px", "Consolas", "black", 440, 295,"text");
+      difficultExtreme.text = 'very difficult';
+      difficultExtreme.update();
+
          }
 
 
@@ -459,7 +468,7 @@ function finishExperiment()
     myArea.stop();
 	  myArea.key = false;
 	  window.removeEventListener('keydown', function (e) {myArea.key = e.keyCode;})
-	  finishingText = new component("25px", "Consolas", "black", canvas_size/7, canvas_size/2,"text");
+	  finishingText = new component("25px", "Consolas", "black", 100, 100,"text");
 	  finishingText.text  = "Done!!!";
 	  finishingText.update();
   	 }
@@ -506,7 +515,7 @@ function component(width, height, color, x, y, type,image_source) {
         if (this.type == "text") {
           ctx.font = " bold 23px Calibri";
           ctx.fillStyle = 'green';
-          wrapText(ctx, this.text, 100, 100, 400, 30); //alwasy align left and start at the (border, border) corner, max line width 400 
+          wrapText(ctx, this.text, this.x, this.y, 400, 30); //alwasy align left and start at the (border, border) corner, max line width 400 
         } 
         if (type == "image") 
         {
@@ -545,7 +554,7 @@ function component(width, height, color, x, y, type,image_source) {
 function showInstructions()
 	{
 	 myArea.start('starting');
-	 introText= new component("25px", "Consolas", "black", canvas_size/7, canvas_size/2, "text");
+	 introText= new component("25px", "Consolas", "black", 100, 100, "text");
 	 introText.text = 'Hello! Press any key to start the experiment! This is a very long text, printed to check the text wrapping function.';
 	 introText.update();
    myStart =  new component(game_piece_size, arrow_height , "black", start_x, start_y, "image", "http://www.freeiconspng.com/uploads/up-arrow-png-29.png");
