@@ -326,7 +326,9 @@ function updateGameArea()
       myScore = new component("25px", "Consolas", "black", canvas_size/7, canvas_size/2,"text");
       myScore.text = "Your score: " + (100 - score);
       setTimeout(function(){myArea.clear(); myScore.update();}, 750);
-      setTimeout(finishExperiment, 1750);
+      setTimeout(finishTrial,1750);
+      setTimeout(showPostTrialDifficultyScreen, 1751);
+      //setTimeout(finishExperiment, 1750);
     }
     else{
       myArea.clear();
@@ -413,8 +415,12 @@ function updateGameArea()
 
 
 
-
-
+ function finishTrial(){
+  myArea.clear();
+  myArea.stop();
+  myArea.key = false;
+  window.removeEventListener('keydown', function (e) {myArea.key = e.keyCode;})
+ }
 
 function runExperiment()
          {
@@ -435,6 +441,13 @@ function showChoiceScreen()
          }
 
 
+function showPostTrialDifficultyScreen()
+         {
+        myArea.start('posttrial_choice');
+      myChoiceText  = new component("25px", "Consolas", "black", canvas_size/7, canvas_size/2,"text");
+      myChoiceText.text = "How would you rate the difficulty of this trial on a scale from 0 to 100?";
+      myChoiceText.update();
+         }
 
 
 function playTrial() {}
