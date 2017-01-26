@@ -463,9 +463,12 @@ function component(width, height, color, x, y, type,image_source) {
       {
         ctx = myArea.context;
         if (this.type == "text") {
-          ctx.font = this.width + " " + this.height;
-          ctx.fillStyle = color;
-          ctx.fillText(this.text, this.x, this.y);
+          //ctx.font = this.width + " " + this.height;
+          ctx.font = " bold 23px Calibri";
+          ctx.textAlign = 'center';
+          //ctx.fillStyle = color;
+          ctx.fillStyle = 'green'
+          ctx.fillText(this.text, canvas_size/2, canvas_size/2);
         } 
         if (type == "image") 
         {
