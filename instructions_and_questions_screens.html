@@ -554,24 +554,80 @@ myArea.start('posttrial_surprise');
 surpriseQuestion = new component("25px", "Consolas", "black", 100, 100,"text");
 surpriseQuestion.text = "Were you surprised by the score you got on this trial? Was it lower or higher that what you expected?";
 surpriseQuestion.update();
-lowerSurpriseButton = new component( 25, 25, "red", 100, 238);
+lowerSurpriseButton = new component( 25, 25, "black", 100, 238);
 lowerSurpriseButton.update();
 lowerSurpriseText = new component("25px", "Consolas", "black", 85, 285,"text");
 lowerSurpriseText.text = "lower";
 lowerSurpriseText.update();
-noSurpriseButton = new component( 25, 25, "red", 295, 238);
+noSurpriseButton = new component( 25, 25, "black", 295, 238);
 noSurpriseButton.update();
 higherSurpriseText = new component("25px", "Consolas", "black", 475, 285,"text");
 higherSurpriseText.text = "higher";
 higherSurpriseText.update();
-higherSurpriseButton = new component( 25, 25, "red", 490, 238);
+higherSurpriseButton = new component( 25, 25, "black", 490, 238);
 higherSurpriseButton.update();
 noSurpriseText = new component("25px", "Consolas", "black", 245, 285,"text");
 noSurpriseText.text = "not surprised";
 noSurpriseText.update();
-
-
+myArea.canvas.addEventListener("mousedown", selectSurprise, false);
  }
+
+var lowerSurpriseButton;
+var higherSurpriseButton;
+var noSurpriseButton;
+var mouseX2;
+var mouseY2;
+var surpriseResponse;
+function selectSurprise(evt) {
+  theCanvas = myArea.canvas;
+    //getting mouse position correctly, being mindful of resizing that may have occured in the browser:
+    var bRect = theCanvas.getBoundingClientRect();
+    mouseX2 = (evt.clientX - bRect.left)*(theCanvas.width/bRect.width);
+    mouseY2 = (evt.clientY - bRect.top)*(theCanvas.height/bRect.height);
+    if  (mouseX2 > lowerSurpriseButton.x && mouseX2 < (lowerSurpriseButton.x + lowerSurpriseButton.width) &&  mouseY2 > lowerSurpriseButton.y && mouseY2 < (lowerSurpriseButton.y + lowerSurpriseButton.height)) 
+    {
+      myArea.canvas.removeEventListener("mousedown", selectSurprise, false);
+      lowerSurpriseButton.color = "red";
+      lowerSurpriseButton.update();
+      surpriseResponse = -1;
+      setTimeout(finishExperiment, 800);       
+  }
+ if  (mouseX2 > noSurpriseButton.x && mouseX2 < (noSurpriseButton.x + noSurpriseButton.width) &&  mouseY2 > noSurpriseButton.y && mouseY2 < (noSurpriseButton.y + noSurpriseButton.height)) 
+    {
+      myArea.canvas.removeEventListener("mousedown", selectSurprise, false);
+      noSurpriseButton.color = "red";
+      noSurpriseButton.update();
+      surpriseResponse = 0;
+      setTimeout(finishExperiment, 800);       
+  }
+   if  (mouseX2 > higherSurpriseButton.x && mouseX2 < (higherSurpriseButton.x + higherSurpriseButton.width) &&  mouseY2 > higherSurpriseButton.y && mouseY2 < (higherSurpriseButton.y + higherSurpriseButton.height)) 
+    {
+      myArea.canvas.removeEventListener("mousedown", selectSurprise, false);
+      higherSurpriseButton.color = "red";
+      higherSurpriseButton.update();
+      surpriseResponse = 1;
+      setTimeout(finishExperiment, 800);       
+  }
+
+    //code below prevents the mouse down from having an effect on the main browser window:
+    if (evt.preventDefault) {
+      evt.preventDefault();
+    } //standard
+    else if (evt.returnValue) {
+      evt.returnValue = false;
+    } //older IE
+    return false;
+  }
+
+
+
+
+
+
+
+
+
+
 
 function playTrial() {}
 function showPostTrialQuestions() {}
@@ -619,6 +675,7 @@ function component(width, height, color, x, y, type,image_source) {
       this.height = height;
       this.speedX = 0;
       this.speedY = 0;
+      this.color = color;
       this.x = x;
       this.y = y;
       this.orientation = 'U';
@@ -639,7 +696,7 @@ function component(width, height, color, x, y, type,image_source) {
             this.width, this.height);
         }
         else {
-          ctx.fillStyle = color;
+          ctx.fillStyle = this.color;
           ctx.fillRect(this.x, this.y, this.width, this.height);
         }
       }
