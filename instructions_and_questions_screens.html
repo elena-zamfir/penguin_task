@@ -253,9 +253,12 @@ function mouseMoveListener(evt) {
     //posX = (posX < minX) ? minX : ((posX > maxX) ? maxX : posX);
     posY = mouseY - dragHoldY;
     //posY = (posY < minY) ? minY : ((posY > maxY) ? maxY : posY);
-     slider.clear();
+     myArea.clear();
     slider.x = posX;
     slider.y = posY;
+    difficultyQuestion.update();
+    easyExtreme.update();
+    difficultExtreme.update();
    slideBar.update();
     slider.update();
   } 
@@ -511,6 +514,9 @@ function showChoiceScreen()
          }
 var slider;
 var slideBar;
+var difficultyQuestion;
+var easyExtreme;
+var difficultExtreme;
 
 function showPostTrialDifficultyScreen()
          {
