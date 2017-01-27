@@ -552,8 +552,20 @@ function showPostTrialSurpriseScreen()
  {
 myArea.start('posttrial_surprise');
 surpriseQuestion = new component("25px", "Consolas", "black", 100, 100,"text");
-surpriseQuestion.text = "Were you surprised by the score you got on this trial?";
+surpriseQuestion.text = "Were you surprised by the score you got on this trial? Was it lower or higher that what you expected?";
 surpriseQuestion.update();
+lowerSurpriseButton = new component( 25, 25, "red", 100, 238);
+lowerSurpriseButton.update();
+lowerSurpriseText = new component("25px", "Consolas", "black", 85, 285,"text");
+lowerSurpriseText.text = "lower";
+lowerSurpriseText.update();
+higherSurpriseButton = new component( 25, 25, "red", 295, 238);
+higherSurpriseButton.update();
+noSurpriseButton = new component( 25, 25, "red", 490, 238);
+noSurpriseButton.update();
+
+
+
  }
 
 function playTrial() {}
