@@ -249,12 +249,15 @@ function mouseMoveListener(evt) {
     mouseY = (evt.clientY - bRect.top)*(theCanvas.height/bRect.height);
     
     //clamp x and y positions to prevent object from dragging outside of canvas
+
     posX = mouseX - dragHoldX;
+
     //posX = (posX < minX) ? minX : ((posX > maxX) ? maxX : posX);
-    posY = mouseY - dragHoldY;
+    //posY = mouseY - dragHoldY;
     //posY = (posY < minY) ? minY : ((posY > maxY) ? maxY : posY);
      myArea.clear();
-    slider.x = posX;
+    if(posX > 99 && posX < 500)
+    {slider.x = posX;}
     //slider.y = posY;
     difficultyQuestion.update();
     easyExtreme.update();
