@@ -10,7 +10,7 @@ canvas {
 </style>
 </head>
 <body onload="showInstructions()">
-
+<p id="demo"></p>
 <script>
 
 var canvas_size = 600;
@@ -223,6 +223,9 @@ function mouseDownListener(evt) {
     return false;
   }
 
+  var current_difficulty_estimate;
+
+
 function mouseUpListener(evt) 
 {
   theCanvas = myArea.canvas;
@@ -232,7 +235,9 @@ function mouseUpListener(evt)
     dragging = false;
     window.removeEventListener("mousemove", mouseMoveListener, false);
     theCanvas.removeEventListener("mousedown", mouseDownListener, false);
-    setTimeout(finishExperiment,750);
+    current_difficulty_estimate  = (slider.x-100.0)/4.;
+    //document.getElementById("demo").innerHTML = current_difficulty_estimate;
+    setTimeout(finishExperiment,1000);
   }
 }
 function mouseMoveListener(evt) {
@@ -258,7 +263,7 @@ function mouseMoveListener(evt) {
     //posY = mouseY - dragHoldY;
     //posY = (posY < minY) ? minY : ((posY > maxY) ? maxY : posY);
      myArea.clear();
-    if(posX > 99 && posX < 499)
+    if(posX > 100 && posX < 499)
     {slider.x = posX;}
     //slider.y = posY;
     difficultyQuestion.update();
