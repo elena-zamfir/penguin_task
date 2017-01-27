@@ -231,6 +231,8 @@ function mouseUpListener(evt)
   if (dragging) {
     dragging = false;
     window.removeEventListener("mousemove", mouseMoveListener, false);
+    theCanvas.removeEventListener("mousedown", mouseDownListener, false);
+    setTimeout(finishExperiment,750);
   }
 }
 function mouseMoveListener(evt) {
