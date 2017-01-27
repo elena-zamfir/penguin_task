@@ -237,7 +237,8 @@ function mouseUpListener(evt)
     theCanvas.removeEventListener("mousedown", mouseDownListener, false);
     current_difficulty_estimate  = (slider.x-100.0)/4.;
     //document.getElementById("demo").innerHTML = current_difficulty_estimate;
-    setTimeout(finishExperiment,1000);
+    //setTimeout(finishExperiment,1000);
+    setTimeout(function(){myArea.stop(); myArea.clear();showPostTrialSurpriseScreen();}, 1000);
   }
 }
 function mouseMoveListener(evt) {
@@ -547,7 +548,13 @@ function showPostTrialDifficultyScreen()
        myArea.canvas.addEventListener("mousedown", mouseDownListener, false);
 
          }
-
+function showPostTrialSurpriseScreen()
+ {
+myArea.start('posttrial_surprise');
+surpriseQuestion = new component("25px", "Consolas", "black", 100, 100,"text");
+surpriseQuestion.text = "Were you surprised by the score you got on this trial?";
+surpriseQuestion.update();
+ }
 
 function playTrial() {}
 function showPostTrialQuestions() {}
