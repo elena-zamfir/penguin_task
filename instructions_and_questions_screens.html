@@ -156,7 +156,7 @@ function level_setup()
 var current_decision;
 var current_reward; 
 var current_bonus_available = 200;
-var current_random_option;
+var current_random_option = 70;
 
 
 function checkForKeyPresses()
@@ -165,7 +165,7 @@ function checkForKeyPresses()
  {
   myArea.key = false;
   window.removeEventListener('keydown', function (e) {myArea.key = e.keyCode;})
-  startingText= new component("25px", "Consolas", "green", 100, 100,"text");
+  startingText= new component("25px", "Consolas", "green", 100, 100,400,"text");
   startingText.text = "Exp starting!!";
   myArea.clear();
   myArea.stop();
@@ -178,7 +178,7 @@ if (myArea.key && myArea.expstage == 'pretrial_choice' && myArea.key == 37)
  window.removeEventListener('keydown', function (e) {myArea.key = e.keyCode;})
  myArea.stop();
  current_decision = 'self';
- leftChoiceText= new component("25px", "Consolas", "green", 100, 100,"text");
+ leftChoiceText= new component("25px", "Consolas", "green", 100, 100,400,"text");
  leftChoiceText.text = " you chose left!!";
  myArea.clear();
  leftChoiceText.update(); 	      
@@ -190,7 +190,7 @@ if (myArea.key && myArea.expstage == 'pretrial_choice' && myArea.key == 39)
   window.removeEventListener('keydown', function (e) {myArea.key = e.keyCode;})
   myArea.stop();
   current_decision = 'random';
-  leftChoiceText= new component("25px", "Consolas", "green", 100, 100,"text");
+  leftChoiceText= new component("25px", "Consolas", "green", 100, 100,400,"text");
   leftChoiceText.text = " you chose right!!";
   myArea.clear();
   leftChoiceText.update();
@@ -287,7 +287,7 @@ function hitTest(mx,my)
    myArea.start('trial');	
    clearInterval(myArea.interval); 
    currentTrial = currentTrial + 1;
-   countTrialText = new component("25px", "Consolas", "green", 100, 100,"text");
+   countTrialText = new component("25px", "Consolas", "green", 100, 100,400,"text");
    countTrialText.text = 'this is trial ' + currentTrial;
    countTrialText.update();
    if(currentTrial > nrTrials) 
@@ -312,8 +312,8 @@ function hitTest(mx,my)
            if (M[i][j][3] == 0) {myObstacles.push(new component (maze_segment_length,1, "green", border + j*maze_segment_length, border + (i+1) *maze_segment_length));}}
          }
        }
-    myStart =  new component(game_piece_size, arrow_height , "black", start_x, start_y, "image", "http://www.freeiconspng.com/uploads/up-arrow-png-29.png");
-    myPrize = new component(0.7*canvas_size, 0.7*canvas_size, "http://smileyfaceplace.weebly.com/uploads/6/9/7/1/6971266/4692542_orig.jpg", 0.15*canvas_size, 0.15*canvas_size, "image", "http://smileyfaceplace.weebly.com/uploads/6/9/7/1/6971266/4692542_orig.jpg");
+    myStart =  new component(game_piece_size, arrow_height , "black", start_x, start_y,400, "image", "http://www.freeiconspng.com/uploads/up-arrow-png-29.png");
+    myPrize = new component(0.7*canvas_size, 0.7*canvas_size, "http://smileyfaceplace.weebly.com/uploads/6/9/7/1/6971266/4692542_orig.jpg", 0.15*canvas_size, 0.15*canvas_size, 400,"image", "http://smileyfaceplace.weebly.com/uploads/6/9/7/1/6971266/4692542_orig.jpg");
    // mySound = new sound("http://soundbible.com/grab.php?id=1003&type=mp3");
     myArea.draw = setInterval(updateGameArea,50);
    }
@@ -413,7 +413,7 @@ function updateGameArea()
       //mySound.play();
       myArea.stop();
       score = (myArea.frameNo * 1.0)/(nr_maze_rows * 1.0);
-      myScore = new component("25px", "Consolas", "green", 100, 100,"text");
+      myScore = new component("25px", "Consolas", "green", 100, 100,400,"text");
       myScore.text = "Your score: " + (100 - score);
       setTimeout(function(){myArea.clear(); myScore.update();}, 750);
       setTimeout(finishTrial,1750);
@@ -525,19 +525,19 @@ function setDifficulty() {}
 function showChoiceScreen()
          {
     	  myArea.start('pretrial_choice');
-  	  myChoiceText  = new component("25px", "Consolas", "green", 100, 100,"text");
+  	  myChoiceText  = new component("25px", "Consolas", "green", 100, 100, 400,"text");
   	  myChoiceText.text = "Bonus: " 
-      myBonusText = new component("25px", "Consolas", "red", 300, 100,"text");
+      myBonusText = new component("25px", "Consolas", "red", 300, 100,400,"text");
       myBonusText.text = " "+ current_bonus_available;
       myBonusText.update();
   	  myChoiceText.update();
-      myChoiceText  = new component("25px", "Consolas", "green", 100, 200,"text");
+      myChoiceText  = new component("25px", "Consolas", "green", 100, 200,400,"text");
       myChoiceText.text = "Win based on:";
       myChoiceText.update();
-      ownPerformanceOption = new component("25px", "Consolas", "green", 80, 350,"text");
+      ownPerformanceOption = new component("25px", "Consolas", "green", 80, 350, 100,"text");
       ownPerformanceOption.text = "your performance";
       ownPerformanceOption.update();
-      randomOption = new component("25px", "Consolas", "green", 460, 350,"text");
+      randomOption = new component("25px", "Consolas", "green", 460, 350,100,"text");
       randomOption.text = "draw from top " + current_random_option + " % scores";
       randomOption.update();
       }
@@ -550,15 +550,15 @@ var difficultExtreme;
 function showPostTrialDifficultyScreen()
          {
         myArea.start('posttrial_choice');
-      difficultyQuestion  = new component("25px", "Consolas", "green", 100, 100,"text");
+      difficultyQuestion  = new component("25px", "Consolas", "green", 100, 100, 400,"text");
       difficultyQuestion.text = "How would you rate the difficulty of this trial on a scale from 0 to 100?";
       difficultyQuestion.update();
       slideBar = new component( 400, 25, "black", 100, 250);
       slideBar.update();
-      easyExtreme = new component("25px", "Consolas", "green", 65, 295,"text");
+      easyExtreme = new component("25px", "Consolas", "green", 65, 295,400,"text");
       easyExtreme.text = 'very easy';
       easyExtreme.update();
-      difficultExtreme = new component("25px", "Consolas", "green", 440, 295,"text");
+      difficultExtreme = new component("25px", "Consolas", "green", 440, 295,400,"text");
       difficultExtreme.text = 'very difficult';
       difficultExtreme.update();
       slider = new component( 10, 50, "red", 295, 238);
@@ -569,22 +569,22 @@ function showPostTrialDifficultyScreen()
 function showPostTrialSurpriseScreen()
  {
 myArea.start('posttrial_surprise');
-surpriseQuestion = new component("25px", "Consolas", "green", 100, 100,"text");
+surpriseQuestion = new component("25px", "Consolas", "green", 100, 100, 400,"text");
 surpriseQuestion.text = "Were you surprised by the score you got on this trial? Was it lower or higher that what you expected?";
 surpriseQuestion.update();
 lowerSurpriseButton = new component( 25, 25, "black", 100, 238);
 lowerSurpriseButton.update();
-lowerSurpriseText = new component("25px", "Consolas", "green", 85, 285,"text");
+lowerSurpriseText = new component("25px", "Consolas", "green", 85, 285,400,"text");
 lowerSurpriseText.text = "lower";
 lowerSurpriseText.update();
 noSurpriseButton = new component( 25, 25, "black", 295, 238);
 noSurpriseButton.update();
-higherSurpriseText = new component("25px", "Consolas", "green", 475, 285,"text");
+higherSurpriseText = new component("25px", "Consolas", "green", 475, 285,400,"text");
 higherSurpriseText.text = "higher";
 higherSurpriseText.update();
 higherSurpriseButton = new component( 25, 25, "black", 490, 238);
 higherSurpriseButton.update();
-noSurpriseText = new component("25px", "Consolas", "green", 245, 285,"text");
+noSurpriseText = new component("25px", "Consolas", "green", 245, 285,400,"text");
 noSurpriseText.text = "not surprised";
 noSurpriseText.update();
 myArea.canvas.addEventListener("mousedown", selectSurprise, false);
@@ -642,11 +642,6 @@ function selectSurprise(evt) {
 
 
 
-
-
-
-
-
 function playTrial() {}
 function showPostTrialQuestions() {}
 
@@ -656,7 +651,7 @@ function finishExperiment()
     myArea.stop();
 	  myArea.key = false;
 	  window.removeEventListener('keydown', function (e) {myArea.key = e.keyCode;})
-	  finishingText = new component("25px", "Consolas", "green", 100, 100,"text");
+	  finishingText = new component("25px", "Consolas", "green", 100, 100,400,"text");
 	  finishingText.text  = "Done!!!";
 	  finishingText.update();
   	 }
@@ -687,10 +682,11 @@ function finishExperiment()
   context.fillText(line, x, y);
 }
 
-function component(width, height, color, x, y, type,image_source) {
+function component(width, height, color, x, y, maxLengthText, type,image_source) {
       this.type = type;
       this.width = width;
       this.height = height;
+      this.maxWidth = maxLengthText;
       this.speedX = 0;
       this.speedY = 0;
       this.color = color;
@@ -704,7 +700,7 @@ function component(width, height, color, x, y, type,image_source) {
         if (this.type == "text") {
           ctx.font = " bold 23px Calibri";
           ctx.fillStyle = this.color;
-          wrapText(ctx, this.text, this.x, this.y, 400, 30); //alwasy align left and start at the (border, border) corner, max line width 400 
+          wrapText(ctx, this.text, this.x, this.y, this.maxWidth, 30); //  max line width 400 
         } 
         if (this.type == "image") 
         {
@@ -747,7 +743,7 @@ function component(width, height, color, x, y, type,image_source) {
 function showInstructions()
 	{
 	 myArea.start('starting');
-	 introText= new component("25px", "Consolas", "green", 100, 100, "text");
+	 introText= new component("25px", "Consolas", "green", 100, 100, 400, "text");
 	 introText.text = 'Hello! Press any key to start the experiment! This is a very long text, printed to check the text wrapping function.';
 	 introText.update();
    myStart =  new component(game_piece_size, arrow_height , "black", start_x, start_y, "image", "http://www.freeiconspng.com/uploads/up-arrow-png-29.png");
