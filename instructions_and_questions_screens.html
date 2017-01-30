@@ -537,9 +537,13 @@ function showChoiceScreen()
       ownPerformanceOption = new component("25px", "Consolas", "green", 80, 350, 100,"text");
       ownPerformanceOption.text = "your performance";
       ownPerformanceOption.update();
-      randomOption = new component("25px", "Consolas", "green", 460, 350,100,"text");
+      randomOption = new component("25px", "Consolas", "green", 380, 350,100,"text");
       randomOption.text = "draw from top " + current_random_option + " % scores";
       randomOption.update();
+      ownPerformanceButton = new component( 25, 25, "black", 80, 300); 
+      ownPerformanceButton.update();
+      randomPerformanceButton = new component( 25, 25, "black", 390, 300); 
+      randomPerformanceButton.update();
       }
 var slider;
 var slideBar;
