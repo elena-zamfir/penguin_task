@@ -544,6 +544,7 @@ function showChoiceScreen()
       ownPerformanceButton.update();
       randomPerformanceButton = new component( 25, 25, "black", 390, 300); 
       randomPerformanceButton.update();
+      myArea.canvas.addEventListener("mousedown", selectRewardDependence, false);
       }
 var slider;
 var slideBar;
@@ -641,8 +642,42 @@ function selectSurprise(evt) {
     return false;
   }
 
+var mouseX3;
+var mouseY3; 
 
+function selectRewardDependence(evt){
+  theCanvas = myArea.canvas;
+    //getting mouse position correctly, being mindful of resizing that may have occured in the browser:
+    var bRect = theCanvas.getBoundingClientRect();
+    mouseX3 = (evt.clientX - bRect.left)*(theCanvas.width/bRect.width);
+    mouseY3 = (evt.clientY - bRect.top)*(theCanvas.height/bRect.height);
+    if  (mouseX3 > ownPerformanceButton.x && mouseX3 < (ownPerformanceButton.x + ownPerformanceButton.width) &&  mouseY3 > ownPerformanceButton.y && mouseY3 < (ownPerformanceButton.y + ownPerformanceButton.height)) 
+    {
+      myArea.canvas.removeEventListener("mousedown", selectRewardDependence , false);
+      selectRewardDependence.color = "red";
+      selectRewardDependence.update();
+      current_decision = 'self';
+      setTimeout(finishExperiment, 800);       
+  }
+ 
+   if  (mouseX3 > randomPerformanceButton.x && mouseX3 < (randomPerformanceButton.x + randomPerformanceButton.width) &&  mouseY3 > randomPerformanceButton.y && mouseY3 < (randomPerformanceButton.y + randomPerformanceButton.height)) 
+    {
+      myArea.canvas.removeEventListener("mousedown", selectRewardDependence , false);
+      randomPerformanceButton.color = "red";
+      randomPerformanceButton.update();
+      surpriseResponse = 'random';
+      setTimeout(finishExperiment, 800);       
+  }
 
+    //code below prevents the mouse down from having an effect on the main browser window:
+    if (evt.preventDefault) {
+      evt.preventDefault();
+    } //standard
+    else if (evt.returnValue) {
+      evt.returnValue = false;
+    } //older IE
+    return false;
+}
 
 
 
