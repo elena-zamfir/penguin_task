@@ -560,6 +560,7 @@ var difficultExtreme;
 function showPostTrialDifficultyScreen()
          {
         myArea.start('posttrial_choice');
+         myArea.canvas.style.cursor = "auto"; //make mouse reappear
       difficultyQuestion  = new component("25px", "Consolas", "green", 100, 100, 400,"text");
       difficultyQuestion.text = "How would you rate the difficulty of this trial on a scale from 0 to 100?";
       difficultyQuestion.update();
@@ -662,7 +663,8 @@ function selectRewardDependence(evt){
       ownPerformanceButton.color = "red";
       ownPerformanceButton.update();
       current_decision = 'self';
-      //setTimeout(finishExperiment, 800);       
+      //setTimeout(finishExperiment, 800);  
+      myArea.canvas.style.cursor = "none"; //hide mouse cursor     
       setTimeout(startTrial, 800);       
   }
  
@@ -672,7 +674,8 @@ function selectRewardDependence(evt){
       randomPerformanceButton.color = "red";
       randomPerformanceButton.update();
       surpriseResponse = 'random';
-      //setTimeout(finishExperiment, 800);       
+      //setTimeout(finishExperiment, 800); 
+      myArea.canvas.style.cursor = "none"; //hide mouse cursor       
       setTimeout(startTrial, 800);
   }
 
