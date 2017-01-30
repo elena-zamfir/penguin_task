@@ -82,7 +82,7 @@ function createMaze(rows, columns)
 var border_to_maze_segment_ratio = 1.5;
 var mu_score = 75;
 var sigma_score = 10;
-var nr_maze_rows = 5;
+var nr_maze_rows = 7;
 var maze_segment_length = Math.floor(canvas_size/(nr_maze_rows + 2*border_to_maze_segment_ratio));
 var border = border_to_maze_segment_ratio*maze_segment_length;
 var mySound;
@@ -415,7 +415,7 @@ function updateGameArea()
       myArea.stop();
       score = (myArea.frameNo * 1.0)/(nr_maze_rows * 1.0);
       myScore = new component("25px", "Consolas", "green", 100, 100,400,"text");
-      myScore.text = "Your score: " + (100 - score);
+      myScore.text = "Your score: " + parseFloat((1000 - score)/10).toFixed(2);;
       setTimeout(function(){myArea.clear(); myScore.update();}, 750);
       setTimeout(finishTrial,1750);
       setTimeout(showPostTrialDifficultyScreen, 1751);
