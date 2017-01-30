@@ -172,6 +172,7 @@ function checkForKeyPresses()
   startingText.update();
   setTimeout(runExperiment, 1000);
 }
+
 if (myArea.key && myArea.expstage == 'pretrial_choice' && myArea.key == 37)
 {
  myArea.key = false;
@@ -522,6 +523,10 @@ function runExperiment()
 
 function setDifficulty() {}
 
+
+var ownPerformanceButton;
+var randomPerformanceButton;
+
 function showChoiceScreen()
          {
     	  myArea.start('pretrial_choice');
@@ -654,10 +659,11 @@ function selectRewardDependence(evt){
     if  (mouseX3 > ownPerformanceButton.x && mouseX3 < (ownPerformanceButton.x + ownPerformanceButton.width) &&  mouseY3 > ownPerformanceButton.y && mouseY3 < (ownPerformanceButton.y + ownPerformanceButton.height)) 
     {
       myArea.canvas.removeEventListener("mousedown", selectRewardDependence , false);
-      selectRewardDependence.color = "red";
-      selectRewardDependence.update();
+      ownPerformanceButton.color = "red";
+      ownPerformanceButton.update();
       current_decision = 'self';
-      setTimeout(finishExperiment, 800);       
+      //setTimeout(finishExperiment, 800);       
+      setTimeout(startTrial, 800);       
   }
  
    if  (mouseX3 > randomPerformanceButton.x && mouseX3 < (randomPerformanceButton.x + randomPerformanceButton.width) &&  mouseY3 > randomPerformanceButton.y && mouseY3 < (randomPerformanceButton.y + randomPerformanceButton.height)) 
