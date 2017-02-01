@@ -491,6 +491,8 @@ function updateGameArea()
           myGamePiece.x += myGamePiece.speedX;
           myGamePiece.y += myGamePiece.speedY;
         }
+        allXs.push(myGamePiece.x);
+        allYs.push(myGamePiece.y);
         myGamePiece.update();
         myFinishPosition.update();
         if (current_orientation == 'D') {myStart.image.src = "http://pngplay.com/wp-content/uploads/2016/07/Down-Arrow-PNG.png";}
@@ -730,7 +732,9 @@ function saveData()
     data_to_be_saved = {"allChoices": allChoices,"allDifficultyChoices": allDifficultyChoices, "allSurpriseResponses": allSurpriseResponses,
     "allSubjectScores": allSubjectScores, "allRewards": allRewards,
     "current_maze": current_maze, "nr_maze_rows": nr_maze_rows,
-    "allRotations": allRotations};
+    "allRotations": allRotations,
+    "allXs": allXs,
+    "allYs": allYs};
     text_data_to_be_saved = JSON.stringify(data_to_be_saved);
     return text_data_to_be_saved;
   }
