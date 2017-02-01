@@ -1,0 +1,39 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<style>
+canvas {
+    border:1px solid #d3d3d3;
+    background-color: #f1f1f1;
+}
+</style>
+</head>
+<body onload="showInstructions()">
+
+<script>
+var textToSave = 'this is a test';
+var list = [];
+var person = {name: "John", age: 23, occupation: "student"};
+list.push(person);
+var new_person = {name: 'Jane', age: 15, occupation: "pupil"};
+list.push(new_person);
+var text_list = JSON.stringify(list);
+
+var hiddenElement = document.createElement('a');
+
+hiddenElement.href = 'data:attachment/text,' + encodeURI(text_list);
+hiddenElement.target = '_blank';
+hiddenElement.download = 'myFile.txt';
+hiddenElement.click();
+
+
+
+
+</script>
+
+
+
+</body>
+</html>
