@@ -27,7 +27,7 @@ var allRotations = [];
 var allXs = [];
 var allYs = [];
 var allKeyPresses = [];
-
+var allOrientations = [];
 
 
 var canvas_size = 600;
@@ -460,6 +460,7 @@ function updateGameArea()
         myGamePiece.speedX = 0;
         myGamePiece.speedY = 0;
         current_orientation  = myGamePiece.orientation;
+        allOrientations.push(current_orientation);
         if (current_orientation == 'U'){
           if (myArea.key && myArea.key == 37) {myGamePiece.speedX = -speed; }
           if (myArea.key && myArea.key == 39) {myGamePiece.speedX = speed; }
@@ -734,7 +735,8 @@ function saveData()
     "current_maze": current_maze, "nr_maze_rows": nr_maze_rows,
     "allRotations": allRotations,
     "allXs": allXs,
-    "allYs": allYs};
+    "allYs": allYs, 
+    "allOrientations": allOrientations};
     text_data_to_be_saved = JSON.stringify(data_to_be_saved);
     return text_data_to_be_saved;
   }
