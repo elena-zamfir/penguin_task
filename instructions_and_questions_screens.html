@@ -18,7 +18,8 @@ canvas {
 // variables to be saved 
 
 var allChoices = [];
-
+var allDifficultyChoices =[];
+var allSurpriseResponses = [];
 
 
 var canvas_size = 600;
@@ -251,6 +252,7 @@ function mouseUpListener(evt)
     window.removeEventListener("mousemove", mouseMoveListener, false);
     theCanvas.removeEventListener("mousedown", mouseDownListener, false);
     current_difficulty_estimate  = (slider.x-100.0)/4.;
+    allDifficultyChoices.push(current_difficulty_estimate);
     //document.getElementById("demo").innerHTML = current_difficulty_estimate;
     //setTimeout(finishExperiment,1000);
     setTimeout(function(){myArea.stop(); myArea.clear();showPostTrialSurpriseScreen();}, 1000);
@@ -627,6 +629,7 @@ function selectSurprise(evt) {
       lowerSurpriseButton.color = "red";
       lowerSurpriseButton.update();
       surpriseResponse = -1;
+      allSurpriseResponses.push(surpriseResponse);
       setTimeout(finishExperiment, 800);       
   }
  if  (mouseX2 > noSurpriseButton.x && mouseX2 < (noSurpriseButton.x + noSurpriseButton.width) &&  mouseY2 > noSurpriseButton.y && mouseY2 < (noSurpriseButton.y + noSurpriseButton.height)) 
@@ -635,6 +638,7 @@ function selectSurprise(evt) {
       noSurpriseButton.color = "red";
       noSurpriseButton.update();
       surpriseResponse = 0;
+      allSurpriseResponses.push(surpriseResponse);
       setTimeout(finishExperiment, 800);       
   }
    if  (mouseX2 > higherSurpriseButton.x && mouseX2 < (higherSurpriseButton.x + higherSurpriseButton.width) &&  mouseY2 > higherSurpriseButton.y && mouseY2 < (higherSurpriseButton.y + higherSurpriseButton.height)) 
@@ -643,6 +647,7 @@ function selectSurprise(evt) {
       higherSurpriseButton.color = "red";
       higherSurpriseButton.update();
       surpriseResponse = 1;
+      allSurpriseResponses.push(surpriseResponse);
       setTimeout(finishExperiment, 800);       
   }
 
@@ -707,7 +712,7 @@ function showPostTrialQuestions() {}
 
 function saveData()
   {
-    data_to_be_saved = {"choices": allChoices};
+    data_to_be_saved = {"allChoices": allChoices,"allDifficultyChoices": allDifficultyChoices, "allSurpriseResponses": allSurpriseResponses};
     text_data_to_be_saved = JSON.stringify(data_to_be_saved);
     return text_data_to_be_saved;
   }
@@ -728,7 +733,7 @@ function finishExperiment()
     var hiddenElement = document.createElement('a');
 
      hiddenElement.href = 'data:attachment/text,' + encodeURI(saveData());
-hiddenElement.target = '_blank';
+//hiddenElement.target = '_blank';
 hiddenElement.download = 'myFile.json';
 hiddenElement.click();
 
