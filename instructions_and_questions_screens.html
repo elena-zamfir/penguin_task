@@ -13,6 +13,14 @@ canvas {
 <p id="demo"></p>
 <script>
 
+
+
+// variables to be saved 
+
+var allChoices = [];
+
+
+
 var canvas_size = 600;
 var nrTrials = 1;
 var currentTrial = 0;
@@ -663,6 +671,7 @@ function selectRewardDependence(evt){
       ownPerformanceButton.color = "red";
       ownPerformanceButton.update();
       current_decision = 'self';
+      allChoices.push(current_decision);
       //setTimeout(finishExperiment, 800);  
       myArea.canvas.style.cursor = "none"; //hide mouse cursor     
       setTimeout(startTrial, 800);       
@@ -673,7 +682,8 @@ function selectRewardDependence(evt){
       myArea.canvas.removeEventListener("mousedown", selectRewardDependence , false);
       randomPerformanceButton.color = "red";
       randomPerformanceButton.update();
-      surpriseResponse = 'random';
+      current_decision = 'random';
+      allChoices.push(current_decision);
       //setTimeout(finishExperiment, 800); 
       myArea.canvas.style.cursor = "none"; //hide mouse cursor       
       setTimeout(startTrial, 800);
@@ -694,15 +704,34 @@ function selectRewardDependence(evt){
 function playTrial() {}
 function showPostTrialQuestions() {}
 
+
+function saveData()
+  {
+    data_to_be_saved = {"choices": allChoices};
+    text_data_to_be_saved = JSON.stringify(data_to_be_saved);
+    return text_data_to_be_saved;
+  }
+
+
+
+
 function finishExperiment() 
 	 {
   	myArea.clear();
     myArea.stop();
 	  myArea.key = false;
 	  window.removeEventListener('keydown', function (e) {myArea.key = e.keyCode;})
-	  finishingText = new component("25px", "Consolas", "green", 100, 100,400,"text");
-	  finishingText.text  = "Done!!!";
-	  finishingText.update();
+
+    finishingText = new component("25px", "Consolas", "green", 100, 100,400,"text");
+    finishingText.text  = "Done!!!";
+    finishingText.update();
+    var hiddenElement = document.createElement('a');
+
+     hiddenElement.href = 'data:attachment/text,' + encodeURI(saveData());
+hiddenElement.target = '_blank';
+hiddenElement.download = 'myFile.json';
+hiddenElement.click();
+
   	 }
 
 
