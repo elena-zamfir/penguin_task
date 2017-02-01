@@ -29,7 +29,6 @@ var allYs = [];
 var allKeyPresses = [];
 var allOrientations = [];
 
-
 var canvas_size = 600;
 var nrTrials = 1;
 var currentTrial = 0;
@@ -485,6 +484,8 @@ function updateGameArea()
           if (myArea.key && myArea.key == 38) {myGamePiece.speedY = speed; }
           if (myArea.key && myArea.key == 40) {myGamePiece.speedY = -speed; }
         }
+        allKeyPresses.push(myArea.key);
+
         proposed_x = myGamePiece.x + myGamePiece.speedX;
         proposed_y = myGamePiece.y + myGamePiece.speedY;
         test_crash = myGamePiece.crashWithMaze( proposed_x, proposed_y)
@@ -736,7 +737,8 @@ function saveData()
     "allRotations": allRotations,
     "allXs": allXs,
     "allYs": allYs, 
-    "allOrientations": allOrientations};
+    "allOrientations": allOrientations,
+    "allKeyPresses": allKeyPresses};
     text_data_to_be_saved = JSON.stringify(data_to_be_saved);
     return text_data_to_be_saved;
   }
