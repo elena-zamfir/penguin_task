@@ -20,7 +20,8 @@ canvas {
 var allChoices = [];
 var allDifficultyChoices =[];
 var allSurpriseResponses = [];
-
+var allSubjectScores = [];
+var allRewards = [];
 
 var canvas_size = 600;
 var nrTrials = 1;
@@ -423,12 +424,17 @@ function updateGameArea()
       myPrize.update();
       //mySound.play();
       myArea.stop();
-      score = (myArea.frameNo * 1.0)/(nr_maze_rows * 1.0);
+      score = parseFloat((1000-(myArea.frameNo * 1.0)/(nr_maze_rows * 1.0))/10).toFixed(2);
+      allSubjectScores.push(score);
       myScore = new component("25px", "Consolas", "green", 100, 100,400,"text");
-      myScore.text = "Your score: " + parseFloat((1000 - score)/10).toFixed(2);;
-      setTimeout(function(){myArea.clear(); myScore.update();}, 750);
-      setTimeout(finishTrial,1750);
-      setTimeout(showPostTrialDifficultyScreen, 1751);
+      myScore.text = "Your score: " + score;
+      current_reward = score/100* current_bonus_available;
+      myReward = new component("25px", "Consolas", "green", 100, 200,400,"text");
+      myReward.text = "Your bonus reward: " + current_reward;
+      allRewards.push(current_reward);
+      setTimeout(function(){myArea.clear(); myScore.update();myReward.update();}, 750);
+      setTimeout(finishTrial,2750);
+      setTimeout(showPostTrialDifficultyScreen, 2751);
       //setTimeout(finishExperiment, 1750);
     }
     else{
@@ -712,7 +718,8 @@ function showPostTrialQuestions() {}
 
 function saveData()
   {
-    data_to_be_saved = {"allChoices": allChoices,"allDifficultyChoices": allDifficultyChoices, "allSurpriseResponses": allSurpriseResponses};
+    data_to_be_saved = {"allChoices": allChoices,"allDifficultyChoices": allDifficultyChoices, "allSurpriseResponses": allSurpriseResponses,
+    "allSubjectScores": allSubjectScores, "allRewards": allRewards};
     text_data_to_be_saved = JSON.stringify(data_to_be_saved);
     return text_data_to_be_saved;
   }
