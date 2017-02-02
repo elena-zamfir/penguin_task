@@ -22,12 +22,20 @@ var allDifficultyChoices =[];
 var allSurpriseResponses = [];
 var allSubjectScores = [];
 var allRewards = [];
-var current_maze;
+var allMazes =[];
+var allMazeDimensions = [];
 var allRotations = [];
 var allXs = [];
 var allYs = [];
 var allKeyPresses = [];
 var allOrientations = [];
+var currentTrialRotations = [];
+var currentTrialXs = [];
+var currentTrialYs = [];
+var currentTrialOrientations = [];
+var currentTrialKeyPresses = [];
+
+
 
 var canvas_size = 600;
 var nrTrials = 3;
@@ -304,6 +312,11 @@ function hitTest(mx,my)
   {
    myArea.start('trial');	
    clearInterval(myArea.interval); 
+   currentTrialRotations = [];
+   currentTrialXs = [];
+   currentTrialYs = [];
+   currentTrialOrientations = [];
+   currentTrialKeyPresses = [];
    currentTrial = currentTrial + 1;
    countTrialText = new component("25px", "Consolas", "green", 100, 100,400,"text");
    countTrialText.text = 'this is trial ' + currentTrial;
@@ -313,12 +326,13 @@ function hitTest(mx,my)
    else
    {
     myArea.clear();
+    allMazeDimensions.push(nr_maze_rows);
     level_setup();
     myGamePiece = new component(game_piece_size, game_piece_size, "red",piece_x , piece_y);
     myFinishPosition = new component(game_piece_size, game_piece_size, "yellow", finish_x, finish_y);
     myObstacles = [];
     M = createMaze(nr_maze_rows, nr_maze_rows);
-    current_maze = M;
+    allMazes.push(M);
     for ( i =0; i< nr_maze_rows; i++)
     {
      for ( j=0; j< nr_maze_rows; j++)
@@ -449,9 +463,9 @@ function updateGameArea()
       if (myArea.frameNo ==  myArea.nextRotation) {
 
         random_rot = getRndInteger(1,3);
-        if (random_rot == 1) {rotate_90_maze(); allRotations.push({"frame": myArea.frameNo, "direction": 90});} // add curent rotation to list of rotations}
-        if(random_rot == 2) {rotate_180_maze(); allRotations.push({"frame": myArea.frameNo, "direction": 180});}
-        if(random_rot == 3) {rotate_270_maze(); allRotations.push({"frame": myArea.frameNo, "direction": 270});}
+        if (random_rot == 1) {rotate_90_maze(); /*allRotations.push({"frame": myArea.frameNo, "direction": 90});*/ currentTrialRotations.push({"frame": myArea.frameNo, "direction": 90});} // add curent rotation to list of rotations}
+        if(random_rot == 2) {rotate_180_maze(); /*allRotations.push({"frame": myArea.frameNo, "direction": 180});*/currentTrialRotations.push({"frame": myArea.frameNo, "direction": 180});}
+        if(random_rot == 3) {rotate_270_maze(); /*allRotations.push({"frame": myArea.frameNo, "direction": 270});*/currentTrialRotations.push({"frame": myArea.frameNo, "direction": 270});}
         myArea.nextRotation = myArea.frameNo + getRndInteger(70, 100);   }
         for (i = 0; i < myObstacles.length; i += 1) {
           myObstacles[i].update();
@@ -459,7 +473,8 @@ function updateGameArea()
         myGamePiece.speedX = 0;
         myGamePiece.speedY = 0;
         current_orientation  = myGamePiece.orientation;
-        allOrientations.push(current_orientation);
+        //allOrientations.push(current_orientation);
+        currentTrialOrientations.push(current_orientation);
         if (current_orientation == 'U'){
           if (myArea.key && myArea.key == 37) {myGamePiece.speedX = -speed; }
           if (myArea.key && myArea.key == 39) {myGamePiece.speedX = speed; }
@@ -484,8 +499,8 @@ function updateGameArea()
           if (myArea.key && myArea.key == 38) {myGamePiece.speedY = speed; }
           if (myArea.key && myArea.key == 40) {myGamePiece.speedY = -speed; }
         }
-        allKeyPresses.push(myArea.key);
-
+        //allKeyPresses.push(myArea.key);
+        currentTrialKeyPresses.push(myArea.key);
         proposed_x = myGamePiece.x + myGamePiece.speedX;
         proposed_y = myGamePiece.y + myGamePiece.speedY;
         test_crash = myGamePiece.crashWithMaze( proposed_x, proposed_y)
@@ -493,8 +508,10 @@ function updateGameArea()
           myGamePiece.x += myGamePiece.speedX;
           myGamePiece.y += myGamePiece.speedY;
         }
-        allXs.push(myGamePiece.x);
-        allYs.push(myGamePiece.y);
+        //allXs.push(myGamePiece.x);
+        //allYs.push(myGamePiece.y);
+        currentTrialXs.push(myGamePiece.x);
+        currentTrialYs.push(myGamePiece.y);
         myGamePiece.update();
         myFinishPosition.update();
         if (current_orientation == 'D') {myStart.image.src = "http://pngplay.com/wp-content/uploads/2016/07/Down-Arrow-PNG.png";}
@@ -540,6 +557,11 @@ function updateGameArea()
   myArea.stop();
   myArea.key = false;
   window.removeEventListener('keydown', function (e) {myArea.key = e.keyCode;})
+  allRotations.push(currentTrialRotations);
+  allXs.push(currentTrialXs);
+  allYs.push(currentTrialYs);
+  allOrientations.push(currentTrialOrientations);
+  allKeyPresses.push(currentTrialKeyPresses);
  }
 
 function runExperiment()
@@ -735,7 +757,7 @@ function saveData()
   {
     data_to_be_saved = {"allChoices": allChoices,"allDifficultyChoices": allDifficultyChoices, "allSurpriseResponses": allSurpriseResponses,
     "allSubjectScores": allSubjectScores, "allRewards": allRewards,
-    "current_maze": current_maze, "nr_maze_rows": nr_maze_rows,
+    "allMazes": allMazes, "allMazeDimensions": allMazeDimensions,
     "allRotations": allRotations,
     "allXs": allXs,
     "allYs": allYs, 
