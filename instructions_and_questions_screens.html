@@ -30,7 +30,7 @@ var allKeyPresses = [];
 var allOrientations = [];
 
 var canvas_size = 600;
-var nrTrials = 1;
+var nrTrials = 3;
 var currentTrial = 0;
 var maxLineWidth = 400;
 var heightLine = 30;
@@ -649,7 +649,7 @@ function selectSurprise(evt) {
       lowerSurpriseButton.update();
       surpriseResponse = -1;
       allSurpriseResponses.push(surpriseResponse);
-      setTimeout(finishExperiment, 800);       
+      //setTimeout(finishExperiment, 800);
   }
  if  (mouseX2 > noSurpriseButton.x && mouseX2 < (noSurpriseButton.x + noSurpriseButton.width) &&  mouseY2 > noSurpriseButton.y && mouseY2 < (noSurpriseButton.y + noSurpriseButton.height)) 
     {
@@ -658,7 +658,7 @@ function selectSurprise(evt) {
       noSurpriseButton.update();
       surpriseResponse = 0;
       allSurpriseResponses.push(surpriseResponse);
-      setTimeout(finishExperiment, 800);       
+      //setTimeout(finishExperiment, 800);       
   }
    if  (mouseX2 > higherSurpriseButton.x && mouseX2 < (higherSurpriseButton.x + higherSurpriseButton.width) &&  mouseY2 > higherSurpriseButton.y && mouseY2 < (higherSurpriseButton.y + higherSurpriseButton.height)) 
     {
@@ -667,9 +667,11 @@ function selectSurprise(evt) {
       higherSurpriseButton.update();
       surpriseResponse = 1;
       allSurpriseResponses.push(surpriseResponse);
-      setTimeout(finishExperiment, 800);       
+      //setTimeout(finishExperiment, 800);       
   }
 
+if(currentTrial == nrTrials) {setTimeout(finishExperiment, 800);}
+else {setTimeout(showChoiceScreen,800);}
     //code below prevents the mouse down from having an effect on the main browser window:
     if (evt.preventDefault) {
       evt.preventDefault();
