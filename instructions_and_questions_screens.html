@@ -453,7 +453,7 @@ function updateGameArea()
       myScore = new component("25px", "Consolas", "green", 100, 100,400,"text");
       myScore.text = "Your score: " + score;
        
-      current_reward = score/100* current_bonus_available;
+      current_reward = parseFloat(score/100* current_bonus_available).toFixed(2);
       myReward = new component("25px", "Consolas", "green", 100, 200,400,"text");
       myReward.text = "Your bonus reward: " + current_reward;
       allRewards.push(current_reward);
