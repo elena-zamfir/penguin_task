@@ -34,7 +34,7 @@ var currentTrialXs = [];
 var currentTrialYs = [];
 var currentTrialOrientations = [];
 var currentTrialKeyPresses = [];
-
+var allBonuses = [];
 
 
 var canvas_size = 600;
@@ -180,6 +180,7 @@ function level_setup()
 
 var current_decision;
 var current_reward; 
+var possibleBonusesAvailable = [100,200,300,500,1000,2000,10];
 var current_bonus_available = 200;
 var current_random_option = 70;
 
@@ -451,10 +452,12 @@ function updateGameArea()
       allSubjectScores.push(score);
       myScore = new component("25px", "Consolas", "green", 100, 100,400,"text");
       myScore.text = "Your score: " + score;
+       
       current_reward = score/100* current_bonus_available;
       myReward = new component("25px", "Consolas", "green", 100, 200,400,"text");
       myReward.text = "Your bonus reward: " + current_reward;
       allRewards.push(current_reward);
+      
       setTimeout(function(){myArea.clear(); myScore.update();myReward.update();}, 750);
       setTimeout(finishTrial,2750);
       setTimeout(showPostTrialDifficultyScreen, 2751);
@@ -585,6 +588,8 @@ function showChoiceScreen()
     	  myArea.start('pretrial_choice');
   	  myChoiceText  = new component("25px", "Consolas", "green", 100, 100, 400,"text");
   	  myChoiceText.text = "Bonus: " 
+      current_bonus_available = possibleBonusesAvailable[getRndInteger(0,possibleBonusesAvailable.length)];
+      allBonuses.push(current_bonus_available);
       myBonusText = new component("25px", "Consolas", "red", 300, 100,400,"text");
       myBonusText.text = " "+ current_bonus_available;
       myBonusText.update();
@@ -764,7 +769,8 @@ function saveData()
     "allXs": allXs,
     "allYs": allYs, 
     "allOrientations": allOrientations,
-    "allKeyPresses": allKeyPresses};
+    "allKeyPresses": allKeyPresses,
+    "allBonuses": allBonuses};
     text_data_to_be_saved = JSON.stringify(data_to_be_saved);
     return text_data_to_be_saved;
   }
