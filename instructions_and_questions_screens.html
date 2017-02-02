@@ -38,7 +38,7 @@ var currentTrialKeyPresses = [];
 
 
 var canvas_size = 600;
-var nrTrials = 3;
+var nrTrials = 5;
 var currentTrial = 0;
 var maxLineWidth = 400;
 var heightLine = 30;
@@ -107,6 +107,7 @@ var border_to_maze_segment_ratio = 1.5;
 var mu_score = 75;
 var sigma_score = 10;
 var nr_maze_rows = 7;
+var possibleNrMazeRows = [3,5,7,7,7,7,9,9,9,11, 11,3,3,3,3,5,5,5];
 var maze_segment_length = Math.floor(canvas_size/(nr_maze_rows + 2*border_to_maze_segment_ratio));
 var border = border_to_maze_segment_ratio*maze_segment_length;
 var mySound;
@@ -326,6 +327,7 @@ function hitTest(mx,my)
    else
    {
     myArea.clear();
+    nr_maze_rows = possibleNrMazeRows[getRndInteger(0, possibleNrMazeRows.length)] // draw maze size    
     allMazeDimensions.push(nr_maze_rows);
     level_setup();
     myGamePiece = new component(game_piece_size, game_piece_size, "red",piece_x , piece_y);
