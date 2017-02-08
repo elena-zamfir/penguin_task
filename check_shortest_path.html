@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<style>
+canvas {
+    border:1px solid #d3d3d3;
+    background-color: #f1f1f1;
+}
+</style>
+</head>
+<body onload="check()">
+<p id="demo"></p>
+<script>
+
+function Create3DArray(rows, columns)
+	{
+	 var arr = [];
+	 for (var i=0;i<rows;i++)
+             {
+  	      arr[i] = [];
+  	      for ( var j =0; j< columns; j++)
+	          {
+	           arr[i][j] = [];
+	           for ( var k =0; k <5; k++)
+	               { arr[i][j][k] = 0; }
+      		  }
+             }
+         return arr;
+         }
+
+
+function createMaze(rows, columns)
+         {
+	  var M = Create3DArray(rows, columns);
+	  var r = 0;
+	  var c = Math.floor(columns/2);
+	  var history  = [[r,c]];
+	  var check = [];
+	  var aux = [];
+	  while (history.length)
+	       {
+	        M[r][c][4]  = 1;
+	        check  = [];
+	        if  (c > 0 && M[r][c-1][4] == 0) {check.push('L');}
+	        if  (r > 0 && M[r-1][c][4] == 0) {check.push('U');}
+	        if  (c < columns-1 && M[r][c+1][4] == 0) {check.push('R');}
+	        if  (r < rows-1 && M[r+1][c][4] == 0) {check.push('D');}
+       	        if (check.length)
+                   {
+	            history.push([r,c]);
+	            move_direction = check[Math.floor(Math.random() * check.length)];
+	            if (move_direction == 'L') {M[r][c][0] =1; c = c-1; M[r][c][2]=1;}
+        	    if (move_direction == 'U') {M[r][c][1] =1; r = r-1; M[r][c][3]=1;}
+	            if (move_direction == 'R') {M[r][c][2] =1; c = c+1; M[r][c][0]=1;}
+	            if (move_direction == 'D') {M[r][c][3] =1; r = r+1; M[r][c][1]=1;}
+       	 	   }
+   		else  {aux  = history.pop(); r  = aux[0]; c = aux[1];}
+           	}
+         M[0][Math.floor(columns/2)][1] = 1;
+	 M[rows-1][Math.floor(columns/2)][3] = 1;
+	 return M;
+         }
+
+class Queue  {
+	
+	constructor()
+		{
+			this.elements=[];
+		 
+		}
+	add (element) {this.elements.push(element);}
+	remove(){var first;
+			if (this.elements.length) 
+			{ document.getElementById("demo").innerHTML = "in the remove function";
+				 first = this.elements[0];
+				document.getElementById("demo").innerHTML = "in the remove function, after aux";
+				if(this.elements.length >1) {
+					document.getElementById("demo").innerHTML = "in the remove function, shifting list";
+				for (var i=0;i<this.elements.length-1;i++)
+					{
+						this.elements[i] = this.elements[i+1];
+						document.getElementById("demo").innerHTML = "in the remove function, shifting list";
+					}
+				}
+				document.getElementById("demo").innerHTML = "in the remove function, after list shift, if necessary";
+				this.elements.pop();
+				document.getElementById("demo").innerHTML = "in the remove function, inspectig discarded element";
+				document.getElementById("demo").innerHTML = "in the remove function. queue length is "+ this.elements.length;	
+				return first;
+
+			}
+
+		}
+}
+
+class Node  
+{
+	constructor (row,column,parent) {this.row = row; this.column = column; this.parent = parent;}
+}
+
+function findShortestPath(maze)
+{ 
+	size = maze.length;
+	
+	root = new Node(0, Math.floor(size/2),undefined);
+	//document.getElementById("demo").innerHTML = "<br> I'm in the findShortestPath function. the root node is (" + root.row + "," + root.column + "), with parent =  " + root.parent; 
+	var path = [];
+
+	q = new Queue();
+
+	q.add(root);
+	document.getElementById("demo").innerHTML = "<br> I'm in the findShortestPath function. the queue has been initialized. its first element is (" + q.elements[0].row + "," + q.elements[0].column + ")."; 
+	while(q.elements.length)
+	{document.getElementById("demo").innerHTML = "print something in the while loop";
+		currentNode  = q.remove();
+		document.getElementById("demo").innerHTML = "<br> I'm in the while loop. the current element is (" + currentNode.row + "," + currentNode.column + ") and the queue length now is " + q.elements.length;
+	    if(currentNode.row == size-1 && currentNode.column == Math.floor(size/2))
+	    	{aux = currentNode;
+	    	 path.push(aux);
+	    	 while(aux.parent !== undefined)
+	    	 {path.push(aux.parent);
+	    	 	aux = aux.parent;
+
+	    	 }
+	    	 return path.reverse();
+	    	 }
+	    else
+	    	 {
+	    	 	if(currentNode.row > 0 && maze[currentNode.row][currentNode.column][1] ==1) {new_node = new Node(currentNode.row-1, currentNode.column, currentNode); q.add(new_node);}
+	    	 	if(currentNode.row <size-1 && maze[currentNode.row][currentNode.column][3] ==1) {new_node = new Node(currentNode.row+1, currentNode.column, currentNode); q.add(new_node);}
+	    	 	if(currentNode.column <size-1 && maze[currentNode.row][currentNode.column][2] ==1) {new_node = new Node(currentNode.row, currentNode.column+1, currentNode); q.add(new_node);}
+	    	 	if(currentNode.column >0 && maze[currentNode.row][currentNode.column][0] ==1) {new_node = new Node(currentNode.row, currentNode.column-1, currentNode); q.add(new_node);}
+	    	 }
+
+	}
+}
+var canvas_size = 600;
+var myArea = 
+  {
+   canvas : document.createElement("canvas"),
+   start : function(expstage)
+   {
+     this.canvas.width = canvas_size;
+     this.canvas.height = canvas_size;
+     this.context = this.canvas.getContext("2d");
+     this.expstage = expstage;
+     this.frameNo = 0;
+     this.nextRotation  = 90;
+     document.body.insertBefore(this.canvas, document.body.childNodes[0]);
+     //this.interval = setInterval(checkForKeyPresses, 100);
+     //myArea.key = false;
+     //window.addEventListener('keydown', function (e) {myArea.key = e.keyCode;})     
+     //window.addEventListener('keyup', function (e) {
+       //   myArea.key = false;
+     // })
+   },
+   clear : function() 
+   {
+    this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+  },
+ /* stop : function() {
+   clearInterval(this.interval);
+   clearInterval(this.draw);
+ }*/
+}
+function component(width, height, color, x, y, maxLengthText, type,image_source) {
+      this.type = type;
+      this.width = width;
+      this.height = height;
+      this.maxWidth = maxLengthText;
+      this.speedX = 0;
+      this.speedY = 0;
+      this.color = color;
+      this.x = x;
+      this.y = y;
+      this.orientation = 'U';
+      if (type == "image") {this.image = new Image(); this.image.src =image_source;}
+      this.update = function() 
+      {
+        ctx = myArea.context;
+        if (this.type == "text") {
+          ctx.font = " bold 23px Calibri";
+          ctx.fillStyle = this.color;
+          wrapText(ctx, this.text, this.x, this.y, this.maxWidth, 30); //  max line width 400 
+        } 
+        if (this.type == "image") 
+        {
+          ctx.drawImage(this.image,
+            this.x,
+            this.y,
+            this.width, this.height);
+        }
+        else {
+          ctx.fillStyle = this.color;
+          ctx.fillRect(this.x, this.y, this.width, this.height);
+        }
+      }
+      
+       
+    
+   }
+
+
+function check(){
+
+	M = createMaze(5,5);
+
+  myObstacles = [];
+  nr_maze_rows = 5;
+  border = 100;
+  
+  maze_segment_length = Math.floor(600/(nr_maze_rows + 2*1.5));
+
+
+  for ( i =0; i< nr_maze_rows; i++)
+    {
+     for ( j=0; j< nr_maze_rows; j++)
+     {
+       if (M[i][j][0] == 0) {myObstacles.push(new component (1, maze_segment_length, "green", border + j*maze_segment_length, border + i *maze_segment_length));}
+       if (M[i][j][1] == 0) {myObstacles.push(new component (maze_segment_length,1, "green", border + j*maze_segment_length, border + i *maze_segment_length));}
+       if(j == nr_maze_rows-1){
+         if (M[i][j][2] == 0) {myObstacles.push(new component (1,maze_segment_length, "green", border + (j+1)*maze_segment_length, border + i *maze_segment_length));}}
+         if(i == nr_maze_rows-1){
+           if (M[i][j][3] == 0) {myObstacles.push(new component (maze_segment_length,1, "green", border + j*maze_segment_length, border + (i+1) *maze_segment_length));}}
+         }
+       }
+
+        myArea.start('trial');	
+       
+       for (i = 0; i < myObstacles.length; i += 1) {
+          myObstacles[i].update();
+        }
+          
+   sp = findShortestPath(M);
+ //document.getElementById("demo").innerHTML = "<br> print something, more specifically the number of obstacles is:  " + myObstacles.length; 
+  document.getElementById("demo").innerHTML = "<br> shortest path length"+ sp.length;
+}
+
+
+
+</script>
+
+
+
+</body>
+</html>
