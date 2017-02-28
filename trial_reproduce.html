@@ -1,0 +1,993 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<style>
+canvas {
+    border:1px solid #d3d3d3;
+    background-color: #f1f1f1;
+}
+</style>
+</head>
+<body onload="showInstructions()">
+<p id="demo"></p>
+<script>
+
+
+
+// variables to be saved 
+
+var allChoices = [];
+var allDifficultyChoices =[];
+var allSurpriseResponses = [];
+var allSubjectScores = [];
+var allRewards = [];
+var allMazes =[];
+var allMazeDimensions = [];
+var allRotations = [];
+var allXs = [];
+var allYs = [];
+var allKeyPresses = [];
+var allOrientations = [];
+var currentTrialRotations = [];
+var currentTrialXs = [];
+var currentTrialYs = [];
+var currentTrialOrientations = [];
+var currentTrialKeyPresses = [];
+var allBonuses = [];
+
+
+var canvas_size = 600;
+var nrTrials = 1;
+var currentTrial = 0;
+var currentReproducedTrial = 0;
+var maxLineWidth = 400;
+var heightLine = 30;
+var dragging;
+var mouseX;
+var mouseY;
+var dragHoldX;
+var dragHoldY;
+
+// maze creating functions
+
+function Create3DArray(rows, columns)
+	{
+	 var arr = [];
+	 for (var i=0;i<rows;i++)
+             {
+  	      arr[i] = [];
+  	      for ( var j =0; j< columns; j++)
+	          {
+	           arr[i][j] = [];
+	           for ( var k =0; k <5; k++)
+	               { arr[i][j][k] = 0; }
+      		  }
+             }
+         return arr;
+         }
+
+
+function createMaze(rows, columns)
+         {
+	  var M = Create3DArray(rows, columns);
+	  var r = 0;
+	  var c = Math.floor(columns/2);
+	  var history  = [[r,c]];
+	  var check = [];
+	  var aux = [];
+	  while (history.length)
+	       {
+	        M[r][c][4]  = 1;
+	        check  = [];
+	        if  (c > 0 && M[r][c-1][4] == 0) {check.push('L');}
+	        if  (r > 0 && M[r-1][c][4] == 0) {check.push('U');}
+	        if  (c < columns-1 && M[r][c+1][4] == 0) {check.push('R');}
+	        if  (r < rows-1 && M[r+1][c][4] == 0) {check.push('D');}
+       	        if (check.length)
+                   {
+	            history.push([r,c]);
+	            move_direction = check[Math.floor(Math.random() * check.length)];
+	            if (move_direction == 'L') {M[r][c][0] =1; c = c-1; M[r][c][2]=1;}
+        	    if (move_direction == 'U') {M[r][c][1] =1; r = r-1; M[r][c][3]=1;}
+	            if (move_direction == 'R') {M[r][c][2] =1; c = c+1; M[r][c][0]=1;}
+	            if (move_direction == 'D') {M[r][c][3] =1; r = r+1; M[r][c][1]=1;}
+       	 	   }
+   		else  {aux  = history.pop(); r  = aux[0]; c = aux[1];}
+           	}
+         M[0][Math.floor(columns/2)][1] = 1;
+	 M[rows-1][Math.floor(columns/2)][3] = 1;
+	 return M;
+         }
+
+
+
+
+
+var border_to_maze_segment_ratio = 1.5;
+var mu_score = 75;
+var sigma_score = 10;
+var nr_maze_rows = 7;
+//var possibleNrMazeRows = [3,5,7,7,7,7,9,9,9,11, 11,3,3,3,3,5,5,5];
+var possibleNrMazeRows = [3];
+var maze_segment_length = Math.floor(canvas_size/(nr_maze_rows + 2*border_to_maze_segment_ratio));
+var border = border_to_maze_segment_ratio*maze_segment_length;
+var mySound;
+var game_piece_size = 0.6* maze_segment_length;
+var arrow_height = 0.9*maze_segment_length;
+var piece_x = 0.5*canvas_size - 0.5*game_piece_size;
+var piece_y = border - 0.5*game_piece_size;
+var start_x = piece_x;
+var start_y = 0.5*border - 0.25*game_piece_size - 0.5*arrow_height;
+var finish_x = piece_x;
+var finish_y = canvas_size - border;
+var inter_maze_interval = 25;
+var speed = 0.3*game_piece_size;
+var myGamePiece;
+var myObstacles = [];
+var myFinishPosition;
+var myStart;
+var score;
+
+function level_setup() 
+        {
+	 maze_segment_length = Math.floor(canvas_size/(nr_maze_rows + 2*border_to_maze_segment_ratio));
+	 border = border_to_maze_segment_ratio*maze_segment_length;
+	 game_piece_size = 0.6* maze_segment_length;
+	 arrow_height = 0.9*maze_segment_length;
+	 piece_x = 0.5*canvas_size - 0.5*game_piece_size;
+	 piece_y = border - 0.5*game_piece_size;
+	 start_x = piece_x;
+	 start_y = 0.5*border - 0.25*game_piece_size - 0.5*arrow_height;
+	 finish_x = piece_x;
+	 finish_y = canvas_size - border;
+	 speed = 0.3*game_piece_size;
+	}
+
+
+
+  var myArea = 
+  {
+   canvas : document.createElement("canvas"),
+   start : function(expstage)
+   {
+     this.canvas.width = canvas_size;
+     this.canvas.height = canvas_size;
+     this.context = this.canvas.getContext("2d");
+     this.expstage = expstage;
+     this.frameNo = 0;
+     this.nextRotation  = 90;
+     document.body.insertBefore(this.canvas, document.body.childNodes[0]);
+     this.interval = setInterval(checkForKeyPresses, 100);
+     myArea.key = false;
+     window.addEventListener('keydown', function (e) {myArea.key = e.keyCode;})     
+     window.addEventListener('keyup', function (e) {
+          myArea.key = false;
+      })
+     if(this.expstage == "reproduce_trial") {clearInterval(this.interval); window.removeEventListener('keydown', function (e) {myArea.key = e.keyCode;}); window.removeEventListener('keyup', function (e) {
+          myArea.key = false;
+      }); }
+   },
+   clear : function() 
+   {
+    this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+  },
+  stop : function() {
+   clearInterval(this.interval);
+   clearInterval(this.draw);
+   clearInterval(this.reproduceDrawing);
+ }
+}
+
+
+
+
+ 
+
+var current_decision;
+var current_reward; 
+var possibleBonusesAvailable = [100,200,300,500,1000,2000,10];
+var current_bonus_available = 200;
+var current_random_option = 70;
+
+
+function checkForKeyPresses()
+{
+ if (myArea.key && myArea.expstage == 'starting')
+ {
+  myArea.key = false;
+  window.removeEventListener('keydown', function (e) {myArea.key = e.keyCode;})
+  startingText= new component("25px", "Consolas", "green", 100, 100,400,"text");
+  startingText.text = "Exp starting!!";
+  myArea.clear();
+  myArea.stop();
+  startingText.update();
+  setTimeout(runExperiment, 1000);
+}
+/*
+if (myArea.key && myArea.expstage == 'pretrial_choice' && myArea.key == 37)
+{
+ myArea.key = false;
+ window.removeEventListener('keydown', function (e) {myArea.key = e.keyCode;})
+ myArea.stop();
+ current_decision = 'self';
+ leftChoiceText= new component("25px", "Consolas", "green", 100, 100,400,"text");
+ leftChoiceText.text = " you chose left!!";
+ myArea.clear();
+ leftChoiceText.update(); 	      
+ setTimeout(startTrial,1000);
+ }
+if (myArea.key && myArea.expstage == 'pretrial_choice' && myArea.key == 39)
+{
+  myArea.key = false;
+  window.removeEventListener('keydown', function (e) {myArea.key = e.keyCode;})
+  myArea.stop();
+  current_decision = 'random';
+  leftChoiceText= new component("25px", "Consolas", "green", 100, 100,400,"text");
+  leftChoiceText.text = " you chose right!!";
+  myArea.clear();
+  leftChoiceText.update();
+  setTimeout(startTrial,1000);
+  //setTimeout(function (){finishExperiment();}, 1000);
+}*/
+}
+
+function mouseDownListener(evt) {
+  theCanvas = myArea.canvas;
+    //getting mouse position correctly, being mindful of resizing that may have occured in the browser:
+    var bRect = theCanvas.getBoundingClientRect();
+    mouseX = (evt.clientX - bRect.left)*(theCanvas.width/bRect.width);
+    mouseY = (evt.clientY - bRect.top)*(theCanvas.height/bRect.height);
+    if  (hitTest(mouseX, mouseY)) 
+    {
+      dragging = true;
+      dragHoldX = mouseX - slider.x;
+      dragHoldY = mouseY - slider.y;
+    //document.getElementById("demo").innerHTML = "<br>HIT! "+ mouseX;
+  }
+
+  if (dragging) {
+    window.addEventListener("mousemove", mouseMoveListener, false);
+  }
+  theCanvas.removeEventListener("mousedown", mouseDownListener, false);
+  window.addEventListener("mouseup", mouseUpListener, false);
+
+    //code below prevents the mouse down from having an effect on the main browser window:
+    if (evt.preventDefault) {
+      evt.preventDefault();
+    } //standard
+    else if (evt.returnValue) {
+      evt.returnValue = false;
+    } //older IE
+    return false;
+  }
+
+  var current_difficulty_estimate;
+
+
+function mouseUpListener(evt) 
+{
+  theCanvas = myArea.canvas;
+  theCanvas.addEventListener("mousedown", mouseDownListener, false);
+  window.removeEventListener("mouseup", mouseUpListener, false);
+  if (dragging) {
+    dragging = false;
+    window.removeEventListener("mousemove", mouseMoveListener, false);
+    theCanvas.removeEventListener("mousedown", mouseDownListener, false);
+    current_difficulty_estimate  = (slider.x-100.0)/4.;
+    allDifficultyChoices.push(current_difficulty_estimate);
+    //document.getElementById("demo").innerHTML = current_difficulty_estimate;
+    //setTimeout(finishExperiment,1000);
+    setTimeout(function(){myArea.stop(); myArea.clear();showPostTrialSurpriseScreen();}, 1000);
+  }
+}
+function mouseMoveListener(evt) {
+  var posX;
+  var posY;
+  theCanvas = myArea.canvas;
+  //document.getElementById("demo").innerHTML = "<br>MOVING!!!!! ";
+    //var shapeRad = shapes[dragIndex].rad;
+    //var minX = shapeRad;
+    //var maxX = theCanvas.width - shapeRad;
+    //var minY = shapeRad;
+    //var maxY = theCanvas.height - shapeRad;
+    //getting mouse position correctly 
+    var bRect = theCanvas.getBoundingClientRect();
+    mouseX = (evt.clientX - bRect.left)*(theCanvas.width/bRect.width);
+    mouseY = (evt.clientY - bRect.top)*(theCanvas.height/bRect.height);
+    
+    //clamp x and y positions to prevent object from dragging outside of canvas
+
+    posX = mouseX - dragHoldX;
+
+    //posX = (posX < minX) ? minX : ((posX > maxX) ? maxX : posX);
+    //posY = mouseY - dragHoldY;
+    //posY = (posY < minY) ? minY : ((posY > maxY) ? maxY : posY);
+     myArea.clear();
+    if(posX > 100 && posX < 499)
+    {slider.x = posX;}
+    //slider.y = posY;
+    difficultyQuestion.update();
+    easyExtreme.update();
+    difficultExtreme.update();
+   slideBar.update();
+    slider.update();
+  } 
+function hitTest(mx,my) 
+{return (slider.x < mx && mx< (slider.x + slider.width) && slider.y < my && my< (slider.y + slider.height));}
+
+  function startTrial()
+  {
+   myArea.start('trial');	
+   clearInterval(myArea.interval); 
+   currentTrialRotations = [];
+   currentTrialXs = [];
+   currentTrialYs = [];
+   currentTrialOrientations = [];
+   currentTrialKeyPresses = [];
+   currentTrial = currentTrial + 1;
+   countTrialText = new component("25px", "Consolas", "green", 100, 100,400,"text");
+   countTrialText.text = 'this is trial ' + currentTrial;
+   countTrialText.update();
+   if(currentTrial > nrTrials) 
+     {setTimeout(function (){clearInterval(myArea.draw); finishExperiment();}, 1000);}
+   else
+   {
+    myArea.clear();
+    nr_maze_rows = possibleNrMazeRows[getRndInteger(0, possibleNrMazeRows.length)] // draw maze size    
+    allMazeDimensions.push(nr_maze_rows);
+    level_setup();
+    myGamePiece = new component(game_piece_size, game_piece_size, "red",piece_x , piece_y);
+    myFinishPosition = new component(game_piece_size, game_piece_size, "yellow", finish_x, finish_y);
+    myObstacles = [];
+    M = createMaze(nr_maze_rows, nr_maze_rows);
+    allMazes.push(M);
+    for ( i =0; i< nr_maze_rows; i++)
+    {
+     for ( j=0; j< nr_maze_rows; j++)
+     {
+       if (M[i][j][0] == 0) {myObstacles.push(new component (1, maze_segment_length, "green", border + j*maze_segment_length, border + i *maze_segment_length));}
+       if (M[i][j][1] == 0) {myObstacles.push(new component (maze_segment_length,1, "green", border + j*maze_segment_length, border + i *maze_segment_length));}
+       if(j == nr_maze_rows-1){
+         if (M[i][j][2] == 0) {myObstacles.push(new component (1,maze_segment_length, "green", border + (j+1)*maze_segment_length, border + i *maze_segment_length));}}
+         if(i == nr_maze_rows-1){
+           if (M[i][j][3] == 0) {myObstacles.push(new component (maze_segment_length,1, "green", border + j*maze_segment_length, border + (i+1) *maze_segment_length));}}
+         }
+       }
+    myStart =  new component(game_piece_size, arrow_height , "black", start_x, start_y,400, "image", "http://www.freeiconspng.com/uploads/up-arrow-png-29.png");
+    myPrize = new component(0.7*canvas_size, 0.7*canvas_size, "http://smileyfaceplace.weebly.com/uploads/6/9/7/1/6971266/4692542_orig.jpg", 0.15*canvas_size, 0.15*canvas_size, 400,"image", "http://smileyfaceplace.weebly.com/uploads/6/9/7/1/6971266/4692542_orig.jpg");
+   // mySound = new sound("http://soundbible.com/grab.php?id=1003&type=mp3");
+    myArea.draw = setInterval(updateGameArea,50);
+   }
+ }
+ 
+
+
+ function rotate_90_piece(obstacle) 
+ {
+  current_x = obstacle.x;
+  current_y = obstacle.y;
+  current_width = obstacle.width;
+  current_height = obstacle.height;
+  obstacle.x = canvas_size - current_y-current_height;
+  obstacle.y = current_x;
+  obstacle.width = current_height;
+  obstacle.height = current_width;
+  current_orientation = obstacle.orientation;
+  if (current_orientation == 'U') {obstacle.orientation ='R'; if(obstacle.type == "image") {obstacle.image.src = "http://www.clipartkid.com/images/853/can-t-find-the-perfect-clip-art-L30Drx-clipart.gif";}}
+  if (current_orientation == 'R') {obstacle.orientation ='D'; if(obstacle.type == "image") {obstacle.image.src = "http://pngplay.com/wp-content/uploads/2016/07/Down-Arrow-PNG.png";}}
+  if (current_orientation == 'D') {obstacle.orientation ='L'; if(obstacle.type == "image") {obstacle.image.src = "http://www.clipartkid.com/images/172/left-arrow-silhouette-uZxFVM-clipart.gif";}}
+  if (current_orientation == 'L') {obstacle.orientation ='U';if(obstacle.type == "image") {obstacle.image.src = "http://www.freeiconspng.com/uploads/up-arrow-png-29.png";}}
+ }
+
+ function rotate_90_maze()
+ {
+  for (i =0; i< myObstacles.length; i++){ rotate_90_piece(myObstacles[i]);}
+  rotate_90_piece(myGamePiece);rotate_90_piece(myFinishPosition);rotate_90_piece(myStart);
+ }
+
+ function rotate_180_piece(obstacle) 
+ {
+   current_x = obstacle.x;
+   current_y = obstacle.y;
+   current_width = obstacle.width;
+   current_height = obstacle.height;
+   obstacle.x = canvas_size - current_x-current_width;
+   obstacle.y = canvas_size - current_y-current_height;
+   current_orientation = obstacle.orientation;
+   if (current_orientation == 'U') {obstacle.orientation ='D';if(obstacle.type == "image") {obstacle.image.src = "http://pngplay.com/wp-content/uploads/2016/07/Down-Arrow-PNG.png";}}
+   if (current_orientation == 'R') {obstacle.orientation ='L';if(obstacle.type == "image") {obstacle.image.src = "http://www.clipartkid.com/images/172/left-arrow-silhouette-uZxFVM-clipart.gif";}}
+   if (current_orientation == 'D') {obstacle.orientation ='U';if(obstacle.type == "image") {obstacle.image.src = "http://www.freeiconspng.com/uploads/up-arrow-png-29.png";} }
+   if (current_orientation == 'L') {obstacle.orientation ='R';if(obstacle.type == "image") {obstacle.image.src = "http://www.clipartkid.com/images/853/can-t-find-the-perfect-clip-art-L30Drx-clipart.gif";}}
+ }
+
+ function rotate_180_maze()
+ {
+   for (i =0; i< myObstacles.length; i++){ rotate_180_piece(myObstacles[i]);}
+   rotate_180_piece(myGamePiece);
+   rotate_180_piece(myFinishPosition);
+   rotate_180_piece(myStart);
+ }
+
+ function rotate_270_piece(obstacle) 
+ {
+   current_x = obstacle.x;
+   current_y = obstacle.y;
+   current_width = obstacle.width;
+   current_height = obstacle.height;
+   obstacle.x = current_y;
+   obstacle.y = canvas_size - current_x-current_width;
+   obstacle.width = current_height;
+   obstacle.height = current_width;
+   current_orientation = obstacle.orientation;
+   if (current_orientation == 'U') {obstacle.orientation ='L';if(obstacle.type == "image") {obstacle.image.src = "http://www.clipartkid.com/images/172/left-arrow-silhouette-uZxFVM-clipart.gif";}}
+   if (current_orientation == 'R') {obstacle.orientation ='U';if(obstacle.type == "image") {obstacle.image.src = "http://www.freeiconspng.com/uploads/up-arrow-png-29.png";}}
+   if (current_orientation == 'D') {obstacle.orientation ='R';if(obstacle.type == "image") {obstacle.image.src = "http://www.clipartkid.com/images/853/can-t-find-the-perfect-clip-art-L30Drx-clipart.gif";}}
+   if (current_orientation == 'L') {obstacle.orientation ='D';if(obstacle.type == "image") {obstacle.image.src = "http://pngplay.com/wp-content/uploads/2016/07/Down-Arrow-PNG.png";}}
+ }
+
+ function rotate_270_maze()
+ {
+  for (i =0; i< myObstacles.length; i++){rotate_270_piece(myObstacles[i]);}
+  rotate_270_piece(myGamePiece); 
+  rotate_270_piece(myFinishPosition); 
+  rotate_270_piece(myStart);
+ }
+ 
+
+
+function getRndInteger(min, max) {
+   return Math.floor(Math.random() * (max - min) ) + min;
+}
+
+function updateGameArea() 
+{
+  if(myArea.expstage == 'trial')
+  {
+  myArea.frameNo += 1;
+  if (myGamePiece.crashWith(myFinishPosition, myGamePiece.x, myGamePiece.y))  //if goal has been reached
+    {
+      myArea.clear();
+      myArea.key = false;
+      window.removeEventListener('keydown', function (e) {myArea.key = e.keyCode;})
+      myPrize.image.src = "http://smileyfaceplace.weebly.com/uploads/6/9/7/1/6971266/4692542_orig.jpg";
+      myPrize.update();
+      //mySound.play();
+      myArea.stop();
+      score = parseFloat((1000-(myArea.frameNo * 1.0)/(nr_maze_rows * 1.0))/10).toFixed(2);
+      allSubjectScores.push(score);
+      myScore = new component("25px", "Consolas", "green", 100, 100,400,"text");
+      myScore.text = "Your score: " + score;
+       
+      current_reward = parseFloat(score/100* current_bonus_available).toFixed(2);
+      myReward = new component("25px", "Consolas", "green", 100, 200,400,"text");
+      myReward.text = "Your bonus reward: " + current_reward;
+      allRewards.push(current_reward);
+      
+      setTimeout(function(){myArea.clear(); myScore.update();myReward.update();}, 750);
+      setTimeout(finishTrial,2750);
+      //setTimeout(showPostTrialDifficultyScreen, 2751);
+      setTimeout(reproduceTrial, 2760);
+      //setTimeout(finishExperiment, 1750);
+    }
+    else{
+      myArea.clear();
+      if (myArea.frameNo ==  myArea.nextRotation) {
+
+        random_rot = getRndInteger(1,3);
+        if (random_rot == 1) {rotate_90_maze(); /*allRotations.push({"frame": myArea.frameNo, "direction": 90});*/ currentTrialRotations.push({"frame": myArea.frameNo, "direction": 90});} // add curent rotation to list of rotations}
+        if(random_rot == 2) {rotate_180_maze(); /*allRotations.push({"frame": myArea.frameNo, "direction": 180});*/currentTrialRotations.push({"frame": myArea.frameNo, "direction": 180});}
+        if(random_rot == 3) {rotate_270_maze(); /*allRotations.push({"frame": myArea.frameNo, "direction": 270});*/currentTrialRotations.push({"frame": myArea.frameNo, "direction": 270});}
+        myArea.nextRotation = myArea.frameNo + getRndInteger(70, 100);   }
+        for (i = 0; i < myObstacles.length; i += 1) {
+          myObstacles[i].update();
+        }
+        myGamePiece.speedX = 0;
+        myGamePiece.speedY = 0;
+        current_orientation  = myGamePiece.orientation;
+        //allOrientations.push(current_orientation);
+        currentTrialOrientations.push(current_orientation);
+        if (current_orientation == 'U'){
+          if (myArea.key && myArea.key == 37) {myGamePiece.speedX = -speed; }
+          if (myArea.key && myArea.key == 39) {myGamePiece.speedX = speed; }
+          if (myArea.key && myArea.key == 38) {myGamePiece.speedY = -speed; }
+          if (myArea.key && myArea.key == 40) {myGamePiece.speedY = speed; }
+        }
+        if (current_orientation == 'L'){
+          if (myArea.key && myArea.key == 37) {myGamePiece.speedY = speed; }
+          if (myArea.key && myArea.key == 39) {myGamePiece.speedY = -speed; }
+          if (myArea.key && myArea.key == 38) {myGamePiece.speedX = -speed; }
+          if (myArea.key && myArea.key == 40) {myGamePiece.speedX = speed; }
+        }
+        if (current_orientation == 'R'){
+          if (myArea.key && myArea.key == 37) {myGamePiece.speedY = -speed; }
+          if (myArea.key && myArea.key == 39) {myGamePiece.speedY = speed; }
+          if (myArea.key && myArea.key == 38) {myGamePiece.speedX = speed; }
+          if (myArea.key && myArea.key == 40) {myGamePiece.speedX = -speed; }
+        }
+        if (current_orientation == 'D'){
+          if (myArea.key && myArea.key == 37) {myGamePiece.speedX = speed; }
+          if (myArea.key && myArea.key == 39) {myGamePiece.speedX = -speed; }
+          if (myArea.key && myArea.key == 38) {myGamePiece.speedY = speed; }
+          if (myArea.key && myArea.key == 40) {myGamePiece.speedY = -speed; }
+        }
+        //allKeyPresses.push(myArea.key);
+        currentTrialKeyPresses.push(myArea.key);
+        proposed_x = myGamePiece.x + myGamePiece.speedX;
+        proposed_y = myGamePiece.y + myGamePiece.speedY;
+        test_crash = myGamePiece.crashWithMaze( proposed_x, proposed_y)
+        if (test_crash == false) {
+          myGamePiece.x += myGamePiece.speedX;
+          myGamePiece.y += myGamePiece.speedY;
+        }
+        //allXs.push(myGamePiece.x);
+        //allYs.push(myGamePiece.y);
+        currentTrialXs.push(myGamePiece.x);
+        currentTrialYs.push(myGamePiece.y);
+        myGamePiece.update();
+        myFinishPosition.update();
+        if (current_orientation == 'D') {myStart.image.src = "http://pngplay.com/wp-content/uploads/2016/07/Down-Arrow-PNG.png";}
+        if (current_orientation == 'L') {myStart.image.src = "http://www.clipartkid.com/images/172/left-arrow-silhouette-uZxFVM-clipart.gif";}
+        if (current_orientation == 'R') {myStart.image.src = "http://www.clipartkid.com/images/853/can-t-find-the-perfect-clip-art-L30Drx-clipart.gif";}
+        if (current_orientation == 'U') {myStart.image.src = "http://www.freeiconspng.com/uploads/up-arrow-png-29.png";}
+        myStart.update();}
+      }
+      //document.getElementById("demo").innerHTML = "current frame number " + myArea.frameNo +  " next rotation  " + myArea.nextRotation;
+    }
+
+
+
+//document.getElementById("demo").innerHTML = "current frame number " + myGameArea.frameNo +  " next rotation  " + myGameArea.nextRotation;
+/*if (myGameArea.frameNo == 1000) {
+ if(trialNo == nrTrials) {clearInterval(myTrialStructure);}
+ myGameArea.clear();
+ x = Math.random();
+ y = Math.random();
+ z = Math.sqrt(-2*Math.log(x))*Math.cos(2*Math.PI*y);
+ score = Math.floor(z*sigma_score + mu_score);
+ myScore.text="TIME UP!!! Score: " + score;
+ myScore.update();
+ myGameArea.stopped = true;
+ myGameArea.intertrial_interval_left = iti;
+ myGameArea.stop();
+}    */
+
+
+
+
+
+
+
+
+
+
+
+
+
+ function finishTrial(){
+  myArea.clear();
+  myArea.stop();
+  myArea.key = false;
+  window.removeEventListener('keydown', function (e) {myArea.key = e.keyCode;})
+  allRotations.push(currentTrialRotations);
+  allXs.push(currentTrialXs);
+  allYs.push(currentTrialYs);
+  allOrientations.push(currentTrialOrientations);
+  allKeyPresses.push(currentTrialKeyPresses);
+ }
+
+function runExperiment()
+         {
+          setDifficulty();
+      	  showChoiceScreen();
+	  playTrial();
+      	  showPostTrialQuestions();              
+ 	}
+
+function setDifficulty() {}
+
+
+var ownPerformanceButton;
+var randomPerformanceButton;
+
+function showChoiceScreen()
+         {
+    	  myArea.start('pretrial_choice');
+  	  myChoiceText  = new component("25px", "Consolas", "green", 100, 100, 400,"text");
+  	  myChoiceText.text = "Bonus: " 
+      current_bonus_available = possibleBonusesAvailable[getRndInteger(0,possibleBonusesAvailable.length)];
+      allBonuses.push(current_bonus_available);
+      myBonusText = new component("25px", "Consolas", "red", 300, 100,400,"text");
+      myBonusText.text = " "+ current_bonus_available;
+      myBonusText.update();
+  	  myChoiceText.update();
+      myChoiceText  = new component("25px", "Consolas", "green", 100, 200,400,"text");
+      myChoiceText.text = "Win based on:";
+      myChoiceText.update();
+      ownPerformanceOption = new component("25px", "Consolas", "green", 80, 350, 100,"text");
+      ownPerformanceOption.text = "your performance";
+      ownPerformanceOption.update();
+      randomOption = new component("25px", "Consolas", "green", 380, 350,100,"text");
+      randomOption.text = "draw from top " + current_random_option + " % scores";
+      randomOption.update();
+      ownPerformanceButton = new component( 25, 25, "black", 80, 300); 
+      ownPerformanceButton.update();
+      randomPerformanceButton = new component( 25, 25, "black", 390, 300); 
+      randomPerformanceButton.update();
+      myArea.canvas.addEventListener("mousedown", selectRewardDependence, false);
+      }
+var slider;
+var slideBar;
+var difficultyQuestion;
+var easyExtreme;
+var difficultExtreme;
+
+function showPostTrialDifficultyScreen()
+         {
+        myArea.start('posttrial_choice');
+         myArea.canvas.style.cursor = "auto"; //make mouse reappear
+      difficultyQuestion  = new component("25px", "Consolas", "green", 100, 100, 400,"text");
+      difficultyQuestion.text = "How would you rate the difficulty of this trial on a scale from 0 to 100?";
+      difficultyQuestion.update();
+      slideBar = new component( 400, 25, "black", 100, 250);
+      slideBar.update();
+      easyExtreme = new component("25px", "Consolas", "green", 65, 295,400,"text");
+      easyExtreme.text = 'very easy';
+      easyExtreme.update();
+      difficultExtreme = new component("25px", "Consolas", "green", 440, 295,400,"text");
+      difficultExtreme.text = 'very difficult';
+      difficultExtreme.update();
+      slider = new component( 10, 50, "red", 295, 238);
+      slider.update();
+       myArea.canvas.addEventListener("mousedown", mouseDownListener, false);
+
+         }
+function showPostTrialSurpriseScreen()
+ {
+myArea.start('posttrial_surprise');
+surpriseQuestion = new component("25px", "Consolas", "green", 100, 100, 400,"text");
+surpriseQuestion.text = "Were you surprised by the score you got on this trial? Was it lower or higher that what you expected?";
+surpriseQuestion.update();
+lowerSurpriseButton = new component( 25, 25, "black", 100, 238);
+lowerSurpriseButton.update();
+lowerSurpriseText = new component("25px", "Consolas", "green", 85, 285,400,"text");
+lowerSurpriseText.text = "lower";
+lowerSurpriseText.update();
+noSurpriseButton = new component( 25, 25, "black", 295, 238);
+noSurpriseButton.update();
+higherSurpriseText = new component("25px", "Consolas", "green", 475, 285,400,"text");
+higherSurpriseText.text = "higher";
+higherSurpriseText.update();
+higherSurpriseButton = new component( 25, 25, "black", 490, 238);
+higherSurpriseButton.update();
+noSurpriseText = new component("25px", "Consolas", "green", 245, 285,400,"text");
+noSurpriseText.text = "not surprised";
+noSurpriseText.update();
+myArea.canvas.addEventListener("mousedown", selectSurprise, false);
+ }
+
+var lowerSurpriseButton;
+var higherSurpriseButton;
+var noSurpriseButton;
+var mouseX2;
+var mouseY2;
+var surpriseResponse;
+function selectSurprise(evt) {
+  theCanvas = myArea.canvas;
+    //getting mouse position correctly, being mindful of resizing that may have occured in the browser:
+    var bRect = theCanvas.getBoundingClientRect();
+    mouseX2 = (evt.clientX - bRect.left)*(theCanvas.width/bRect.width);
+    mouseY2 = (evt.clientY - bRect.top)*(theCanvas.height/bRect.height);
+    if  (mouseX2 > lowerSurpriseButton.x && mouseX2 < (lowerSurpriseButton.x + lowerSurpriseButton.width) &&  mouseY2 > lowerSurpriseButton.y && mouseY2 < (lowerSurpriseButton.y + lowerSurpriseButton.height)) 
+    {
+      myArea.canvas.removeEventListener("mousedown", selectSurprise, false);
+      lowerSurpriseButton.color = "red";
+      lowerSurpriseButton.update();
+      surpriseResponse = -1;
+      allSurpriseResponses.push(surpriseResponse);
+      //setTimeout(finishExperiment, 800);
+  }
+ if  (mouseX2 > noSurpriseButton.x && mouseX2 < (noSurpriseButton.x + noSurpriseButton.width) &&  mouseY2 > noSurpriseButton.y && mouseY2 < (noSurpriseButton.y + noSurpriseButton.height)) 
+    {
+      myArea.canvas.removeEventListener("mousedown", selectSurprise, false);
+      noSurpriseButton.color = "red";
+      noSurpriseButton.update();
+      surpriseResponse = 0;
+      allSurpriseResponses.push(surpriseResponse);
+      //setTimeout(finishExperiment, 800);       
+  }
+   if  (mouseX2 > higherSurpriseButton.x && mouseX2 < (higherSurpriseButton.x + higherSurpriseButton.width) &&  mouseY2 > higherSurpriseButton.y && mouseY2 < (higherSurpriseButton.y + higherSurpriseButton.height)) 
+    {
+      myArea.canvas.removeEventListener("mousedown", selectSurprise, false);
+      higherSurpriseButton.color = "red";
+      higherSurpriseButton.update();
+      surpriseResponse = 1;
+      allSurpriseResponses.push(surpriseResponse);
+      //setTimeout(finishExperiment, 800);       
+  }
+
+if(currentTrial == nrTrials) {//setTimeout(finishExperiment, 800);
+                               setTimeout(reproduceTrial, 1000);
+                              }
+else {setTimeout(showChoiceScreen,800);}
+    //code below prevents the mouse down from having an effect on the main browser window:
+    if (evt.preventDefault) {
+      evt.preventDefault();
+    } //standard
+    else if (evt.returnValue) {
+      evt.returnValue = false;
+    } //older IE
+    return false;
+  }
+
+
+
+function reproduceTrial()
+  {
+    myArea.start('reproduce_trial');  
+    clearInterval(myArea.interval); 
+    myArea.clear();
+
+
+
+reproduceText= new component("25px", "Consolas", "green", 100, 100, 400, "text");
+   reproduceText.text = 'Reproducing previous trial';
+   reproduceText.update();
+   setTimeout(finishExperiment,2000);
+   /*
+    orientationsToReproduce = allOrientations[currentReproducedTrial];
+    currentReproducedTrial = currentReproducedTrial + 1;
+
+    totalLengthOfCurrentReproducedTrial = allXs[currentReproducedTrial-1].length;
+
+
+rotationsCurrentReproducedTrial =allRotations[currentReproducedTrial-1];
+var rotationFramesCurrentReproducedTrial = [];
+
+for (i=0; i< rotationsCurrentReproducedTrial.length; i +=1)
+  {rotationFramesCurrentReproducedTrial.push(rotationsCurrentReproducedTrial["frame"]);}
+
+    nr_maze_rows = allMazeDimensions[currentReproducedTrial -1]; // draw maze size    
+    
+    level_setup();
+    myGamePiece = new component(game_piece_size, game_piece_size, "red",piece_x , piece_y);
+    myFinishPosition = new component(game_piece_size, game_piece_size, "yellow", finish_x, finish_y);
+    myObstacles = [];
+
+    M = allMazes[currentReproducedTrial-1];
+
+    for ( i =0; i< nr_maze_rows; i++)
+    {
+     for ( j=0; j< nr_maze_rows; j++)
+     {
+       if (M[i][j][0] == 0) {myObstacles.push(new component (1, maze_segment_length, "green", border + j*maze_segment_length, border + i *maze_segment_length));}
+       if (M[i][j][1] == 0) {myObstacles.push(new component (maze_segment_length,1, "green", border + j*maze_segment_length, border + i *maze_segment_length));}
+       if(j == nr_maze_rows-1){
+         if (M[i][j][2] == 0) {myObstacles.push(new component (1,maze_segment_length, "green", border + (j+1)*maze_segment_length, border + i *maze_segment_length));}}
+         if(i == nr_maze_rows-1){
+           if (M[i][j][3] == 0) {myObstacles.push(new component (maze_segment_length,1, "green", border + j*maze_segment_length, border + (i+1) *maze_segment_length));}}
+         }
+       }
+       myStart =  new component(game_piece_size, arrow_height , "black", start_x, start_y,400, "image", "http://www.freeiconspng.com/uploads/up-arrow-png-29.png");
+       myPrize = new component(0.7*canvas_size, 0.7*canvas_size, "http://smileyfaceplace.weebly.com/uploads/6/9/7/1/6971266/4692542_orig.jpg", 0.15*canvas_size, 0.15*canvas_size, 400,"image", "http://smileyfaceplace.weebly.com/uploads/6/9/7/1/6971266/4692542_orig.jpg");
+
+for (i = 0; i < myObstacles.length; i += 1) {
+          myObstacles[i].update();
+        }
+        myStart.update();
+        myGamePiece.update();
+        myFinishPosition.update();
+
+for (updates = 1; updates < totalLengthOfCurrentReproducedTrial; updates +=1) 
+{
+
+}
+
+       if(currentReproducedTrial > nrTrials) 
+         {setTimeout(function (){clearInterval(myArea.draw); finishExperiment();}, 1000);}
+       else
+       {
+
+        
+        setTimeout(finishExperiment,3000);
+      }
+*/
+  }
+
+
+
+var mouseX3;
+var mouseY3; 
+
+function selectRewardDependence(evt){
+  theCanvas = myArea.canvas;
+    //getting mouse position correctly, being mindful of resizing that may have occured in the browser:
+    var bRect = theCanvas.getBoundingClientRect();
+    mouseX3 = (evt.clientX - bRect.left)*(theCanvas.width/bRect.width);
+    mouseY3 = (evt.clientY - bRect.top)*(theCanvas.height/bRect.height);
+    if  (mouseX3 > ownPerformanceButton.x && mouseX3 < (ownPerformanceButton.x + ownPerformanceButton.width) &&  mouseY3 > ownPerformanceButton.y && mouseY3 < (ownPerformanceButton.y + ownPerformanceButton.height)) 
+    {
+      myArea.canvas.removeEventListener("mousedown", selectRewardDependence , false);
+      ownPerformanceButton.color = "red";
+      ownPerformanceButton.update();
+      current_decision = 'self';
+      allChoices.push(current_decision);
+      //setTimeout(finishExperiment, 800);  
+      myArea.canvas.style.cursor = "none"; //hide mouse cursor     
+      setTimeout(startTrial, 800);       
+  }
+ 
+   if  (mouseX3 > randomPerformanceButton.x && mouseX3 < (randomPerformanceButton.x + randomPerformanceButton.width) &&  mouseY3 > randomPerformanceButton.y && mouseY3 < (randomPerformanceButton.y + randomPerformanceButton.height)) 
+    {
+      myArea.canvas.removeEventListener("mousedown", selectRewardDependence , false);
+      randomPerformanceButton.color = "red";
+      randomPerformanceButton.update();
+      current_decision = 'random';
+      allChoices.push(current_decision);
+      //setTimeout(finishExperiment, 800); 
+      myArea.canvas.style.cursor = "none"; //hide mouse cursor       
+      setTimeout(startTrial, 800);
+  }
+
+    //code below prevents the mouse down from having an effect on the main browser window:
+    if (evt.preventDefault) {
+      evt.preventDefault();
+    } //standard
+    else if (evt.returnValue) {
+      evt.returnValue = false;
+    } //older IE
+    return false;
+}
+
+
+
+function playTrial() {}
+function showPostTrialQuestions() {}
+
+
+function saveData()
+  {
+    data_to_be_saved = {"allChoices": allChoices,"allDifficultyChoices": allDifficultyChoices, "allSurpriseResponses": allSurpriseResponses,
+    "allSubjectScores": allSubjectScores, "allRewards": allRewards,
+    "allMazes": allMazes, "allMazeDimensions": allMazeDimensions,
+    "allRotations": allRotations,
+    "allXs": allXs,
+    "allYs": allYs, 
+    "allOrientations": allOrientations,
+    "allKeyPresses": allKeyPresses,
+    "allBonuses": allBonuses};
+    text_data_to_be_saved = JSON.stringify(data_to_be_saved);
+    return text_data_to_be_saved;
+  }
+
+
+
+
+function finishExperiment() 
+	 {
+  	myArea.clear();
+    myArea.stop();
+	  myArea.key = false;
+	  window.removeEventListener('keydown', function (e) {myArea.key = e.keyCode;})
+
+    finishingText = new component("25px", "Consolas", "green", 100, 100,400,"text");
+    finishingText.text  = "Done!!!";
+    finishingText.update();
+    var hiddenElement = document.createElement('a');
+
+     hiddenElement.href = 'data:attachment/text,' + encodeURI(saveData());
+//hiddenElement.target = '_blank';
+hiddenElement.download = 'myFile.json';
+//hiddenElement.click();
+
+  	 }
+
+
+
+
+ function wrapText(context, text, x, y, maxWidth, lineHeight) 
+ {
+  var words = text.split(' ');
+  var line = '';
+  for(var n = 0; n < words.length; n++) 
+  {
+    var testLine = line + words[n] + ' ';
+    var metrics = context.measureText(testLine);
+    var testWidth = metrics.width;
+    if (testWidth > maxWidth && n > 0) 
+    { 
+      context.fillText(line, x, y); //if the line with the current word is too long, then prin line without current word
+      line = words[n] + ' '; // then start new line with current work and space
+      y += lineHeight; // increase height if already printed text
+    }
+    else 
+    {
+      line = testLine;
+    }
+  }
+  context.fillText(line, x, y);
+}
+
+function component(width, height, color, x, y, maxLengthText, type,image_source) {
+      this.type = type;
+      this.width = width;
+      this.height = height;
+      this.maxWidth = maxLengthText;
+      this.speedX = 0;
+      this.speedY = 0;
+      this.color = color;
+      this.x = x;
+      this.y = y;
+      this.orientation = 'U';
+      if (type == "image") {this.image = new Image(); this.image.src =image_source;}
+      this.update = function() 
+      {
+        ctx = myArea.context;
+        if (this.type == "text") {
+          ctx.font = " bold 23px Calibri";
+          ctx.fillStyle = this.color;
+          wrapText(ctx, this.text, this.x, this.y, this.maxWidth, 30); //  max line width 400 
+        } 
+        if (this.type == "image") 
+        {
+          ctx.drawImage(this.image,
+            this.x,
+            this.y,
+            this.width, this.height);
+        }
+        else {
+          ctx.fillStyle = this.color;
+          ctx.fillRect(this.x, this.y, this.width, this.height);
+        }
+      }
+      this.crashWith = function(otherobj, proposed_x, proposed_y) 
+      {
+        var myleft = proposed_x;
+        var myright = myleft + (this.width);
+        var mytop = proposed_y;
+        var mybottom = mytop + (this.height);
+        var otherleft = otherobj.x;
+        var otherright = otherobj.x + (otherobj.width);
+        var othertop = otherobj.y;
+        var otherbottom = otherobj.y + (otherobj.height);
+        var crash = true;
+        if ((mybottom < othertop) || (mytop > otherbottom) || (myright < otherleft) || (myleft > otherright)) { crash = false;}
+        return crash;
+      }
+      this.crashWithMaze = function(proposed_x, proposed_y)
+      {
+        maze_crash  = false;
+        for (i = 0; i < myObstacles.length; i += 1) {if (myGamePiece.crashWith(myObstacles[i], proposed_x, proposed_y)) {maze_crash  = true;return;}}
+       return maze_crash;
+     }
+     this.clear = function()
+     {if(this.type != "text" && this.type != "image")
+      {myArea.context.clearRect(this.x, this.y, this.width, this.height);}
+     }
+   }
+
+function showInstructions()
+	{
+	 myArea.start('starting');
+	 introText= new component("25px", "Consolas", "green", 100, 100, 400, "text");
+	 introText.text = 'Hello! Press any key to start the experiment!';
+	 introText.update();
+   myStart =  new component(game_piece_size, arrow_height , "black", start_x, start_y, "image", "http://www.freeiconspng.com/uploads/up-arrow-png-29.png");
+  
+     
+ 	}
+
+
+
+
+
+
+
+
+
+</script>
+
+
+
+</body>
+</html>
