@@ -720,90 +720,71 @@ else {setTimeout(showChoiceScreen,800);}
     return false;
   }
 
-
+var totalLengthOfReproducedTrial;
+var currentFrameInReproducedTrial =0;
 
 function reproduceTrial()
   {
-    currentReproducedTrial = currentReproducedTrial + 1;
-    myArea.start('reproduce_trial');  
-    clearInterval(myArea.interval); 
-    myArea.clear();
-
-rotationsCurrentReproducedTrial =allRotations[currentReproducedTrial-1];
-var rotationFramesCurrentReproducedTrial = [];
-var rotationDirectionsCurrentReproducedTrial = [];
-totalLengthOfCurrentReproducedTrial = allXs[currentReproducedTrial-1].length;
-for (i=0; i< rotationsCurrentReproducedTrial.length; i +=1)
-  {rotationFramesCurrentReproducedTrial.push(rotationsCurrentReproducedTrial[i]["frame"]);
-rotationDirectionsCurrentReproducedTrial.push(rotationsCurrentReproducedTrial[i]["direction"]);
-}
-
-rotationFramesCurrentReproducedTrial.reverse();
-rotationDirectionsCurrentReproducedTrial.reverse();
-
-nr_maze_rows = allMazeDimensions[currentReproducedTrial -1]; // draw maze size    
-
-level_setup();
-myGamePiece = new component(game_piece_size, game_piece_size, "red",piece_x , piece_y);
-myFinishPosition = new component(game_piece_size, game_piece_size, "yellow", finish_x, finish_y);
-myObstacles = [];
-
-M = allMazes[currentReproducedTrial-1];
-
-for ( i =0; i< nr_maze_rows; i++)
-{
- for ( j=0; j< nr_maze_rows; j++)
- {
-   if (M[i][j][0] == 0) {myObstacles.push(new component (1, maze_segment_length, "green", border + j*maze_segment_length, border + i *maze_segment_length));}
-   if (M[i][j][1] == 0) {myObstacles.push(new component (maze_segment_length,1, "green", border + j*maze_segment_length, border + i *maze_segment_length));}
-   if(j == nr_maze_rows-1){
-     if (M[i][j][2] == 0) {myObstacles.push(new component (1,maze_segment_length, "green", border + (j+1)*maze_segment_length, border + i *maze_segment_length));}}
-     if(i == nr_maze_rows-1){
-       if (M[i][j][3] == 0) {myObstacles.push(new component (maze_segment_length,1, "green", border + j*maze_segment_length, border + (i+1) *maze_segment_length));}}
-     }
-   }
-   myStart =  new component(game_piece_size, arrow_height , "black", start_x, start_y,400, "image", "http://www.freeiconspng.com/uploads/up-arrow-png-29.png");
-   myPrize = new component(0.7*canvas_size, 0.7*canvas_size, "http://smileyfaceplace.weebly.com/uploads/6/9/7/1/6971266/4692542_orig.jpg", 0.15*canvas_size, 0.15*canvas_size, 400,"image", "http://smileyfaceplace.weebly.com/uploads/6/9/7/1/6971266/4692542_orig.jpg");
-
-   for (i = 0; i < myObstacles.length; i += 1) {
-    myObstacles[i].update();
-  }
-  myStart.update();
-  myGamePiece.update();
-  myFinishPosition.update();
-setTimeout(finishExperiment,5000);
-/*
-   reproduceText= new component("25px", "Consolas", "green", 100, 100, 400, "text");
-   reproduceText.text = 'Reproducing previous trial. There were ' + rotationsCurrentReproducedTrial.length + " rotations, the last one of which occured at frame number " + rotationFramesCurrentReproducedTrial[0] + "and direction " + rotationDirectionsCurrentReproducedTrial[0] + ", while the total number of frames was "+totalLengthOfCurrentReproducedTrial;
-   reproduceText.update();
-   setTimeout(finishExperiment,5000);*/
-
-   /*
-
-    orientationsToReproduce = allOrientations[currentReproducedTrial-1];
-    totalLengthOfCurrentReproducedTrial = allXs[currentReproducedTrial-1].length;
-
-
-
+myArea.start('reproduce_trial'); 
+currentFrameInReproducedTrial = 0;
+ reproducingText= new component("25px", "Consolas", "green", 100, 100, 400, "text");
+   reproducingText.text = 'Starting reproduced trials  ' ;
+   reproducingText.update(); 
+//clearInterval(myArea.interval); 
     
-
-for (updates = 1; updates < totalLengthOfCurrentReproducedTrial; updates +=1) 
-{
-
+    
+   currentReproducedTrial = currentReproducedTrial + 1;
+    
+   if(currentReproducedTrial > nrTrials) 
+     {setTimeout(function (){clearInterval(myArea.reproduceDrawing); finishExperiment();}, 5000);}
+   else
+   {
+    totalLengthOfReproducedTrial = allXs[currentReproducedTrial-1].length;
+    myArea.clear();
+    nr_maze_rows = allMazeDimensions[currentReproducedTrial-1]; // draw maze size    
+    
+    level_setup(); //set up starting positions and maze difficulty
+    myGamePiece = new component(game_piece_size, game_piece_size, "red",piece_x , piece_y);
+    myFinishPosition = new component(game_piece_size, game_piece_size, "yellow", finish_x, finish_y);
+    myObstacles = [];
+    M = allMazes[currentReproducedTrial-1];
+     
+    for ( i =0; i< nr_maze_rows; i++)
+    {
+     for ( j=0; j< nr_maze_rows; j++)
+     {
+       if (M[i][j][0] == 0) {myObstacles.push(new component (1, maze_segment_length, "green", border + j*maze_segment_length, border + i *maze_segment_length));}
+       if (M[i][j][1] == 0) {myObstacles.push(new component (maze_segment_length,1, "green", border + j*maze_segment_length, border + i *maze_segment_length));}
+       if(j == nr_maze_rows-1){
+         if (M[i][j][2] == 0) {myObstacles.push(new component (1,maze_segment_length, "green", border + (j+1)*maze_segment_length, border + i *maze_segment_length));}}
+         if(i == nr_maze_rows-1){
+           if (M[i][j][3] == 0) {myObstacles.push(new component (maze_segment_length,1, "green", border + j*maze_segment_length, border + (i+1) *maze_segment_length));}}
+         }
+       }
+    myStart =  new component(game_piece_size, arrow_height , "black", start_x, start_y,400, "image", "http://www.freeiconspng.com/uploads/up-arrow-png-29.png");
+    myPrize = new component(0.7*canvas_size, 0.7*canvas_size, "http://smileyfaceplace.weebly.com/uploads/6/9/7/1/6971266/4692542_orig.jpg", 0.15*canvas_size, 0.15*canvas_size, 400,"image", "http://smileyfaceplace.weebly.com/uploads/6/9/7/1/6971266/4692542_orig.jpg");
+     reproducingText= new component("25px", "Consolas", "green", 100, 100, 400, "text");
+   reproducingText.text = 'Total length of trial being reproduced is  ' + totalLengthOfReproducedTrial;
+   reproducingText.update();
+   //setTimeout(finishExperiment,2000);
+   // mySound = new sound("http://soundbible.com/grab.php?id=1003&type=mp3");
+    setTimeout(function(){ myArea.reproduceDrawing = setInterval(updateReproducingGameArea,50);},2000);
+   }
 }
 
-       if(currentReproducedTrial > nrTrials) 
-         {setTimeout(function (){clearInterval(myArea.draw); finishExperiment();}, 1000);}
-       else
-       {
 
-        
-        setTimeout(finishExperiment,3000);
-      }
-*/
-  }
-
-
+function updateReproducingGameArea()
+{currentFrameInReproducedTrial = currentFrameInReproducedTrial +1;
+ 
+  if(currentFrameInReproducedTrial == totalLengthOfReproducedTrial) {myArea.clear();
+  reproducingText= new component("25px", "Consolas", "green", 100, 100, 400, "text");
+   reproducingText.text = 'Current frame in the reproduced trial is  ' + currentFrameInReproducedTrial;
+   reproducingText.update(); clearInterval(myArea.reproduceDrawing); setTimeout(finishExperiment,3000);}
+  else{ myArea.clear();
+  reproducingText= new component("25px", "Consolas", "green", 100, 100, 400, "text");
+   reproducingText.text = 'Current frame in the reproduced trial is  ' + currentFrameInReproducedTrial;
+   reproducingText.update();}
+}
 
 var mouseX3;
 var mouseY3; 
