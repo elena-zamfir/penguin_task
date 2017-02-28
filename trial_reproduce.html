@@ -722,7 +722,9 @@ else {setTimeout(showChoiceScreen,800);}
 
 var totalLengthOfReproducedTrial;
 var currentFrameInReproducedTrial =0;
-
+var rotationFramesInCurrentReproducedTrial = [];
+var rotationDirectionsInCurrentReproducedTrial = [];
+var nrRotationsInCurrentReproducedTrial;
 function reproduceTrial()
   {
 myArea.start('reproduce_trial'); 
@@ -741,6 +743,20 @@ currentFrameInReproducedTrial = 0;
    {
     totalLengthOfReproducedTrial = allXs[currentReproducedTrial-1].length;
     myArea.clear();
+
+    rotationFramesInCurrentReproducedTrial = [];
+    rotationDirectionsInCurrentReproducedTrial = [];
+    nrRotationsInCurrentReproducedTrial  = allRotations[currentReproducedTrial-1].length;
+
+    for (i=0; i< nrRotationsInCurrentReproducedTrial; i += 1) 
+    {
+      rotationFramesInCurrentReproducedTrial.push(allRotations[currentReproducedTrial-1][i]["frame"]);
+      rotationDirectionsInCurrentReproducedTrial.push(allRotations[currentReproducedTrial-1][i]["direction"]);
+    }
+    rotationFramesInCurrentReproducedTrial.reverse();
+    rotationDirectionsInCurrentReproducedTrial.reverse();
+
+
     nr_maze_rows = allMazeDimensions[currentReproducedTrial-1]; // draw maze size    
     
     level_setup(); //set up starting positions and maze difficulty
@@ -776,14 +792,55 @@ currentFrameInReproducedTrial = 0;
 function updateReproducingGameArea()
 {currentFrameInReproducedTrial = currentFrameInReproducedTrial +1;
  
-  if(currentFrameInReproducedTrial == totalLengthOfReproducedTrial) {myArea.clear();
+  if(currentFrameInReproducedTrial == totalLengthOfReproducedTrial) {
+    myArea.clear();
   reproducingText= new component("25px", "Consolas", "green", 100, 100, 400, "text");
    reproducingText.text = 'Current frame in the reproduced trial is  ' + currentFrameInReproducedTrial;
-   reproducingText.update(); clearInterval(myArea.reproduceDrawing); setTimeout(finishExperiment,3000);}
+   reproducingText.update(); clearInterval(myArea.reproduceDrawing); setTimeout(finishExperiment,3000);
+ }
   else{ myArea.clear();
-  reproducingText= new component("25px", "Consolas", "green", 100, 100, 400, "text");
+  /*reproducingText= new component("25px", "Consolas", "green", 100, 100, 400, "text");
    reproducingText.text = 'Current frame in the reproduced trial is  ' + currentFrameInReproducedTrial;
-   reproducingText.update();}
+   reproducingText.update();*/
+
+
+ 
+      if(nrRotationsInCurrentReproducedTrial >0) 
+      {
+      if ( currentFrameInReproducedTrial == rotationFramesInCurrentReproducedTrial[nrRotationsInCurrentReproducedTrial-1] ) // if this is the current first rotation
+       {
+
+         
+        if (rotationDirectionsInCurrentReproducedTrial[nrRotationsInCurrentReproducedTrial-1] == 90) {rotate_90_maze(); } // perform rotation
+        if(rotationDirectionsInCurrentReproducedTrial[nrRotationsInCurrentReproducedTrial-1] == 180) {rotate_180_maze();}
+        if(rotationDirectionsInCurrentReproducedTrial[nrRotationsInCurrentReproducedTrial-1] == 270) {rotate_270_maze();}
+        rotationDirectionsInCurrentReproducedTrial.pop();
+        rotationFramesInCurrentReproducedTrial.pop();
+        nrRotationsInCurrentReproducedTrial = rotationDirectionsInCurrentReproducedTrial.length;
+
+       }
+      } // if there are rotations, check if i reached one. if yes, perform rotation and delete it from the list of rotations to perform. 
+        for (i = 0; i < myObstacles.length; i += 1) {
+          myObstacles[i].update();
+        } //draw maze; 
+         myGamePiece.x = allXs[currentReproducedTrial-1][currentFrameInReproducedTrial];
+         myGamePiece.y = allYs[currentReproducedTrial-1][currentFrameInReproducedTrial];
+     
+         
+        myGamePiece.update();
+        myFinishPosition.update();
+        if (allOrientations[currentReproducedTrial-1][currentFrameInReproducedTrial] == 'D') {myStart.image.src = "http://pngplay.com/wp-content/uploads/2016/07/Down-Arrow-PNG.png";}
+        if (allOrientations[currentReproducedTrial-1][currentFrameInReproducedTrial] == 'L') {myStart.image.src = "http://www.clipartkid.com/images/172/left-arrow-silhouette-uZxFVM-clipart.gif";}
+        if (allOrientations[currentReproducedTrial-1][currentFrameInReproducedTrial] == 'R') {myStart.image.src = "http://www.clipartkid.com/images/853/can-t-find-the-perfect-clip-art-L30Drx-clipart.gif";}
+        if (allOrientations[currentReproducedTrial-1][currentFrameInReproducedTrial] == 'U') {myStart.image.src = "http://www.freeiconspng.com/uploads/up-arrow-png-29.png";}
+        myStart.update();
+    }
+
+
+
+
+
+
 }
 
 var mouseX3;
