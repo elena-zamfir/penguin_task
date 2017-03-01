@@ -40,7 +40,6 @@ var allBonuses = [];
 var canvas_size = 600;
 var nrTrials = 1;
 var currentTrial = 0;
-var currentReproducedTrial = 0;
 var maxLineWidth = 400;
 var heightLine = 30;
 var dragging;
@@ -108,8 +107,7 @@ var border_to_maze_segment_ratio = 1.5;
 var mu_score = 75;
 var sigma_score = 10;
 var nr_maze_rows = 7;
-//var possibleNrMazeRows = [3,5,7,7,7,7,9,9,9,11, 11,3,3,3,3,5,5,5];
-var possibleNrMazeRows = [3];
+var possibleNrMazeRows = [3,5,7,7,7,7,9,9,9,11, 11,3,3,3,3,5,5,5];
 var maze_segment_length = Math.floor(canvas_size/(nr_maze_rows + 2*border_to_maze_segment_ratio));
 var border = border_to_maze_segment_ratio*maze_segment_length;
 var mySound;
@@ -164,9 +162,6 @@ function level_setup()
      window.addEventListener('keyup', function (e) {
           myArea.key = false;
       })
-     if(this.expstage == "reproduce_trial") {clearInterval(this.interval); window.removeEventListener('keydown', function (e) {myArea.key = e.keyCode;}); window.removeEventListener('keyup', function (e) {
-          myArea.key = false;
-      }); }
    },
    clear : function() 
    {
@@ -175,7 +170,6 @@ function level_setup()
   stop : function() {
    clearInterval(this.interval);
    clearInterval(this.draw);
-   clearInterval(this.reproduceDrawing);
  }
 }
 
@@ -705,9 +699,7 @@ function selectSurprise(evt) {
       //setTimeout(finishExperiment, 800);       
   }
 
-if(currentTrial == nrTrials) {//setTimeout(finishExperiment, 800);
-                               setTimeout(reproduceTrial, 1000);
-                              }
+if(currentTrial == nrTrials) {setTimeout(finishExperiment, 800);}
 else {setTimeout(showChoiceScreen,800);}
     //code below prevents the mouse down from having an effect on the main browser window:
     if (evt.preventDefault) {
@@ -718,72 +710,6 @@ else {setTimeout(showChoiceScreen,800);}
     } //older IE
     return false;
   }
-
-
-
-function reproduceTrial()
-  {
-    myArea.start('reproduce_trial');  
-   clearInterval(myArea.interval); 
-/*
-   currentTrialRotations = [];
-   currentTrialXs = [];
-   currentTrialYs = [];
-   currentTrialOrientations = [];
-   currentTrialKeyPresses = [];
-*/
-   currentReproducedTrial = currentReproducedTrial + 1;
-
-   /*countTrialText = new component("25px", "Consolas", "green", 100, 100,400,"text");
-   countTrialText.text = 'this is trial ' + currentTrial;
-   countTrialText.update();*/
-
-   if(currentReproducedTrial > nrTrials) 
-     {setTimeout(function (){clearInterval(myArea.draw); finishExperiment();}, 1000);}
-   else
-   {
-    myArea.clear();
-    //nr_maze_rows = possibleNrMazeRows[getRndInteger(0, possibleNrMazeRows.length)] // draw maze size    
-    nr_maze_rows = allMazeDimensions[currentReproducedTrial -1]; // draw maze size    
-    //allMazeDimensions.push(nr_maze_rows);
-    level_setup();
-    myGamePiece = new component(game_piece_size, game_piece_size, "red",piece_x , piece_y);
-    myFinishPosition = new component(game_piece_size, game_piece_size, "yellow", finish_x, finish_y);
-    myObstacles = [];
-    /*
-    M = createMaze(nr_maze_rows, nr_maze_rows);
-    allMazes.push(M);*/
-    M = allMazes[currentReproducedTrial-1];
-
-    for ( i =0; i< nr_maze_rows; i++)
-    {
-     for ( j=0; j< nr_maze_rows; j++)
-     {
-       if (M[i][j][0] == 0) {myObstacles.push(new component (1, maze_segment_length, "green", border + j*maze_segment_length, border + i *maze_segment_length));}
-       if (M[i][j][1] == 0) {myObstacles.push(new component (maze_segment_length,1, "green", border + j*maze_segment_length, border + i *maze_segment_length));}
-       if(j == nr_maze_rows-1){
-         if (M[i][j][2] == 0) {myObstacles.push(new component (1,maze_segment_length, "green", border + (j+1)*maze_segment_length, border + i *maze_segment_length));}}
-         if(i == nr_maze_rows-1){
-           if (M[i][j][3] == 0) {myObstacles.push(new component (maze_segment_length,1, "green", border + j*maze_segment_length, border + (i+1) *maze_segment_length));}}
-         }
-       }
-    myStart =  new component(game_piece_size, arrow_height , "black", start_x, start_y,400, "image", "http://www.freeiconspng.com/uploads/up-arrow-png-29.png");
-    myPrize = new component(0.7*canvas_size, 0.7*canvas_size, "http://smileyfaceplace.weebly.com/uploads/6/9/7/1/6971266/4692542_orig.jpg", 0.15*canvas_size, 0.15*canvas_size, 400,"image", "http://smileyfaceplace.weebly.com/uploads/6/9/7/1/6971266/4692542_orig.jpg");
-   // mySound = new sound("http://soundbible.com/grab.php?id=1003&type=mp3");
-    //myArea.reproduceDrawing = setInterval(reproduceGameArea,50);
-
-    for (i = 0; i < myObstacles.length; i += 1) {
-          myObstacles[i].update();
-        }
-        myStart.update();
-        myGamePiece.update();
-        myFinishPosition.update();
-        setTimeout(finishExperiment,3000);
-   }
-
-  }
-
-
 
 var mouseX3;
 var mouseY3; 
