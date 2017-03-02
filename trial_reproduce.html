@@ -442,7 +442,9 @@ function getRndInteger(min, max) {
 
 var prizeDisplayTime = 750;
 var scoreDisplayTime = 1000;
-var betweenTrialsTime = 30;
+var betweenTrialEndAndQuestionsTime = 30;
+var betweenTrialsTime = 800;
+var betweenSelfAndOtherTime = 800;
 
 function updateGameArea() 
 {
@@ -468,7 +470,7 @@ function updateGameArea()
       myReward.text = "Your bonus reward: " + current_reward;
       allRewards.push(current_reward);
       
-      setTimeout(function(){myArea.clear(); myScore.update();myReward.update();setTimeout(function() {finishTrial(); setTimeout(showPostTrialDifficultyScreen , betweenTrialsTime);},scoreDisplayTime);}, prizeDisplayTime);
+      setTimeout(function(){myArea.clear(); myScore.update();myReward.update();setTimeout(function() {finishTrial(); setTimeout(showPostTrialDifficultyScreen , betweenTrialEndAndQuestionsTime);},scoreDisplayTime);}, prizeDisplayTime);
      //setTimeout(finishTrial,1000);
      // setTimeout(startTrial,1030);
       //setTimeout(showPostTrialDifficultyScreen, 2751);
@@ -677,6 +679,7 @@ var noSurpriseButton;
 var mouseX2;
 var mouseY2;
 var surpriseResponse;
+
 function selectSurprise(evt) {
   theCanvas = myArea.canvas;
     //getting mouse position correctly, being mindful of resizing that may have occured in the browser:
@@ -712,9 +715,9 @@ function selectSurprise(evt) {
   }
 
 if(currentTrial == nrTrials) {//setTimeout(finishExperiment, 800);
-                               setTimeout(reproduceTrial, 1000);
+                               setTimeout(reproduceTrial,  betweenSelfAndOtherTime);
                               }
-else {setTimeout(showChoiceScreen,800);}
+else {setTimeout(showChoiceScreen,betweenTrialsTime);}
     //code below prevents the mouse down from having an effect on the main browser window:
     if (evt.preventDefault) {
       evt.preventDefault();
