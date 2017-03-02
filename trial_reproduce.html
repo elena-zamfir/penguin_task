@@ -330,7 +330,7 @@ function hitTest(mx,my)
    countTrialText.text = 'this is trial ' + currentTrial;
    countTrialText.update();*/
    if(currentTrial > nrTrials) 
-     {setTimeout(function (){clearInterval(myArea.draw); reproduceTrial();}, 1000);}
+     {/*setTimeout(function (){clearInterval(myArea.draw); reproduceTrial();}, 1000);*/  clearInterval(myArea.draw); reproduceTrial();}
    else
    {
     myArea.clear();
@@ -440,6 +440,10 @@ function getRndInteger(min, max) {
    return Math.floor(Math.random() * (max - min) ) + min;
 }
 
+var prizeDisplayTime = 750;
+var scoreDisplayTime = 1000;
+var betweenTrialsTime = 30;
+
 function updateGameArea() 
 {
   if(myArea.expstage == 'trial')
@@ -464,9 +468,9 @@ function updateGameArea()
       myReward.text = "Your bonus reward: " + current_reward;
       allRewards.push(current_reward);
       
-      //setTimeout(function(){myArea.clear(); myScore.update();myReward.update();}, 750);
-      setTimeout(finishTrial,1000);
-      setTimeout(startTrial,1030);
+      setTimeout(function(){myArea.clear(); myScore.update();myReward.update();setTimeout(function() {finishTrial(); setTimeout(showPostTrialDifficultyScreen , betweenTrialsTime);},scoreDisplayTime);}, prizeDisplayTime);
+     //setTimeout(finishTrial,1000);
+     // setTimeout(startTrial,1030);
       //setTimeout(showPostTrialDifficultyScreen, 2751);
      // setTimeout(reproduceTrial, 110);
       //setTimeout(finishExperiment, 1750);
@@ -579,10 +583,10 @@ function updateGameArea()
 
 function runExperiment()
          {
-          setDifficulty();
+          setDifficulty(); // e nedefinita
       	  showChoiceScreen();
-	  playTrial();
-      	  showPostTrialQuestions();              
+	  playTrial(); //e nedefinita
+      	  showPostTrialQuestions();              //e nedefinita
  	}
 
 function setDifficulty() {}
