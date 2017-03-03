@@ -204,6 +204,18 @@ function checkForKeyPresses()
   startingText.update();
   setTimeout(runExperiment, 1000);
 }
+
+ if (myArea.key && myArea.expstage == 'other_stage_start')
+ {
+  myArea.key = false;
+  window.removeEventListener('keydown', function (e) {myArea.key = e.keyCode;})
+  startingText= new component("25px", "Consolas", "green", 100, 100,400,"text");
+  startingText.text = "Other performing trials starting!!";
+  myArea.clear();
+  myArea.stop();
+  startingText.update();
+  setTimeout(reproduceTrial, 1000);
+}
 /*
 if (myArea.key && myArea.expstage == 'pretrial_choice' && myArea.key == 37)
 {
@@ -585,10 +597,10 @@ function updateGameArea()
 
 function runExperiment()
          {
-          setDifficulty(); // e nedefinita
+          setDifficulty(); // not defind
       	  showChoiceScreen();
-	  playTrial(); //e nedefinita
-      	  showPostTrialQuestions();              //e nedefinita
+	  playTrial(); //not defined
+      	  showPostTrialQuestions();              //not defined
  	}
 
 function setDifficulty() {}
@@ -715,7 +727,10 @@ function selectSurprise(evt) {
   }
 
 if(currentTrial == nrTrials) {//setTimeout(finishExperiment, 800);
-                               setTimeout(reproduceTrial,  betweenSelfAndOtherTime);
+                               //setTimeout(reproduceTrial,  betweenSelfAndOtherTime);
+                               myArea.clear();
+                               myArea.stop();
+                               setTimeout(showBetweenSelfAndOtherScreen,  betweenSelfAndOtherTime);
                               }
 else {setTimeout(showChoiceScreen,betweenTrialsTime);}
     //code below prevents the mouse down from having an effect on the main browser window:
@@ -726,6 +741,22 @@ else {setTimeout(showChoiceScreen,betweenTrialsTime);}
       evt.returnValue = false;
     } //older IE
     return false;
+  }
+
+/*function startOtherTrials()
+{
+myArea.start('other_stage_start');
+myInfoText = new component("25px", "Consolas", "green", 100, 100,400,"text");
+myInfoText.text = "You will now see another subject performing. You will earn a small salary on every tri"
+}*/
+
+function showBetweenSelfAndOtherScreen()
+  {
+myArea.start('other_stage_start');
+myInfoText = new component("25px", "Consolas", "green", 100, 100,400,"text");
+myInfoText.text = "You will now see another subject performing. You will be able to choose if you want to earn bonus reward basen on this other person's performance on the following trial or based on a draw form the algorithm prediction. Please press a key when you're ready to start.";
+myInfoText.update();
+
   }
 
 var totalLengthOfReproducedTrial;
@@ -751,7 +782,7 @@ currentFrameInReproducedTrial = 0;
    else
    {
     totalLengthOfReproducedTrial = allXs[currentReproducedTrial-1].length;
-    myArea.clear();
+   // myArea.clear();
 
     rotationFramesInCurrentReproducedTrial = [];
     rotationDirectionsInCurrentReproducedTrial = [];
