@@ -35,6 +35,8 @@ var currentTrialYs = [];
 var currentTrialOrientations = [];
 var currentTrialKeyPresses = [];
 var allBonuses = [];
+var allRandomOptions = [];
+var allOtherChoices = [];
 
 
 var canvas_size = 600;
@@ -213,8 +215,8 @@ function checkForKeyPresses()
   startingText.text = "Other performing trials starting!!";
   myArea.clear();
   myArea.stop();
-  startingText.update();
-  setTimeout(reproduceTrial, 1000);
+  startingText.update();  
+  setTimeout(showOtherChoiceScreen, 1000);
 }
 /*
 if (myArea.key && myArea.expstage == 'pretrial_choice' && myArea.key == 37)
@@ -607,6 +609,8 @@ function setDifficulty() {}
 
 
 var ownPerformanceButton;
+var otherPerformanceButton;
+
 var randomPerformanceButton;
 
 function showChoiceScreen()
@@ -629,6 +633,7 @@ function showChoiceScreen()
       randomOption = new component("25px", "Consolas", "green", 380, 350,100,"text");
       randomOption.text = "draw from top " + current_random_option + " % scores";
       randomOption.update();
+      allRandomOptions.push(current_random_option);
       ownPerformanceButton = new component( 25, 25, "black", 80, 300); 
       ownPerformanceButton.update();
       randomPerformanceButton = new component( 25, 25, "black", 390, 300); 
@@ -765,6 +770,42 @@ var rotationFramesInCurrentReproducedTrial = [];
 var rotationDirectionsInCurrentReproducedTrial = [];
 var nrRotationsInCurrentReproducedTrial;
 
+
+function showOtherChoiceScreen()
+         {
+          currentReproducedTrial = currentReproducedTrial+1;
+
+        myArea.start('pretrial_other_choice');
+        myArea.canvas.style.cursor = "auto"; //make mouse reappear
+      myChoiceText  = new component("25px", "Consolas", "green", 100, 100, 400,"text");
+      myChoiceText.text = "Bonus: " 
+      //current_bonus_available = possibleBonusesAvailable[getRndInteger(0,possibleBonusesAvailable.length)];
+      current_bonus_available = allBonuses[currentReproducedTrial-1];
+
+      //allBonuses.push(current_bonus_available);
+      myBonusText = new component("25px", "Consolas", "red", 300, 100,400,"text");
+      myBonusText.text = " "+ current_bonus_available;
+      myBonusText.update();
+      myChoiceText.update();
+      myChoiceText  = new component("25px", "Consolas", "green", 100, 200,400,"text");
+      myChoiceText.text = "Win based on:";
+      myChoiceText.update();
+      otherPerformanceOption = new component("25px", "Consolas", "green", 80, 350, 100,"text");
+      otherPerformanceOption.text = "their performance";
+      otherPerformanceOption.update();
+      randomOption = new component("25px", "Consolas", "green", 380, 350,100,"text");
+      randomOption.text = "draw from top " + allRandomOptions[currentReproducedTrial-1] + " % scores";
+      randomOption.update();
+      otherPerformanceButton = new component( 25, 25, "black", 80, 300); 
+      otherPerformanceButton.update();
+      randomPerformanceButton = new component( 25, 25, "black", 390, 300); 
+      randomPerformanceButton.update();
+      myArea.canvas.addEventListener("mousedown", selectOtherRewardDependence, false);
+      }
+
+
+
+
 function reproduceTrial()
   {
 myArea.start('reproduce_trial'); 
@@ -775,7 +816,7 @@ currentFrameInReproducedTrial = 0;
 //clearInterval(myArea.interval); 
     
     
-   currentReproducedTrial = currentReproducedTrial + 1;
+   //currentReproducedTrial = currentReproducedTrial + 1; I update this variable when i show the choice screen, because i need the trial count there to be able to select the right bonus to display. 
     
    if(currentReproducedTrial > nrTrials) 
      {setTimeout(function (){clearInterval(myArea.reproduceDrawing); finishExperiment();}, 1000);}
@@ -838,7 +879,9 @@ function updateReproducingGameArea()
    reproducingText.text = 'Current frame in the reproduced trial is  ' + currentFrameInReproducedTrial;
    reproducingText.update(); */
 
-   clearInterval(myArea.reproduceDrawing); setTimeout(reproduceTrial,20);
+   //clearInterval(myArea.reproduceDrawing); setTimeout(reproduceTrial,20);
+   clearInterval(myArea.reproduceDrawing); setTimeout(showOtherChoiceScreen,20);
+
  }
   else{ myArea.clear();
   /*reproducingText= new component("25px", "Consolas", "green", 100, 100, 400, "text");
@@ -929,6 +972,48 @@ function selectRewardDependence(evt){
 }
 
 
+function selectOtherRewardDependence(evt){
+  theCanvas = myArea.canvas;
+
+    //getting mouse position correctly, being mindful of resizing that may have occured in the browser:
+    var bRect = theCanvas.getBoundingClientRect();
+    mouseX3 = (evt.clientX - bRect.left)*(theCanvas.width/bRect.width);
+    mouseY3 = (evt.clientY - bRect.top)*(theCanvas.height/bRect.height);
+    if  (mouseX3 > otherPerformanceButton.x && mouseX3 < (otherPerformanceButton.x + otherPerformanceButton.width) &&  mouseY3 > otherPerformanceButton.y && mouseY3 < (otherPerformanceButton.y + otherPerformanceButton.height)) 
+    {
+      myArea.canvas.removeEventListener("mousedown", selectOtherRewardDependence , false);
+      otherPerformanceButton.color = "red";
+      otherPerformanceButton.update();
+      current_decision = 'other';
+      allOtherChoices.push(current_decision);
+      //setTimeout(finishExperiment, 800);  
+      myArea.canvas.style.cursor = "none"; //hide mouse cursor     
+      //setTimeout(startTrial, 800);       
+      setTimeout(reproduceTrial,800);
+  }
+ 
+   if  (mouseX3 > randomPerformanceButton.x && mouseX3 < (randomPerformanceButton.x + randomPerformanceButton.width) &&  mouseY3 > randomPerformanceButton.y && mouseY3 < (randomPerformanceButton.y + randomPerformanceButton.height)) 
+    {
+      myArea.canvas.removeEventListener("mousedown", selectRewardDependence , false);
+      randomPerformanceButton.color = "red";
+      randomPerformanceButton.update();
+      current_decision = 'random';
+      allChoices.push(current_decision);
+      //setTimeout(finishExperiment, 800); 
+      myArea.canvas.style.cursor = "none"; //hide mouse cursor       
+      setTimeout(startTrial, 800);
+  }
+
+    //code below prevents the mouse down from having an effect on the main browser window:
+    if (evt.preventDefault) {
+      evt.preventDefault();
+    } //standard
+    else if (evt.returnValue) {
+      evt.returnValue = false;
+    } //older IE
+    return false;
+}
+
 
 function playTrial() {}
 function showPostTrialQuestions() {}
@@ -944,7 +1029,7 @@ function saveData()
     "allYs": allYs, 
     "allOrientations": allOrientations,
     "allKeyPresses": allKeyPresses,
-    "allBonuses": allBonuses};
+    "allBonuses": allBonuses, 'allRandomOptions': allRandomOptions};
     text_data_to_be_saved = JSON.stringify(data_to_be_saved);
     return text_data_to_be_saved;
   }
