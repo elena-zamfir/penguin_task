@@ -847,6 +847,13 @@ function selectSurprise(evt) {
       surpriseResponse = -1;
       allSurpriseResponses.push(surpriseResponse);
       //setTimeout(finishExperiment, 800);
+      if(currentTrial == nrTrials) {//setTimeout(finishExperiment, 800);
+                               //setTimeout(reproduceTrial,  betweenSelfAndOtherTime);
+                               myArea.clear();
+                               myArea.stop();
+                               setTimeout(showBetweenSelfAndOtherScreen,  betweenSelfAndOtherTime);
+                              }
+else {setTimeout(showChoiceScreen,betweenTrialsTime);}
   }
  if  (mouseX2 > noSurpriseButton.x && mouseX2 < (noSurpriseButton.x + noSurpriseButton.width) &&  mouseY2 > noSurpriseButton.y && mouseY2 < (noSurpriseButton.y + noSurpriseButton.height)) 
     {
@@ -856,6 +863,13 @@ function selectSurprise(evt) {
       surpriseResponse = 0;
       allSurpriseResponses.push(surpriseResponse);
       //setTimeout(finishExperiment, 800);       
+      if(currentTrial == nrTrials) {//setTimeout(finishExperiment, 800);
+                               //setTimeout(reproduceTrial,  betweenSelfAndOtherTime);
+                               myArea.clear();
+                               myArea.stop();
+                               setTimeout(showBetweenSelfAndOtherScreen,  betweenSelfAndOtherTime);
+                              }
+else {setTimeout(showChoiceScreen,betweenTrialsTime);}
   }
    if  (mouseX2 > higherSurpriseButton.x && mouseX2 < (higherSurpriseButton.x + higherSurpriseButton.width) &&  mouseY2 > higherSurpriseButton.y && mouseY2 < (higherSurpriseButton.y + higherSurpriseButton.height)) 
     {
@@ -864,16 +878,23 @@ function selectSurprise(evt) {
       higherSurpriseButton.update();
       surpriseResponse = 1;
       allSurpriseResponses.push(surpriseResponse);
-      //setTimeout(finishExperiment, 800);       
+      //setTimeout(finishExperiment, 800);   
+      if(currentTrial == nrTrials) {//setTimeout(finishExperiment, 800);
+                               //setTimeout(reproduceTrial,  betweenSelfAndOtherTime);
+                               myArea.clear();
+                               myArea.stop();
+                               setTimeout(showBetweenSelfAndOtherScreen,  betweenSelfAndOtherTime);
+                              }
+else {setTimeout(showChoiceScreen,betweenTrialsTime);}    
   }
-
+/*
 if(currentTrial == nrTrials) {//setTimeout(finishExperiment, 800);
                                //setTimeout(reproduceTrial,  betweenSelfAndOtherTime);
                                myArea.clear();
                                myArea.stop();
                                setTimeout(showBetweenSelfAndOtherScreen,  betweenSelfAndOtherTime);
                               }
-else {setTimeout(showChoiceScreen,betweenTrialsTime);}
+else {setTimeout(showChoiceScreen,betweenTrialsTime);}*/
     //code below prevents the mouse down from having an effect on the main browser window:
     if (evt.preventDefault) {
       evt.preventDefault();
@@ -1065,13 +1086,29 @@ function updateReproducingGameArea()
  
   if(currentFrameInReproducedTrial == totalLengthOfReproducedTrial) {
     myArea.clear();
+
+
+      myPrize.image.src = "http://smileyfaceplace.weebly.com/uploads/6/9/7/1/6971266/4692542_orig.jpg";
+      myPrize.update();
+      //mySound.play();
+      myArea.stop();
+       
+      myScore = new component("25px", "Consolas", "green", 100, 100,400,"text");
+      myScore.text = "Your score: " + allSubjectScores[currentReproducedTrial-1];
+       
+       
+      myReward = new component("25px", "Consolas", "green", 100, 200,400,"text");
+      myReward.text = "Your bonus reward: " + allRewards[currentReproducedTrial-1];
+       
+      
+      setTimeout(function(){myArea.clear(); myScore.update();myReward.update();setTimeout(function() { clearInterval(myArea.reproduceDrawing); setTimeout(showPostTrialOtherDifficultyScreen , betweenTrialEndAndQuestionsTime);},scoreDisplayTime);}, prizeDisplayTime);
   /*reproducingText= new component("25px", "Consolas", "green", 100, 100, 400, "text");
    reproducingText.text = 'Current frame in the reproduced trial is  ' + currentFrameInReproducedTrial;
    reproducingText.update(); */
 
    //clearInterval(myArea.reproduceDrawing); setTimeout(reproduceTrial,20);
    //clearInterval(myArea.reproduceDrawing); setTimeout(showOtherChoiceScreen,20);
-   clearInterval(myArea.reproduceDrawing); setTimeout(showPostTrialOtherDifficultyScreen,20);
+   //clearInterval(myArea.reproduceDrawing); setTimeout(showPostTrialOtherDifficultyScreen,20);
 
 
  }
