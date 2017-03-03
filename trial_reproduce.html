@@ -37,7 +37,7 @@ var currentTrialKeyPresses = [];
 var allBonuses = [];
 var allRandomOptions = [];
 var allOtherChoices = [];
-
+var allDifficultyOtherChoices=[];
 
 var canvas_size = 600;
 var nrTrials = 2;
@@ -276,6 +276,36 @@ function mouseDownListener(evt) {
     return false;
   }
 
+function mouseDownListenerOther(evt) {
+  theCanvas = myArea.canvas;
+    //getting mouse position correctly, being mindful of resizing that may have occured in the browser:
+    var bRect = theCanvas.getBoundingClientRect();
+    mouseX = (evt.clientX - bRect.left)*(theCanvas.width/bRect.width);
+    mouseY = (evt.clientY - bRect.top)*(theCanvas.height/bRect.height);
+    if  (hitTest(mouseX, mouseY)) //checks if the current mouse position hits the slider, which is a global variable. so its position needs to have been updated for the current situation before. 
+      //in this case in the screen showing the difficulty question screen. 
+    {
+      dragging = true;
+      dragHoldX = mouseX - slider.x;
+      dragHoldY = mouseY - slider.y;
+    //document.getElementById("demo").innerHTML = "<br>HIT! "+ mouseX;
+  }
+
+  if (dragging) {
+    window.addEventListener("mousemove", mouseMoveListenerOther, false);
+  }
+  theCanvas.removeEventListener("mousedown", mouseDownListenerOther, false);
+  window.addEventListener("mouseup", mouseUpListenerOther, false);
+
+    //code below prevents the mouse down from having an effect on the main browser window:
+    if (evt.preventDefault) {
+      evt.preventDefault();
+    } //standard
+    else if (evt.returnValue) {
+      evt.returnValue = false;
+    } //older IE
+    return false;
+  }
   var current_difficulty_estimate;
 
 
@@ -289,13 +319,68 @@ function mouseUpListener(evt)
     window.removeEventListener("mousemove", mouseMoveListener, false);
     theCanvas.removeEventListener("mousedown", mouseDownListener, false);
     current_difficulty_estimate  = (slider.x-100.0)/4.;
+    
     allDifficultyChoices.push(current_difficulty_estimate);
     //document.getElementById("demo").innerHTML = current_difficulty_estimate;
     //setTimeout(finishExperiment,1000);
     setTimeout(function(){myArea.stop(); myArea.clear();showPostTrialSurpriseScreen();}, 1000);
+ 
+
+  }
+}
+function mouseUpListenerOther(evt) 
+{
+  theCanvas = myArea.canvas;
+  theCanvas.addEventListener("mousedown", mouseDownListenerOther, false);
+  window.removeEventListener("mouseup", mouseUpListenerOther, false);
+  if (dragging) {
+    dragging = false;
+    window.removeEventListener("mousemove", mouseMoveListenerOther, false);
+    theCanvas.removeEventListener("mousedown", mouseDownListenerOther, false);
+    current_difficulty_estimate  = (slider.x-100.0)/4.;
+    
+ 
+    allDifficultyOtherChoices.push(current_difficulty_estimate);
+    //document.getElementById("demo").innerHTML = current_difficulty_estimate;
+    //setTimeout(finishExperiment,1000);
+    setTimeout(function(){myArea.stop(); myArea.clear(); showOtherPostTrialSurpriseScreen(); }, 1000);
+
+
   }
 }
 function mouseMoveListener(evt) {
+  var posX;
+  var posY;
+  theCanvas = myArea.canvas;
+  //document.getElementById("demo").innerHTML = "<br>MOVING!!!!! ";
+    //var shapeRad = shapes[dragIndex].rad;
+    //var minX = shapeRad;
+    //var maxX = theCanvas.width - shapeRad;
+    //var minY = shapeRad;
+    //var maxY = theCanvas.height - shapeRad;
+    //getting mouse position correctly 
+    var bRect = theCanvas.getBoundingClientRect();
+    mouseX = (evt.clientX - bRect.left)*(theCanvas.width/bRect.width);
+    mouseY = (evt.clientY - bRect.top)*(theCanvas.height/bRect.height);
+    
+    //clamp x and y positions to prevent object from dragging outside of canvas
+
+    posX = mouseX - dragHoldX;
+
+    //posX = (posX < minX) ? minX : ((posX > maxX) ? maxX : posX);
+    //posY = mouseY - dragHoldY;
+    //posY = (posY < minY) ? minY : ((posY > maxY) ? maxY : posY);
+     myArea.clear();
+    if(posX > 100 && posX < 499)
+    {slider.x = posX;}
+    //slider.y = posY;
+    difficultyQuestion.update();
+    easyExtreme.update();
+    difficultExtreme.update();
+   slideBar.update();
+    slider.update();
+  } 
+  function mouseMoveListenerOther(evt) {
   var posX;
   var posY;
   theCanvas = myArea.canvas;
@@ -666,6 +751,29 @@ function showPostTrialDifficultyScreen()
        myArea.canvas.addEventListener("mousedown", mouseDownListener, false);
 
          }
+
+
+
+ function showPostTrialOtherDifficultyScreen()
+         {
+        myArea.start('other_posttrial_choice');
+         myArea.canvas.style.cursor = "auto"; //make mouse reappear
+      difficultyQuestion  = new component("25px", "Consolas", "green", 100, 100, 400,"text");
+      difficultyQuestion.text = "How would you rate the difficulty of this trial on a scale from 0 to 100?";
+      difficultyQuestion.update();
+      slideBar = new component( 400, 25, "black", 100, 250);
+      slideBar.update();
+      easyExtreme = new component("25px", "Consolas", "green", 65, 295,400,"text");
+      easyExtreme.text = 'very easy';
+      easyExtreme.update();
+      difficultExtreme = new component("25px", "Consolas", "green", 440, 295,400,"text");
+      difficultExtreme.text = 'very difficult';
+      difficultExtreme.update();
+      slider = new component( 10, 50, "red", 295, 238);
+      slider.update();
+       myArea.canvas.addEventListener("mousedown", mouseDownListenerOther, false);
+
+         }        
 function showPostTrialSurpriseScreen()
  {
 myArea.start('posttrial_surprise');
@@ -689,6 +797,33 @@ noSurpriseText.text = "not surprised";
 noSurpriseText.update();
 myArea.canvas.addEventListener("mousedown", selectSurprise, false);
  }
+
+
+function showOtherPostTrialSurpriseScreen()
+ {
+myArea.start('other_posttrial_surprise');
+surpriseQuestion = new component("25px", "Consolas", "green", 100, 100, 400,"text");
+surpriseQuestion.text = "Were you surprised by the score they got on this trial? Was it lower or higher that what you expected?";
+surpriseQuestion.update();
+lowerSurpriseButton = new component( 25, 25, "black", 100, 238);
+lowerSurpriseButton.update();
+lowerSurpriseText = new component("25px", "Consolas", "green", 85, 285,400,"text");
+lowerSurpriseText.text = "lower";
+lowerSurpriseText.update();
+noSurpriseButton = new component( 25, 25, "black", 295, 238);
+noSurpriseButton.update();
+higherSurpriseText = new component("25px", "Consolas", "green", 475, 285,400,"text");
+higherSurpriseText.text = "higher";
+higherSurpriseText.update();
+higherSurpriseButton = new component( 25, 25, "black", 490, 238);
+higherSurpriseButton.update();
+noSurpriseText = new component("25px", "Consolas", "green", 245, 285,400,"text");
+noSurpriseText.text = "not surprised";
+noSurpriseText.update();
+myArea.canvas.addEventListener("mousedown", selectOtherSurprise, false);
+ }
+
+
 
 var lowerSurpriseButton;
 var higherSurpriseButton;
@@ -738,6 +873,60 @@ if(currentTrial == nrTrials) {//setTimeout(finishExperiment, 800);
                                setTimeout(showBetweenSelfAndOtherScreen,  betweenSelfAndOtherTime);
                               }
 else {setTimeout(showChoiceScreen,betweenTrialsTime);}
+    //code below prevents the mouse down from having an effect on the main browser window:
+    if (evt.preventDefault) {
+      evt.preventDefault();
+    } //standard
+    else if (evt.returnValue) {
+      evt.returnValue = false;
+    } //older IE
+    return false;
+  }
+
+
+
+
+  function selectOtherSurprise(evt) {
+  theCanvas = myArea.canvas;
+    //getting mouse position correctly, being mindful of resizing that may have occured in the browser:
+    var bRect = theCanvas.getBoundingClientRect();
+    mouseX2 = (evt.clientX - bRect.left)*(theCanvas.width/bRect.width);
+    mouseY2 = (evt.clientY - bRect.top)*(theCanvas.height/bRect.height);
+    if  (mouseX2 > lowerSurpriseButton.x && mouseX2 < (lowerSurpriseButton.x + lowerSurpriseButton.width) &&  mouseY2 > lowerSurpriseButton.y && mouseY2 < (lowerSurpriseButton.y + lowerSurpriseButton.height)) 
+    {
+      myArea.canvas.removeEventListener("mousedown", selectSurprise, false);
+      lowerSurpriseButton.color = "red";
+      lowerSurpriseButton.update();
+      surpriseResponse = -1;
+      allOtherSurpriseResponses.push(surpriseResponse);
+      //setTimeout(finishExperiment, 800);
+  }
+ if  (mouseX2 > noSurpriseButton.x && mouseX2 < (noSurpriseButton.x + noSurpriseButton.width) &&  mouseY2 > noSurpriseButton.y && mouseY2 < (noSurpriseButton.y + noSurpriseButton.height)) 
+    {
+      myArea.canvas.removeEventListener("mousedown", selectSurprise, false);
+      noSurpriseButton.color = "red";
+      noSurpriseButton.update();
+      surpriseResponse = 0;
+      allOtherSurpriseResponses.push(surpriseResponse);
+      //setTimeout(finishExperiment, 800);       
+  }
+   if  (mouseX2 > higherSurpriseButton.x && mouseX2 < (higherSurpriseButton.x + higherSurpriseButton.width) &&  mouseY2 > higherSurpriseButton.y && mouseY2 < (higherSurpriseButton.y + higherSurpriseButton.height)) 
+    {
+      myArea.canvas.removeEventListener("mousedown", selectSurprise, false);
+      higherSurpriseButton.color = "red";
+      higherSurpriseButton.update();
+      surpriseResponse = 1;
+      allOtherSurpriseResponses.push(surpriseResponse);
+      //setTimeout(finishExperiment, 800);       
+  }
+
+if(currentReproducedTrial == nrTrials) {//setTimeout(finishExperiment, 800);
+                               //setTimeout(reproduceTrial,  betweenSelfAndOtherTime);
+                               myArea.clear();
+                               myArea.stop();
+                               setTimeout(finishExperiment,  500);
+                              }
+else {setTimeout(showOtherChoiceScreen,betweenTrialsTime);}
     //code below prevents the mouse down from having an effect on the main browser window:
     if (evt.preventDefault) {
       evt.preventDefault();
@@ -880,7 +1069,9 @@ function updateReproducingGameArea()
    reproducingText.update(); */
 
    //clearInterval(myArea.reproduceDrawing); setTimeout(reproduceTrial,20);
-   clearInterval(myArea.reproduceDrawing); setTimeout(showOtherChoiceScreen,20);
+   //clearInterval(myArea.reproduceDrawing); setTimeout(showOtherChoiceScreen,20);
+   clearInterval(myArea.reproduceDrawing); setTimeout(showPostTrialOtherDifficultyScreen,20);
+
 
  }
   else{ myArea.clear();
