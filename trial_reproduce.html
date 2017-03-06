@@ -903,7 +903,7 @@ else {setTimeout(showChoiceScreen,betweenTrialsTime);}*/
   }
 
 
-
+var time_to_finish = 50; 
 
   function selectOtherSurprise(evt) {
   theCanvas = myArea.canvas;
@@ -919,10 +919,7 @@ else {setTimeout(showChoiceScreen,betweenTrialsTime);}*/
       surpriseResponse = -1;
       allOtherSurpriseResponses.push(surpriseResponse);
       //setTimeout(finishExperiment, 800);
-      if(currentReproducedTrial == nrTrials) {//setTimeout(finishExperiment, 800);
-                               //setTimeout(reproduceTrial,  betweenSelfAndOtherTime);
-                               myArea.clear();
-                               myArea.stop();
+      if(currentReproducedTrial == nrTrials) {  
                                setTimeout(finishExperiment,  500);
                               }
 else {setTimeout(showOtherChoiceScreen,betweenTrialsTime);}
