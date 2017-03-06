@@ -17,9 +17,17 @@ canvas {
 
 // variables to be saved 
 
-var allChoices = [];
-var allDifficultyChoices =[];
-var allSurpriseResponses = [];
+// reward dependency choices
+var allChoicesSelf = [];
+var allChoicesOther = [];
+
+//difficulty estimates 
+var allDifficultyEstimatesSelf =[];
+var allDifficultyEstimatesOther=[];
+
+var allSurpriseResponsesSelf = [];
+var allSurpriseResponsesOther =[];
+
 var allSubjectScores = [];
 var allRewards = [];
 var allMazes =[];
@@ -36,9 +44,8 @@ var currentTrialOrientations = [];
 var currentTrialKeyPresses = [];
 var allBonuses = [];
 var allRandomOptions = [];
-var allOtherChoices = [];
-var allDifficultyOtherChoices=[];
-var allOtherSurpriseResponses =[];
+
+
 
 var canvas_size = 600;
 var nrTrials = 2;
@@ -321,7 +328,7 @@ function mouseUpListener(evt)
     theCanvas.removeEventListener("mousedown", mouseDownListener, false);
     current_difficulty_estimate  = (slider.x-100.0)/4.;
     
-    allDifficultyChoices.push(current_difficulty_estimate);
+    allDifficultyEstimatesSelf.push(current_difficulty_estimate);
     //document.getElementById("demo").innerHTML = current_difficulty_estimate;
     //setTimeout(finishExperiment,1000);
     setTimeout(function(){myArea.stop(); myArea.clear();showPostTrialSurpriseScreen();}, 1000);
@@ -341,7 +348,7 @@ function mouseUpListenerOther(evt)
     current_difficulty_estimate  = (slider.x-100.0)/4.;
     
  
-    allDifficultyOtherChoices.push(current_difficulty_estimate);
+    allDifficultyEstimatesOther.push(current_difficulty_estimate);
     //document.getElementById("demo").innerHTML = current_difficulty_estimate;
     //setTimeout(finishExperiment,1000);
     setTimeout(function(){myArea.stop(); myArea.clear(); showOtherPostTrialSurpriseScreen(); }, 1000);
@@ -845,7 +852,7 @@ function selectSurprise(evt) {
       lowerSurpriseButton.color = "red";
       lowerSurpriseButton.update();
       surpriseResponse = -1;
-      allSurpriseResponses.push(surpriseResponse);
+      allSurpriseResponsesSelf.push(surpriseResponse);
       //setTimeout(finishExperiment, 800);
       if(currentTrial == nrTrials) {//setTimeout(finishExperiment, 800);
                                //setTimeout(reproduceTrial,  betweenSelfAndOtherTime);
@@ -860,7 +867,7 @@ else {setTimeout(showChoiceScreen,betweenTrialsTime);}
       noSurpriseButton.color = "red";
       noSurpriseButton.update();
       surpriseResponse = 0;
-      allSurpriseResponses.push(surpriseResponse);
+      allSurpriseResponsesSelf.push(surpriseResponse);
       //setTimeout(finishExperiment, 800);       
       if(currentTrial == nrTrials) {//setTimeout(finishExperiment, 800);
                                //setTimeout(reproduceTrial,  betweenSelfAndOtherTime);
@@ -875,7 +882,7 @@ else {setTimeout(showChoiceScreen,betweenTrialsTime);}
       higherSurpriseButton.color = "red";
       higherSurpriseButton.update();
       surpriseResponse = 1;
-      allSurpriseResponses.push(surpriseResponse);
+      allSurpriseResponsesSelf.push(surpriseResponse);
       //setTimeout(finishExperiment, 800);   
       if(currentTrial == nrTrials) {//setTimeout(finishExperiment, 800);
                                //setTimeout(reproduceTrial,  betweenSelfAndOtherTime);
@@ -917,7 +924,7 @@ var time_to_finish = 50;
       lowerSurpriseButton.color = "red";
       lowerSurpriseButton.update();
       surpriseResponse = -1;
-      allOtherSurpriseResponses.push(surpriseResponse);
+      allSurpriseResponsesOther.push(surpriseResponse);
       //setTimeout(finishExperiment, 800);
       if(currentReproducedTrial == nrTrials) {  
                                setTimeout(finishExperiment,  500);
@@ -930,7 +937,7 @@ else {setTimeout(showOtherChoiceScreen,betweenTrialsTime);}
       noSurpriseButton.color = "red";
       noSurpriseButton.update();
       surpriseResponse = 0;
-      allOtherSurpriseResponses.push(surpriseResponse);
+      allSurpriseResponsesOther.push(surpriseResponse);
       //setTimeout(finishExperiment, 800);     
       if(currentReproducedTrial == nrTrials) {//setTimeout(finishExperiment, 800);
                                //setTimeout(reproduceTrial,  betweenSelfAndOtherTime);
@@ -946,7 +953,7 @@ else {setTimeout(showOtherChoiceScreen,betweenTrialsTime);}
       higherSurpriseButton.color = "red";
       higherSurpriseButton.update();
       surpriseResponse = 1;
-      allOtherSurpriseResponses.push(surpriseResponse);
+      allSurpriseResponsesOther.push(surpriseResponse);
       //setTimeout(finishExperiment, 800);    
       if(currentReproducedTrial == nrTrials) {//setTimeout(finishExperiment, 800);
                                //setTimeout(reproduceTrial,  betweenSelfAndOtherTime);
@@ -1181,7 +1188,7 @@ function selectRewardDependence(evt){
       ownPerformanceButton.color = "red";
       ownPerformanceButton.update();
       current_decision = 'self';
-      allChoices.push(current_decision);
+      allChoicesSelf.push(current_decision);
       //setTimeout(finishExperiment, 800);  
       myArea.canvas.style.cursor = "none"; //hide mouse cursor     
       setTimeout(startTrial, 800);       
@@ -1193,7 +1200,7 @@ function selectRewardDependence(evt){
       randomPerformanceButton.color = "red";
       randomPerformanceButton.update();
       current_decision = 'random';
-      allChoices.push(current_decision);
+      allChoicesSelf.push(current_decision);
       //setTimeout(finishExperiment, 800); 
       myArea.canvas.style.cursor = "none"; //hide mouse cursor       
       setTimeout(startTrial, 800);
@@ -1223,7 +1230,7 @@ function selectOtherRewardDependence(evt){
       otherPerformanceButton.color = "red";
       otherPerformanceButton.update();
       current_decision = 'other';
-      allOtherChoices.push(current_decision);
+      allChoicesOther.push(current_decision);
       //setTimeout(finishExperiment, 800);  
       myArea.canvas.style.cursor = "none"; //hide mouse cursor     
       //setTimeout(startTrial, 800);       
@@ -1236,7 +1243,7 @@ function selectOtherRewardDependence(evt){
       randomPerformanceButton.color = "red";
       randomPerformanceButton.update();
       current_decision = 'random';
-      allChoices.push(current_decision);
+      allChoicesOther.push(current_decision);
       //setTimeout(finishExperiment, 800); 
       myArea.canvas.style.cursor = "none"; //hide mouse cursor       
       setTimeout(startTrial, 800);
@@ -1259,7 +1266,7 @@ function showPostTrialQuestions() {}
 
 function saveData()
   {
-    data_to_be_saved = {"allChoices": allChoices,"allDifficultyChoices": allDifficultyChoices, "allSurpriseResponses": allSurpriseResponses,
+    data_to_be_saved = {"allChoicesSelf": allChoicesSelf, "allChoicesOther": allChoicesOther,  "allDifficultyEstimatesSelf": allDifficultyEstimatesSelf, "allDifficultyEstimatesOther": allDifficultyEstimatesOther, "allSurpriseResponsesSelf": allSurpriseResponsesSelf, "allSurpriseResponsesOther": allSurpriseResponsesOther,
     "allSubjectScores": allSubjectScores, "allRewards": allRewards,
     "allMazes": allMazes, "allMazeDimensions": allMazeDimensions,
     "allRotations": allRotations,
