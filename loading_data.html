@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+
+</head>
+<body>
+
+<script>
+ 
+  
+$(document).ready(function(){
+    $("button").click(function(){
+   
+        $.get("http://www.gatsby.ucl.ac.uk/teaching/courses/ml1-2016/MStep.m",  function(data, status){
+            //alert("Data: " + data + "\nStatus: " + status);
+             //var variable = data;
+           
+            document.getElementById("p").innerHTML = data;
+        });
+    //$("button").hide(); this is to check that the jQuery works. it does. and it doesn't work any more if the jQuery src above is commented. 
+        
+    });
+});
+
+</script>
+<button>Send an HTTP GET request to a page and get the result back</button>
+<p id="p"><p>
+</body>
+</html>
+
+<!--
+
+<!DOCTYPE html>
+<html>
+<head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+
+</head>
+<body onload="showInstructions()">
+
+<script>
+function showInstructions(){
+ document.getElementById("p").innerHTML='3';}
+ 
+$(document).ready(function(){
+    $("button").click(function(){
+   
+        $.get("demo_test.txt",  function(data, status){
+            alert("Data: " + data + "\nStatus: " + status);
+             var variable = data;
+           
+            setTimeout(function(){document.getElementById("p").innerHTML = variable;}, 1000);
+        });
+        
+    });
+});
+
+</script>
+<button>Send an HTTP GET request to a page and get the result back</button>
+<p id = 'p'><p>
+</body>
+</html>
+
+
+-->
+<!--
+asta cred ca e exact ce vreau!!
+<!DOCTYPE html>
+<html>
+<head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+
+</head>
+-->
+<!--<body onload="showInstructions()">-->
+
+<!--
+<body>
+<script>
+var variable
+function showInstructions(){
+ document.getElementById("p").innerHTML='stare initiala';
+ setTimeout(function(){document.getElementById("p").innerHTML = variable;}, 1000);
+ }
+ 
+$(document).ready(function(){
+    $("button").click(function(){
+   
+        $.get("demo_test.txt",  function(data, status){
+            alert("Data: " + data + "\nStatus: " + status);
+              variable = data;
+           showInstructions();
+            
+        });
+        
+    });
+});
+
+</script>
+<button>Send an HTTP GET request to a page and get the result back</button>
+<p id = 'p'><p>
+</body>
+</html>
+-->
