@@ -17,16 +17,22 @@ canvas {
 
 // variables to be saved 
 
-// reward dependency choices
+ 
+ //variables of which i will have two sets, one for the self and one for the other condition
 var allChoicesSelf = [];
 var allChoicesOther = [];
 
-//difficulty estimates 
+ 
 var allDifficultyEstimatesSelf =[];
 var allDifficultyEstimatesOther=[];
 
+
 var allSurpriseResponsesSelf = [];
 var allSurpriseResponsesOther =[];
+
+
+// variables of which i only have one set, recorded in the self condition, which is used to generate the trials in the other condition 
+
 
 var allSubjectScores = [];
 var allRewards = [];
@@ -1246,7 +1252,7 @@ function selectOtherRewardDependence(evt){
       allChoicesOther.push(current_decision);
       //setTimeout(finishExperiment, 800); 
       myArea.canvas.style.cursor = "none"; //hide mouse cursor       
-      setTimeout(startTrial, 800);
+      setTimeout(reproduceTrial, 800);
   }
 
     //code below prevents the mouse down from having an effect on the main browser window:
@@ -1297,7 +1303,7 @@ function finishExperiment()
      hiddenElement.href = 'data:attachment/text,' + encodeURI(saveData());
 //hiddenElement.target = '_blank';
 hiddenElement.download = 'myFile.json';
-//hiddenElement.click();
+hiddenElement.click();
 
   	 }
 
