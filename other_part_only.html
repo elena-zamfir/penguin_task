@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+    <!DOCTYPE html>
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -62,7 +62,8 @@ var allRandomOptions = [];
 
 var canvas_size = 600;
 var nrTrials = 2;
-var currentTrial = 0;
+//var currentTrial = 0;
+var currentTrial = nrTrials+1;
 var currentReproducedTrial = 0;
 var maxLineWidth = 400;
 var heightLine = 30;
@@ -1259,7 +1260,7 @@ function selectOtherRewardDependence(evt){
       allChoicesOther.push(current_decision);
       //setTimeout(finishExperiment, 800); 
       myArea.canvas.style.cursor = "none"; //hide mouse cursor       
-      setTimeout(startTrial, 800);
+      setTimeout(reproduceTrial, 800);
   }
 
     //code below prevents the mouse down from having an effect on the main browser window:
